@@ -6,12 +6,12 @@ export function buildWhatsAppMessage(formData) {
   const total = getCartTotal()
   const negocio = CONFIG.NOMBRE_NEGOCIO
 
-  let mensaje = `🎄 *Nuevo pedido - ${negocio}*\n\n`
-  mensaje += `👤 *Cliente:* ${formData.nombre}\n`
-  mensaje += `📱 *Teléfono:* ${formData.telefono}\n`
-  if (formData.direccion) mensaje += `📍 *Dirección:* ${formData.direccion}\n`
-  if (formData.comentarios) mensaje += `💬 *Comentarios:* ${formData.comentarios}\n`
-  mensaje += `\n📦 *Detalle del pedido:*\n`
+  let mensaje = ` *Nuevo pedido - ${negocio}*\n\n`
+  mensaje += ` *Cliente:* ${formData.nombre}\n`
+  mensaje += ` *Teléfono:* ${formData.telefono}\n`
+  if (formData.direccion) mensaje += ` *Dirección:* ${formData.direccion}\n`
+  if (formData.comentarios) mensaje += `*Comentarios:* ${formData.comentarios}\n`
+  mensaje += `\n *Detalle del pedido:*\n`
 
   cart.forEach((item, i) => {
     mensaje += `${i + 1}. ${item.nombre}`
@@ -19,9 +19,7 @@ export function buildWhatsAppMessage(formData) {
     mensaje += ` — $ ${item.precio.toLocaleString('es-AR')} x ${item.cantidad} = $ ${(item.precio * item.cantidad).toLocaleString('es-AR')}\n`
   })
 
-  mensaje += `\n💰 *Total: $ ${total.toLocaleString('es-AR')}*`
-  mensaje += `\n\n---\nPedido generado desde la web de ${negocio}`
-
+  mensaje += `\n *Total: $ ${total.toLocaleString('es-AR')}*`
   return mensaje
 }
 

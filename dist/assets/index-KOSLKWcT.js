@@ -1,4 +1,4 @@
-(function(){const o=document.createElement("link").relList;if(o&&o.supports&&o.supports("modulepreload"))return;for(const t of document.querySelectorAll('link[rel="modulepreload"]'))n(t);new MutationObserver(t=>{for(const a of t)if(a.type==="childList")for(const d of a.addedNodes)d.tagName==="LINK"&&d.rel==="modulepreload"&&n(d)}).observe(document,{childList:!0,subtree:!0});function s(t){const a={};return t.integrity&&(a.integrity=t.integrity),t.referrerPolicy&&(a.referrerPolicy=t.referrerPolicy),t.crossOrigin==="use-credentials"?a.credentials="include":t.crossOrigin==="anonymous"?a.credentials="omit":a.credentials="same-origin",a}function n(t){if(t.ep)return;t.ep=!0;const a=s(t);fetch(t.href,a)}})();const g={NOMBRE_NEGOCIO:"Ventas Pandul",NRO_WHATSAPP:"5491151038957",URL_SHEETS:"https://script.google.com/macros/s/AKfycbzmB7g9Fs4-D7h0MbDlxOidVXLYOFsjvsnnVy8RtrfYMdzdIuWpjSYXNDI9G0atzMpykw/exec",HERO_INTERVAL_MS:5e3},M="pandul_cart",$=new Set;let h=q();function q(){try{const e=localStorage.getItem(M);return e?JSON.parse(e):[]}catch{return[]}}function E(){localStorage.setItem(M,JSON.stringify(h)),I()}function I(){$.forEach(e=>e(h))}function A(e){return $.add(e),e(h),()=>$.delete(e)}function y(){return h}function B(){return h.reduce((e,o)=>e+o.cantidad,0)}function S(){return h.reduce((e,o)=>e+o.precio*o.cantidad,0)}function N({slug:e,nombre:o,subtipoNombre:s,precio:n,imagen:t}){const a=s?`${e}::${s}`:e,d=h.find(c=>c.id===a);d?d.cantidad+=1:h.push({id:a,slug:e,nombre:o,subtipo:s||null,precio:n,imagen:t,cantidad:1}),E()}function T(e){h=h.filter(o=>o.id!==e),E()}function j(e,o){const s=h.find(n=>n.id===e);if(s){if(o<=0){T(e);return}s.cantidad=o,E()}}function H(){h=[],E()}const C=[{href:"#inicio",label:"Inicio"},{href:"#catalogo",label:"Catálogo"},{href:"#contacto",label:"Contacto"}];function R(e){e.innerHTML=`
+(function(){const t=document.createElement("link").relList;if(t&&t.supports&&t.supports("modulepreload"))return;for(const o of document.querySelectorAll('link[rel="modulepreload"]'))n(o);new MutationObserver(o=>{for(const a of o)if(a.type==="childList")for(const d of a.addedNodes)d.tagName==="LINK"&&d.rel==="modulepreload"&&n(d)}).observe(document,{childList:!0,subtree:!0});function s(o){const a={};return o.integrity&&(a.integrity=o.integrity),o.referrerPolicy&&(a.referrerPolicy=o.referrerPolicy),o.crossOrigin==="use-credentials"?a.credentials="include":o.crossOrigin==="anonymous"?a.credentials="omit":a.credentials="same-origin",a}function n(o){if(o.ep)return;o.ep=!0;const a=s(o);fetch(o.href,a)}})();const g={NOMBRE_NEGOCIO:"Ventas Pandul",NRO_WHATSAPP:"5491151038957",URL_SHEETS:"https://script.google.com/macros/s/AKfycbzmB7g9Fs4-D7h0MbDlxOidVXLYOFsjvsnnVy8RtrfYMdzdIuWpjSYXNDI9G0atzMpykw/exec",HERO_INTERVAL_MS:5e3},M="pandul_cart",$=new Set;let h=q();function q(){try{const e=localStorage.getItem(M);return e?JSON.parse(e):[]}catch{return[]}}function E(){localStorage.setItem(M,JSON.stringify(h)),I()}function I(){$.forEach(e=>e(h))}function A(e){return $.add(e),e(h),()=>$.delete(e)}function y(){return h}function B(){return h.reduce((e,t)=>e+t.cantidad,0)}function S(){return h.reduce((e,t)=>e+t.precio*t.cantidad,0)}function N({slug:e,nombre:t,subtipoNombre:s,precio:n,imagen:o}){const a=s?`${e}::${s}`:e,d=h.find(c=>c.id===a);d?d.cantidad+=1:h.push({id:a,slug:e,nombre:t,subtipo:s||null,precio:n,imagen:o,cantidad:1}),E()}function T(e){h=h.filter(t=>t.id!==e),E()}function j(e,t){const s=h.find(n=>n.id===e);if(s){if(t<=0){T(e);return}s.cantidad=t,E()}}function H(){h=[],E()}const C=[{href:"#inicio",label:"Inicio"},{href:"#catalogo",label:"Catálogo"},{href:"#contacto",label:"Contacto"}];function R(e){e.innerHTML=`
     <header id="site-header" class="sticky top-0 z-50 bg-navidad-rojo text-white transition-shadow duration-300">
       <div class="container-page flex items-center justify-between h-16">
         <a href="#inicio" class="flex items-center gap-2 group" aria-label="${g.NOMBRE_NEGOCIO}">
@@ -9,10 +9,10 @@
         </a>
 
         <nav class="hidden md:flex items-center gap-1" aria-label="Navegación principal">
-          ${C.map(o=>`
-            <a href="${o.href}"
+          ${C.map(t=>`
+            <a href="${t.href}"
                class="px-3 py-2 rounded-lg text-sm font-medium hover:bg-white/10 hover:text-navidad-dorado transition-colors">
-              ${o.label}
+              ${t.label}
             </a>
           `).join("")}
         </nav>
@@ -46,16 +46,16 @@
 
       <div id="mobile-menu" class="md:hidden hidden border-t border-white/10 bg-navidad-rojo">
         <nav class="container-page py-3 flex flex-col gap-1" aria-label="Navegación móvil">
-          ${C.map(o=>`
-            <a href="${o.href}"
+          ${C.map(t=>`
+            <a href="${t.href}"
                class="mobile-nav-link px-3 py-3 rounded-lg text-base font-medium hover:bg-white/10 hover:text-navidad-dorado transition-colors">
-              ${o.label}
+              ${t.label}
             </a>
           `).join("")}
         </nav>
       </div>
     </header>
-  `,P()}function P(){const e=document.getElementById("menu-btn"),o=document.getElementById("mobile-menu"),s=document.getElementById("icon-menu"),n=document.getElementById("icon-close"),t=document.getElementById("cart-btn"),a=document.getElementById("cart-badge"),d=document.getElementById("site-header");e.addEventListener("click",()=>{!o.classList.contains("hidden")?(o.classList.add("hidden"),s.classList.remove("hidden"),n.classList.add("hidden"),e.setAttribute("aria-expanded","false")):(o.classList.remove("hidden"),s.classList.add("hidden"),n.classList.remove("hidden"),e.setAttribute("aria-expanded","true"))}),document.querySelectorAll(".mobile-nav-link").forEach(c=>{c.addEventListener("click",()=>{o.classList.add("hidden"),s.classList.remove("hidden"),n.classList.add("hidden"),e.setAttribute("aria-expanded","false")})}),t.addEventListener("click",()=>{document.dispatchEvent(new CustomEvent("cart:open"))}),A(c=>{const b=c.reduce((m,v)=>m+v.cantidad,0);b>0?(a.textContent=b,a.classList.remove("hidden")):a.classList.add("hidden")}),window.addEventListener("scroll",()=>{window.scrollY>10?d.classList.add("shadow-lg"):d.classList.remove("shadow-lg")},{passive:!0})}let k=null;async function O(){if(k)return k;try{const e=await fetch("/products/manifest.json",{cache:"no-cache"});if(!e.ok)throw new Error(`HTTP ${e.status}`);return k=await e.json(),k}catch(e){return console.error("Error al cargar productos:",e),[]}}async function _(e){e.id="inicio",e.className="relative min-h-[90vh] flex items-center justify-center overflow-hidden bg-navidad-oscuro",e.innerHTML=`
+  `,P()}function P(){const e=document.getElementById("menu-btn"),t=document.getElementById("mobile-menu"),s=document.getElementById("icon-menu"),n=document.getElementById("icon-close"),o=document.getElementById("cart-btn"),a=document.getElementById("cart-badge"),d=document.getElementById("site-header");e.addEventListener("click",()=>{!t.classList.contains("hidden")?(t.classList.add("hidden"),s.classList.remove("hidden"),n.classList.add("hidden"),e.setAttribute("aria-expanded","false")):(t.classList.remove("hidden"),s.classList.add("hidden"),n.classList.remove("hidden"),e.setAttribute("aria-expanded","true"))}),document.querySelectorAll(".mobile-nav-link").forEach(c=>{c.addEventListener("click",()=>{t.classList.add("hidden"),s.classList.remove("hidden"),n.classList.add("hidden"),e.setAttribute("aria-expanded","false")})}),o.addEventListener("click",()=>{document.dispatchEvent(new CustomEvent("cart:open"))}),A(c=>{const b=c.reduce((m,v)=>m+v.cantidad,0);b>0?(a.textContent=b,a.classList.remove("hidden")):a.classList.add("hidden")}),window.addEventListener("scroll",()=>{window.scrollY>10?d.classList.add("shadow-lg"):d.classList.remove("shadow-lg")},{passive:!0})}let k=null;async function O(){if(k)return k;try{const e=await fetch("/products/manifest.json",{cache:"no-cache"});if(!e.ok)throw new Error(`HTTP ${e.status}`);return k=await e.json(),k}catch(e){return console.error("Error al cargar productos:",e),[]}}async function _(e){e.id="inicio",e.className="relative min-h-[90vh] flex items-center justify-center overflow-hidden bg-navidad-oscuro",e.innerHTML=`
     <div id="hero-slides" class="absolute inset-0"></div>
     <div class="absolute inset-0 bg-gradient-to-b from-navidad-rojo/70 via-navidad-oscuro/60 to-navidad-verde/70"></div>
     <div class="absolute inset-0 bg-black/30"></div>
@@ -91,7 +91,7 @@
     </div>
   `,await z()}async function z(){const e=document.getElementById("hero-slides");if(!e)return;const s=(await O()).filter(a=>a.imagenes&&a.imagenes.length>0).map(a=>a.imagenes[0]);if(s.length===0){e.style.background="linear-gradient(135deg, #C1121F, #065F46)";return}e.innerHTML=s.map((a,d)=>`
       <div class="absolute inset-0 transition-opacity duration-1000 ease-in-out ${d===0?"opacity-100":"opacity-0"}" style="background-image: url('${a}'); background-size: cover; background-position: center;"></div>
-    `).join("");let n=0;const t=s.length;t>1&&setInterval(()=>{const a=e.children;a[n].classList.replace("opacity-100","opacity-0"),n=(n+1)%t,a[n].classList.replace("opacity-0","opacity-100")},g.HERO_INTERVAL_MS)}function F(e){const o=document.createElement("article");o.className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow flex flex-col";const s=e.subtipos&&e.subtipos.length>0,n=s?e.subtipos[0].precio:e.precio,t=s?e.subtipos[0].nombre:null;o.innerHTML=`
+    `).join("");let n=0;const o=s.length;o>1&&setInterval(()=>{const a=e.children;a[n].classList.replace("opacity-100","opacity-0"),n=(n+1)%o,a[n].classList.replace("opacity-0","opacity-100")},g.HERO_INTERVAL_MS)}function F(e){const t=document.createElement("article");t.className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow flex flex-col";const s=e.subtipos&&e.subtipos.length>0,n=s?e.subtipos[0].precio:e.precio,o=s?e.subtipos[0].nombre:null;t.innerHTML=`
     <div class="relative aspect-square bg-navidad-crema overflow-hidden group">
       <img id="main-img-${e.slug}"
            src="${e.imagenes[0]}"
@@ -144,12 +144,12 @@
         Agregar al carrito
       </button>
     </div>
-  `;let a=t,d=n,c=0;const b=o.querySelector(`#main-img-${e.slug}`),m=o.querySelector(`#precio-${e.slug}`),v=o.querySelector(`#add-${e.slug}`);return o.querySelectorAll(".thumb").forEach(i=>{i.addEventListener("click",()=>{const u=parseInt(i.dataset.img,10);c=u,b.src=e.imagenes[u],o.querySelectorAll(".thumb").forEach(w=>{w.classList.remove("bg-navidad-dorado","scale-125"),w.classList.add("bg-white/60")}),i.classList.add("bg-navidad-dorado","scale-125"),i.classList.remove("bg-white/60")})}),o.querySelectorAll(".subtipo-btn").forEach(i=>{i.addEventListener("click",()=>{a=i.dataset.subtipo,d=parseInt(i.dataset.precio,10),m.textContent=`$ ${d.toLocaleString("es-AR")}`,o.querySelectorAll(".subtipo-btn").forEach(u=>{u.classList.remove("border-navidad-rojo","bg-navidad-rojo","text-white"),u.classList.add("border-navidad-oscuro/20","text-navidad-oscuro/70")}),i.classList.add("border-navidad-rojo","bg-navidad-rojo","text-white"),i.classList.remove("border-navidad-oscuro/20","text-navidad-oscuro/70")})}),v.addEventListener("click",()=>{N({slug:e.slug,nombre:e.nombre,subtipoNombre:a,precio:d,imagen:e.imagenes[c]});const i=v.innerHTML;v.innerHTML=`
+  `;let a=o,d=n,c=0;const b=t.querySelector(`#main-img-${e.slug}`),m=t.querySelector(`#precio-${e.slug}`),v=t.querySelector(`#add-${e.slug}`);return t.querySelectorAll(".thumb").forEach(i=>{i.addEventListener("click",()=>{const u=parseInt(i.dataset.img,10);c=u,b.src=e.imagenes[u],t.querySelectorAll(".thumb").forEach(w=>{w.classList.remove("bg-navidad-dorado","scale-125"),w.classList.add("bg-white/60")}),i.classList.add("bg-navidad-dorado","scale-125"),i.classList.remove("bg-white/60")})}),t.querySelectorAll(".subtipo-btn").forEach(i=>{i.addEventListener("click",()=>{a=i.dataset.subtipo,d=parseInt(i.dataset.precio,10),m.textContent=`$ ${d.toLocaleString("es-AR")}`,t.querySelectorAll(".subtipo-btn").forEach(u=>{u.classList.remove("border-navidad-rojo","bg-navidad-rojo","text-white"),u.classList.add("border-navidad-oscuro/20","text-navidad-oscuro/70")}),i.classList.add("border-navidad-rojo","bg-navidad-rojo","text-white"),i.classList.remove("border-navidad-oscuro/20","text-navidad-oscuro/70")})}),v.addEventListener("click",()=>{N({slug:e.slug,nombre:e.nombre,subtipoNombre:a,precio:d,imagen:e.imagenes[c]});const i=v.innerHTML;v.innerHTML=`
       <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
         <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
       </svg>
       ¡Agregado!
-    `,v.classList.remove("bg-navidad-rojo","hover:bg-navidad-rojoClaro"),v.classList.add("bg-navidad-verde","hover:bg-navidad-verdeClaro"),setTimeout(()=>{v.innerHTML=i,v.classList.add("bg-navidad-rojo","hover:bg-navidad-rojoClaro"),v.classList.remove("bg-navidad-verde","hover:bg-navidad-verdeClaro")},1500)}),o}async function W(e){e.className="container-page py-12",e.innerHTML=`
+    `,v.classList.remove("bg-navidad-rojo","hover:bg-navidad-rojoClaro"),v.classList.add("bg-navidad-verde","hover:bg-navidad-verdeClaro"),setTimeout(()=>{v.innerHTML=i,v.classList.add("bg-navidad-rojo","hover:bg-navidad-rojoClaro"),v.classList.remove("bg-navidad-verde","hover:bg-navidad-verdeClaro")},1500)}),t}async function W(e){e.className="container-page py-12",e.innerHTML=`
     <div class="flex items-center justify-between mb-6">
       <h2 id="catalog-title" class="font-display text-3xl font-bold text-navidad-rojo">
         🎄 Cargando productos...
@@ -159,7 +159,7 @@
     <div id="catalog-empty" class="hidden text-center py-16 text-navidad-oscuro/60">
       <p class="text-lg">No hay productos disponibles en este momento.</p>
     </div>
-  `;const o=await O(),s=e.querySelector("#catalogo"),n=e.querySelector("#catalog-title"),t=e.querySelector("#catalog-empty");if(o.length===0){n.textContent="Catálogo",s.classList.add("hidden"),t.classList.remove("hidden");return}n.textContent=`🎄 Catálogo (${o.length} productos)`;const a=document.createDocumentFragment();for(const d of o)a.appendChild(F(d));s.appendChild(a)}function V(e){const o=new Date().getFullYear();e.innerHTML=`
+  `;const t=await O(),s=e.querySelector("#catalogo"),n=e.querySelector("#catalog-title"),o=e.querySelector("#catalog-empty");if(t.length===0){n.textContent="Catálogo",s.classList.add("hidden"),o.classList.remove("hidden");return}n.textContent=`🎄 Catálogo (${t.length} productos)`;const a=document.createDocumentFragment();for(const d of t)a.appendChild(F(d));s.appendChild(a)}function V(e){const t=new Date().getFullYear();e.innerHTML=`
     <footer id="contacto" class="bg-navidad-verde text-white">
       <div class="container-page py-10">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -192,7 +192,7 @@
         </div>
 
         <div class="mt-8 pt-6 border-t border-white/10 text-center text-xs text-white/60">
-          © ${o} ${g.NOMBRE_NEGOCIO}. Todos los derechos reservados.
+          © ${t} ${g.NOMBRE_NEGOCIO}. Todos los derechos reservados.
         </div>
       </div>
     </footer>
@@ -227,7 +227,7 @@
         </button>
       </div>
     </aside>
-  `;const o=e.querySelector("#cart-overlay"),s=e.querySelector("#cart-drawer"),n=e.querySelector("#cart-close"),t=e.querySelector("#cart-items"),a=e.querySelector("#cart-count"),d=e.querySelector("#cart-total"),c=e.querySelector("#cart-checkout");function b(){o.classList.remove("opacity-0","pointer-events-none"),o.classList.add("opacity-100"),s.classList.remove("translate-x-full"),s.setAttribute("aria-hidden","false"),document.body.style.overflow="hidden"}function m(){o.classList.add("opacity-0","pointer-events-none"),o.classList.remove("opacity-100"),s.classList.add("translate-x-full"),s.setAttribute("aria-hidden","true"),document.body.style.overflow=""}function v(){const i=y(),u=S(),w=B();if(a.textContent=w,d.textContent=`$ ${u.toLocaleString("es-AR")}`,i.length===0){t.innerHTML=`
+  `;const t=e.querySelector("#cart-overlay"),s=e.querySelector("#cart-drawer"),n=e.querySelector("#cart-close"),o=e.querySelector("#cart-items"),a=e.querySelector("#cart-count"),d=e.querySelector("#cart-total"),c=e.querySelector("#cart-checkout");function b(){t.classList.remove("opacity-0","pointer-events-none"),t.classList.add("opacity-100"),s.classList.remove("translate-x-full"),s.setAttribute("aria-hidden","false"),document.body.style.overflow="hidden"}function m(){t.classList.add("opacity-0","pointer-events-none"),t.classList.remove("opacity-100"),s.classList.add("translate-x-full"),s.setAttribute("aria-hidden","true"),document.body.style.overflow=""}function v(){const i=y(),u=S(),w=B();if(a.textContent=w,d.textContent=`$ ${u.toLocaleString("es-AR")}`,i.length===0){o.innerHTML=`
         <div class="flex flex-col items-center justify-center h-full text-center py-12">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-20 w-20 text-navidad-oscuro/20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
             <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -236,7 +236,7 @@
           <p class="mt-1 text-sm text-navidad-oscuro/40">Agregá productos desde el catálogo</p>
           <button id="cart-empty-close" class="mt-6 btn-gold">Ver catálogo</button>
         </div>
-      `,t.querySelector("#cart-empty-close").addEventListener("click",()=>{var l;m(),(l=document.querySelector("#catalogo"))==null||l.scrollIntoView({behavior:"smooth"})}),c.classList.add("opacity-50","pointer-events-none");return}c.classList.remove("opacity-50","pointer-events-none"),t.innerHTML=i.map(l=>`
+      `,o.querySelector("#cart-empty-close").addEventListener("click",()=>{var l;m(),(l=document.querySelector("#catalogo"))==null||l.scrollIntoView({behavior:"smooth"})}),c.classList.add("opacity-50","pointer-events-none");return}c.classList.remove("opacity-50","pointer-events-none"),o.innerHTML=i.map(l=>`
         <div class="flex gap-3 p-3 bg-white rounded-xl border border-navidad-oscuro/10">
           <img src="${l.imagen}" alt="${l.nombre}" class="w-16 h-16 rounded-lg object-cover flex-shrink-0" />
           <div class="flex-grow min-w-0">
@@ -255,20 +255,17 @@
             </div>
           </div>
         </div>
-      `).join(""),t.querySelectorAll("[data-inc]").forEach(l=>{l.addEventListener("click",()=>{const r=l.dataset.inc,p=y().find(f=>f.id===r);p&&j(r,p.cantidad+1)})}),t.querySelectorAll("[data-dec]").forEach(l=>{l.addEventListener("click",()=>{const r=l.dataset.dec,p=y().find(f=>f.id===r);p&&j(r,p.cantidad-1)})}),t.querySelectorAll("[data-del]").forEach(l=>{l.addEventListener("click",()=>{T(l.dataset.del)})})}A(v),n.addEventListener("click",m),o.addEventListener("click",m),c.addEventListener("click",()=>{m(),document.dispatchEvent(new CustomEvent("checkout:open"))}),document.addEventListener("cart:open",b),document.addEventListener("keydown",i=>{i.key==="Escape"&&!s.classList.contains("translate-x-full")&&m()}),v()}function D(e){const o=y(),s=S(),n=g.NOMBRE_NEGOCIO;let t=`🎄 *Nuevo pedido - ${n}*
+      `).join(""),o.querySelectorAll("[data-inc]").forEach(l=>{l.addEventListener("click",()=>{const r=l.dataset.inc,p=y().find(f=>f.id===r);p&&j(r,p.cantidad+1)})}),o.querySelectorAll("[data-dec]").forEach(l=>{l.addEventListener("click",()=>{const r=l.dataset.dec,p=y().find(f=>f.id===r);p&&j(r,p.cantidad-1)})}),o.querySelectorAll("[data-del]").forEach(l=>{l.addEventListener("click",()=>{T(l.dataset.del)})})}A(v),n.addEventListener("click",m),t.addEventListener("click",m),c.addEventListener("click",()=>{m(),document.dispatchEvent(new CustomEvent("checkout:open"))}),document.addEventListener("cart:open",b),document.addEventListener("keydown",i=>{i.key==="Escape"&&!s.classList.contains("translate-x-full")&&m()}),v()}function D(e){const t=y(),s=S();let o=` *Nuevo pedido - ${g.NOMBRE_NEGOCIO}*
 
-`;return t+=`👤 *Cliente:* ${e.nombre}
-`,t+=`📱 *Teléfono:* ${e.telefono}
-`,e.direccion&&(t+=`📍 *Dirección:* ${e.direccion}
-`),e.comentarios&&(t+=`💬 *Comentarios:* ${e.comentarios}
-`),t+=`
-📦 *Detalle del pedido:*
-`,o.forEach((a,d)=>{t+=`${d+1}. ${a.nombre}`,a.subtipo&&(t+=` (${a.subtipo})`),t+=` — $ ${a.precio.toLocaleString("es-AR")} x ${a.cantidad} = $ ${(a.precio*a.cantidad).toLocaleString("es-AR")}
-`}),t+=`
-💰 *Total: $ ${s.toLocaleString("es-AR")}*`,t+=`
-
----
-Pedido generado desde la web de ${n}`,t}function X(e){const o=D(e),s=`https://wa.me/${g.NRO_WHATSAPP}?text=${encodeURIComponent(o)}`;H(),window.open(s,"_blank","noopener,noreferrer")}async function Y(e){if(g.URL_SHEETS.includes("XXXX"))return console.warn("[Sheets] URL_SHEETS no configurada, saltando envío a Sheets"),{ok:!0,skipped:!0};const o=y(),s=S(),n={negocio:g.NOMBRE_NEGOCIO,timestamp:new Date().toISOString(),cliente:{nombre:e.nombre,telefono:e.telefono,direccion:e.direccion||"",comentarios:e.comentarios||""},items:o.map(t=>({nombre:t.nombre,subtipo:t.subtipo||"",precio:t.precio,cantidad:t.cantidad,subtotal:t.precio*t.cantidad})),total:s};try{const t=await fetch(g.URL_SHEETS,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(n),keepalive:!0});return t.ok?(console.log("[Sheets] Pedido enviado correctamente"),{ok:!0}):(console.warn("[Sheets] Respuesta no OK:",t.status),{ok:!1,error:`HTTP ${t.status}`})}catch(t){return console.warn("[Sheets] Error de red:",t.message),{ok:!1,error:t.message}}}function K(e){e.innerHTML=`
+`;return o+=` *Cliente:* ${e.nombre}
+`,o+=` *Teléfono:* ${e.telefono}
+`,e.direccion&&(o+=` *Dirección:* ${e.direccion}
+`),e.comentarios&&(o+=`*Comentarios:* ${e.comentarios}
+`),o+=`
+ *Detalle del pedido:*
+`,t.forEach((a,d)=>{o+=`${d+1}. ${a.nombre}`,a.subtipo&&(o+=` (${a.subtipo})`),o+=` — $ ${a.precio.toLocaleString("es-AR")} x ${a.cantidad} = $ ${(a.precio*a.cantidad).toLocaleString("es-AR")}
+`}),o+=`
+ *Total: $ ${s.toLocaleString("es-AR")}*`,o}function X(e){const t=D(e),s=`https://wa.me/${g.NRO_WHATSAPP}?text=${encodeURIComponent(t)}`;H(),window.open(s,"_blank","noopener,noreferrer")}async function Y(e){if(g.URL_SHEETS.includes("XXXX"))return console.warn("[Sheets] URL_SHEETS no configurada, saltando envío a Sheets"),{ok:!0,skipped:!0};const t=y(),s=S(),n={negocio:g.NOMBRE_NEGOCIO,timestamp:new Date().toISOString(),cliente:{nombre:e.nombre,telefono:e.telefono,direccion:e.direccion||"",comentarios:e.comentarios||""},items:t.map(o=>({nombre:o.nombre,subtipo:o.subtipo||"",precio:o.precio,cantidad:o.cantidad,subtotal:o.precio*o.cantidad})),total:s};try{const o=await fetch(g.URL_SHEETS,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(n),keepalive:!0});return o.ok?(console.log("[Sheets] Pedido enviado correctamente"),{ok:!0}):(console.warn("[Sheets] Respuesta no OK:",o.status),{ok:!1,error:`HTTP ${o.status}`})}catch(o){return console.warn("[Sheets] Error de red:",o.message),{ok:!1,error:o.message}}}function K(e){e.innerHTML=`
     <div id="checkout-overlay" class="fixed inset-0 z-[80] bg-black/60 opacity-0 pointer-events-none transition-opacity duration-300"></div>
     <div id="checkout-modal"
          class="fixed inset-0 z-[90] flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300"
@@ -338,7 +335,7 @@ Pedido generado desde la web de ${n}`,t}function X(e){const o=D(e),s=`https://wa
         </form>
       </div>
     </div>
-  `;const o=e.querySelector("#checkout-overlay"),s=e.querySelector("#checkout-modal"),n=e.querySelector("#checkout-close"),t=e.querySelector("#checkout-form"),a=e.querySelector("#checkout-submit"),d=e.querySelector(".btn-text"),c=e.querySelector(".btn-loading");function b(){v(),o.classList.remove("opacity-0","pointer-events-none"),o.classList.add("opacity-100"),s.classList.remove("opacity-0","pointer-events-none"),s.querySelector("div").classList.remove("scale-95"),s.querySelector("div").classList.add("scale-100"),document.body.style.overflow="hidden",setTimeout(()=>{var r;return(r=s.querySelector("#nombre"))==null?void 0:r.focus()},100)}function m(){o.classList.add("opacity-0","pointer-events-none"),o.classList.remove("opacity-100"),s.classList.add("opacity-0","pointer-events-none"),s.querySelector("div").classList.add("scale-95"),s.querySelector("div").classList.remove("scale-100"),document.body.style.overflow="",t.reset(),u()}function v(){const r=y(),p=S(),f=e.querySelector("#order-summary"),L=e.querySelector("#checkout-total");if(r.length===0){f.innerHTML='<p class="text-navidad-oscuro/60 text-center">Carrito vacío</p>';return}f.innerHTML=r.map(x=>`
+  `;const t=e.querySelector("#checkout-overlay"),s=e.querySelector("#checkout-modal"),n=e.querySelector("#checkout-close"),o=e.querySelector("#checkout-form"),a=e.querySelector("#checkout-submit"),d=e.querySelector(".btn-text"),c=e.querySelector(".btn-loading");function b(){v(),t.classList.remove("opacity-0","pointer-events-none"),t.classList.add("opacity-100"),s.classList.remove("opacity-0","pointer-events-none"),s.querySelector("div").classList.remove("scale-95"),s.querySelector("div").classList.add("scale-100"),document.body.style.overflow="hidden",setTimeout(()=>{var r;return(r=s.querySelector("#nombre"))==null?void 0:r.focus()},100)}function m(){t.classList.add("opacity-0","pointer-events-none"),t.classList.remove("opacity-100"),s.classList.add("opacity-0","pointer-events-none"),s.querySelector("div").classList.add("scale-95"),s.querySelector("div").classList.remove("scale-100"),document.body.style.overflow="",o.reset(),u()}function v(){const r=y(),p=S(),f=e.querySelector("#order-summary"),L=e.querySelector("#checkout-total");if(r.length===0){f.innerHTML='<p class="text-navidad-oscuro/60 text-center">Carrito vacío</p>';return}f.innerHTML=r.map(x=>`
         <div class="flex items-center justify-between text-sm">
           <div class="flex items-center gap-2">
             <img src="${x.imagen}" alt="" class="w-10 h-10 rounded-lg object-cover" />
@@ -352,7 +349,7 @@ Pedido generado desde la web de ${n}`,t}function X(e){const o=D(e),s=`https://wa
             <p class="text-xs text-navidad-oscuro/50">x ${x.cantidad}</p>
           </div>
         </div>
-      `).join(""),L.textContent=`$ ${p.toLocaleString("es-AR")}`}function i(r,p){const f=e.querySelector(`#${r}`),L=e.querySelector(`#error-${r}`);f.classList.add("border-navidad-rojo","focus:border-navidad-rojo","focus:ring-navidad-rojo/20"),L.textContent=p,L.classList.remove("hidden")}function u(){e.querySelectorAll(".error-message").forEach(r=>r.classList.add("hidden")),e.querySelectorAll("input, textarea").forEach(r=>{r.classList.remove("border-navidad-rojo","focus:border-navidad-rojo","focus:ring-navidad-rojo/20")})}function w(r){u();let p=!0;r.nombre.trim()||(i("nombre","El nombre es obligatorio"),p=!1);const f=/^[\+]?[(]?[0-9]{1,3}[)]?[-\s\.]?[(]?[0-9]{1,3}[)]?[-\s\.]?[0-9]{4,6}$/;return(!r.telefono.trim()||!f.test(r.telefono.replace(/\s/g,"")))&&(i("telefono","Ingresá un teléfono válido (ej: +54 9 11 1234-5678)"),p=!1),p}async function l(r){r.preventDefault();const p=new FormData(t),f=Object.fromEntries(p);if(w(f)&&y().length!==0){a.disabled=!0,d.classList.add("hidden"),c.classList.remove("hidden");try{Y(f).catch(()=>{}),X(f)}finally{a.disabled=!1,d.classList.remove("hidden"),c.classList.add("hidden"),m()}}}n.addEventListener("click",m),o.addEventListener("click",m),t.addEventListener("submit",l),document.addEventListener("keydown",r=>{r.key==="Escape"&&!s.classList.contains("opacity-0")&&m()}),document.addEventListener("checkout:open",b)}const U=document.querySelector("#app");U.innerHTML=`
+      `).join(""),L.textContent=`$ ${p.toLocaleString("es-AR")}`}function i(r,p){const f=e.querySelector(`#${r}`),L=e.querySelector(`#error-${r}`);f.classList.add("border-navidad-rojo","focus:border-navidad-rojo","focus:ring-navidad-rojo/20"),L.textContent=p,L.classList.remove("hidden")}function u(){e.querySelectorAll(".error-message").forEach(r=>r.classList.add("hidden")),e.querySelectorAll("input, textarea").forEach(r=>{r.classList.remove("border-navidad-rojo","focus:border-navidad-rojo","focus:ring-navidad-rojo/20")})}function w(r){u();let p=!0;r.nombre.trim()||(i("nombre","El nombre es obligatorio"),p=!1);const f=/^[\+]?[(]?[0-9]{1,3}[)]?[-\s\.]?[(]?[0-9]{1,3}[)]?[-\s\.]?[0-9]{4,6}$/;return(!r.telefono.trim()||!f.test(r.telefono.replace(/\s/g,"")))&&(i("telefono","Ingresá un teléfono válido (ej: +54 9 11 1234-5678)"),p=!1),p}async function l(r){r.preventDefault();const p=new FormData(o),f=Object.fromEntries(p);if(w(f)&&y().length!==0){a.disabled=!0,d.classList.add("hidden"),c.classList.remove("hidden");try{Y(f).catch(()=>{}),X(f)}finally{a.disabled=!1,d.classList.remove("hidden"),c.classList.add("hidden"),m()}}}n.addEventListener("click",m),t.addEventListener("click",m),o.addEventListener("submit",l),document.addEventListener("keydown",r=>{r.key==="Escape"&&!s.classList.contains("opacity-0")&&m()}),document.addEventListener("checkout:open",b)}const U=document.querySelector("#app");U.innerHTML=`
   <div id="header"></div>
   <main id="main">
     <div id="hero"></div>
