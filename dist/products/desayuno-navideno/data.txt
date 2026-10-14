@@ -1,0 +1,7 @@
+nombre: Desayuno Navideño
+descripcion: Desayuno completo con medialunas, facturas, jugo natural y café. Perfecto para regalar en estas fiestas. Incluye tarjeta de felicitación.
+precio: 35000
+subtipos:
+1 persona | 18000
+2 personas | 35000
+4 personas | 60000

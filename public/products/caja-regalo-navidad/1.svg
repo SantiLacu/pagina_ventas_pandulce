@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
+  <defs>
+    <linearGradient id="c1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FFFBF0"/>
+      <stop offset="100%" stop-color="#F5E6C8"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#c1)"/>
+  <ellipse cx="400" cy="460" rx="260" ry="45" fill="#065F46" opacity="0.12"/>
+  <rect x="240" y="260" width="320" height="200" rx="16" fill="#C1121F"/>
+  <rect x="240" y="260" width="320" height="40" rx="16" fill="#D4AF37"/>
+  <rect x="380" y="260" width="40" height="200" fill="#D4AF37"/>
+  <path d="M380 260 Q400 220 420 260 Z" fill="#065F46"/>
+  <path d="M400 260 Q360 200 380 260 Z" fill="#065F46"/>
+  <text x="400" y="140" text-anchor="middle" font-family="Georgia, serif" font-size="42" fill="#C1121F" font-weight="bold">Caja Regalo Navidad</text>
+  <text x="400" y="190" text-anchor="middle" font-family="Georgia, serif" font-size="20" fill="#065F46">Pan dulce, budín y alfajores</text>
+</svg>

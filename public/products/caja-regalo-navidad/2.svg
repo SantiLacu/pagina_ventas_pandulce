@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
+  <rect width="800" height="600" fill="#FFF5E6"/>
+  <ellipse cx="400" cy="450" rx="280" ry="40" fill="#C1121F" opacity="0.1"/>
+  <rect x="280" y="300" width="240" height="150" rx="12" fill="#FFF"/>
+  <rect x="280" y="300" width="240" height="30" rx="12" fill="#065F46"/>
+  <ellipse cx="350" cy="370" rx="40" ry="30" fill="#DEB887"/>
+  <ellipse cx="450" cy="370" rx="40" ry="30" fill="#D2691E"/>
+  <rect x="330" y="400" width="35" height="35" rx="4" fill="#8B4513"/>
+  <rect x="380" y="400" width="35" height="35" rx="4" fill="#A0522D"/>
+  <rect x="430" y="400" width="35" height="35" rx="4" fill="#8B4513"/>
+  <text x="400" y="180" text-anchor="middle" font-family="Georgia, serif" font-size="36" fill="#C1121F" font-weight="bold">Contenido de la Caja</text>
+</svg>

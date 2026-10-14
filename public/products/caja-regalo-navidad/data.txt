@@ -1,0 +1,7 @@
+nombre: Caja Regalo Navidad
+descripcion: Caja surtida con pan dulce, budín, alfajores y chocolates artesanales. Envoltura navideña incluida. El regalo ideal para estas fiestas.
+precio: 28000
+subtipos:
+Caja chica | 18000
+Caja mediana | 28000
+Caja grande | 42000

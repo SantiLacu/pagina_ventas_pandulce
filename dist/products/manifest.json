@@ -1,0 +1,75 @@
+[
+  {
+    "slug": "caja-regalo-navidad",
+    "nombre": "Caja Regalo Navidad",
+    "descripcion": "Caja surtida con pan dulce, budín, alfajores y chocolates artesanales. Envoltura navideña incluida. El regalo ideal para estas fiestas.",
+    "precio": 28000,
+    "subtipos": [
+      {
+        "nombre": "Caja chica",
+        "precio": 18000
+      },
+      {
+        "nombre": "Caja mediana",
+        "precio": 28000
+      },
+      {
+        "nombre": "Caja grande",
+        "precio": 42000
+      }
+    ],
+    "imagenes": [
+      "/products/caja-regalo-navidad/1.svg",
+      "/products/caja-regalo-navidad/2.svg"
+    ]
+  },
+  {
+    "slug": "desayuno-navideno",
+    "nombre": "Desayuno Navideño",
+    "descripcion": "Desayuno completo con medialunas, facturas, jugo natural y café. Perfecto para regalar en estas fiestas. Incluye tarjeta de felicitación.",
+    "precio": 35000,
+    "subtipos": [
+      {
+        "nombre": "1 persona",
+        "precio": 18000
+      },
+      {
+        "nombre": "2 personas",
+        "precio": 35000
+      },
+      {
+        "nombre": "4 personas",
+        "precio": 60000
+      }
+    ],
+    "imagenes": [
+      "/products/desayuno-navideno/1.svg",
+      "/products/desayuno-navideno/2.svg"
+    ]
+  },
+  {
+    "slug": "torta-angel",
+    "nombre": "Torta Angel",
+    "descripcion": "Esponjoso bizcocho de chocolate blanco con crema de frambuesa y decoración navideña. Una obra maestra dulce para estas fiestas.",
+    "precio": 75000,
+    "subtipos": [
+      {
+        "nombre": "Porción individual",
+        "precio": 15000
+      },
+      {
+        "nombre": "Torta entera 1kg",
+        "precio": 75000
+      },
+      {
+        "nombre": "Caja x6 porciones",
+        "precio": 85000
+      }
+    ],
+    "imagenes": [
+      "/products/torta-angel/1.svg",
+      "/products/torta-angel/2.svg",
+      "/products/torta-angel/3.svg"
+    ]
+  }
+]
