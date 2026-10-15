@@ -1,0 +1,4 @@
+nombre: Arboles Navideños de Brownie
+descripcion: Brownies bien chocolatosos en forma de arbolitos navideños
+precio: 5000
+subtipos:
