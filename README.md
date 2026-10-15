@@ -1,4 +1,4 @@
-# Ventas Pandul — Directorio Raíz
+# Tentaciones de Sabor — Directorio Raíz
 
 ## Descripción General
 Sitio de ventas (e-commerce liviano) con catálogo de productos, carrito, checkout vía WhatsApp y registro de ventas en Google Sheets.

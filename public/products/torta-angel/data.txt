@@ -1,7 +1,0 @@
-nombre: Torta Angel
-descripcion: Esponjoso bizcocho de chocolate blanco con crema de frambuesa y decoración navideña. Una obra maestra dulce para estas fiestas.
-precio: 75000
-subtipos:
-Porción individual | 15000
-Torta entera 1kg | 75000
-Caja x6 porciones | 85000

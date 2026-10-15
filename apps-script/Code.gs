@@ -1,5 +1,5 @@
 // ============================================
-// Google Apps Script para Ventas Pandul
+// Google Apps Script para Tentaciones de Sabor
 // ============================================
 // INSTRUCCIONES:
 // 1. Abrir script.google.com
@@ -58,7 +58,7 @@ function doGet(e) {
   }
 
   return ContentService
-    .createTextOutput(JSON.stringify({ ok: true, message: 'Ventas Pandul API v1' }))
+    .createTextOutput(JSON.stringify({ ok: true, message: 'Tentaciones de Sabor API v1' }))
     .setMimeType(ContentService.MimeType.JSON)
 }
 
@@ -85,7 +85,7 @@ function getOrCreateSheet() {
 function testPost() {
   const testData = {
     timestamp: new Date().toISOString(),
-    negocio: 'Ventas Pandul',
+    negocio: 'Tentaciones de Sabor',
     cliente: {
       nombre: 'Juan Pérez',
       telefono: '+54 9 11 1234-5678',

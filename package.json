@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "npm run copy:assets && vite build",
+    "copy:assets": "cp -r 'src/assets/hero' 'dist/assets/hero' && cp -r 'public/products' 'dist/products'",
     "preview": "vite preview --port 4173",
     "sync": "node scripts/sync-products.js",
     "sync:watch": "node scripts/sync-products.js --watch",

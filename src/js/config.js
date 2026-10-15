@@ -1,5 +1,5 @@
 export const CONFIG = {
-  NOMBRE_NEGOCIO: 'Ventas Pandul',
+  NOMBRE_NEGOCIO: 'Tentaciones de Sabor',
   NRO_WHATSAPP: '5491151038957',
   URL_SHEETS: 'https://script.google.com/macros/s/AKfycbzmB7g9Fs4-D7h0MbDlxOidVXLYOFsjvsnnVy8RtrfYMdzdIuWpjSYXNDI9G0atzMpykw/exec',
   HERO_INTERVAL_MS: 5000,

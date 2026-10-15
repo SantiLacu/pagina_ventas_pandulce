@@ -1,0 +1,4 @@
+nombre: Galletas Navideña
+descripcion: Galletitas de vainilla de muñequitos y Papá Noel
+precio: 5000
+subtipos:

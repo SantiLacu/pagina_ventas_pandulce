@@ -1,75 +1,63 @@
 [
   {
-    "slug": "caja-regalo-navidad",
-    "nombre": "Caja Regalo Navidad",
-    "descripcion": "Caja surtida con pan dulce, budín, alfajores y chocolates artesanales. Envoltura navideña incluida. El regalo ideal para estas fiestas.",
-    "precio": 28000,
-    "subtipos": [
-      {
-        "nombre": "Caja chica",
-        "precio": 18000
-      },
-      {
-        "nombre": "Caja mediana",
-        "precio": 28000
-      },
-      {
-        "nombre": "Caja grande",
-        "precio": 42000
-      }
-    ],
+    "slug": "brownie-arbol",
+    "nombre": "Arboles Navideños de Brownie",
+    "descripcion": "Brownies bien chocolatosos en forma de arbolitos navideños",
+    "precio": 5000,
+    "subtipos": [],
     "imagenes": [
-      "/products/caja-regalo-navidad/1.svg",
-      "/products/caja-regalo-navidad/2.svg"
+      "/products/brownie-arbol/1.jpg",
+      "/products/brownie-arbol/2.jpg",
+      "/products/brownie-arbol/3.jpg",
+      "/products/brownie-arbol/4.jpg",
+      "/products/brownie-arbol/5.jpg",
+      "/products/brownie-arbol/6.jpg"
     ]
   },
   {
-    "slug": "desayuno-navideno",
-    "nombre": "Desayuno Navideño",
-    "descripcion": "Desayuno completo con medialunas, facturas, jugo natural y café. Perfecto para regalar en estas fiestas. Incluye tarjeta de felicitación.",
-    "precio": 35000,
-    "subtipos": [
-      {
-        "nombre": "1 persona",
-        "precio": 18000
-      },
-      {
-        "nombre": "2 personas",
-        "precio": 35000
-      },
-      {
-        "nombre": "4 personas",
-        "precio": 60000
-      }
-    ],
+    "slug": "galletas-navideñas",
+    "nombre": "Galletas Navideña",
+    "descripcion": "Galletitas de vainilla de muñequitos y Papá Noel",
+    "precio": 5000,
+    "subtipos": [],
     "imagenes": [
-      "/products/desayuno-navideno/1.svg",
-      "/products/desayuno-navideno/2.svg"
+      "/products/galletas-navideñas/1.jpg",
+      "/products/galletas-navideñas/2.jpg",
+      "/products/galletas-navideñas/3.jpg"
     ]
   },
   {
-    "slug": "torta-angel",
-    "nombre": "Torta Angel",
-    "descripcion": "Esponjoso bizcocho de chocolate blanco con crema de frambuesa y decoración navideña. Una obra maestra dulce para estas fiestas.",
-    "precio": 75000,
+    "slug": "pan-dulces",
+    "nombre": "Pan Dulce",
+    "descripcion": "Pan Dulces caseros hechos con mucho amor y sabor.",
+    "precio": 30000,
     "subtipos": [
       {
-        "nombre": "Porción individual",
-        "precio": 15000
+        "nombre": "Chips 1/2 kg",
+        "precio": 30000
       },
       {
-        "nombre": "Torta entera 1kg",
-        "precio": 75000
+        "nombre": "Frutos Secos 1/2 kg",
+        "precio": 40000
       },
       {
-        "nombre": "Caja x6 porciones",
-        "precio": 85000
+        "nombre": "Chips 1 kg",
+        "precio": 40000
+      },
+      {
+        "nombre": "Frutos Secos 1 kg",
+        "precio": 45000
       }
     ],
     "imagenes": [
-      "/products/torta-angel/1.svg",
-      "/products/torta-angel/2.svg",
-      "/products/torta-angel/3.svg"
+      "/products/pan-dulces/1.jpg",
+      "/products/pan-dulces/2.jpg",
+      "/products/pan-dulces/3.jpg",
+      "/products/pan-dulces/4.jpg",
+      "/products/pan-dulces/5.jpg",
+      "/products/pan-dulces/6.jpg",
+      "/products/pan-dulces/7.jpg",
+      "/products/pan-dulces/8.jpg"
     ]
   }
 ]
