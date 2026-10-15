@@ -1,16 +1,20 @@
 import { addToCart } from '../data/cartStore.js'
+import { renderProductModal, initModalListeners } from './productModal.js'
 
 export function renderProductCard(product) {
   const card = document.createElement('article')
   card.className =
     'bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow flex flex-col'
 
+  // Agregar dataset con datos del producto para el modal
+  card.dataset.product = JSON.stringify(product)
+
   const hasSubtipos = product.subtipos && product.subtipos.length > 0
   const precioInicial = hasSubtipos ? product.subtipos[0].precio : product.precio
   const subtipoInicial = hasSubtipos ? product.subtipos[0].nombre : null
 
   card.innerHTML = `
-    <div class="relative aspect-square bg-navidad-crema overflow-hidden group">
+    <div class="relative aspect-square bg-navidad-crema overflow-hidden group cursor-pointer">
       <img id="main-img-${product.slug}"
            src="${product.imagenes[0]}"
            alt="${product.nombre}"
@@ -90,11 +94,26 @@ export function renderProductCard(product) {
   const precioEl = card.querySelector(`#precio-${product.slug}`)
   const addBtn = card.querySelector(`#add-${product.slug}`)
 
+  // Event listener para abrir el modal al hacer click en la tarjeta
+  card.addEventListener('click', (e) => {
+    // Evitar que se abra el modal si se clickearon botones internos
+    if (e.target.closest('#add-${product.slug}') || 
+        e.target.closest('.subtipo-btn') || 
+        e.target.closest('.thumb')) {
+      return
+    }
+    openProductModal(product)
+  })
+
   card.querySelectorAll('.thumb').forEach((thumb) => {
     thumb.addEventListener('click', () => {
       const idx = parseInt(thumb.dataset.img, 10)
       currentImg = idx
       mainImg.src = product.imagenes[idx]
+      // Force image re-load by triggering a re-offset
+      mainImg.style.display = 'none'
+      void mainImg.offsetWidth // Trigger reflow
+      mainImg.style.display = ''
       card.querySelectorAll('.thumb').forEach((t) => {
         t.classList.remove('bg-navidad-dorado', 'scale-125')
         t.classList.add('bg-white/60')
@@ -146,4 +165,22 @@ export function renderProductCard(product) {
   })
 
   return card
+}
+
+// Función para abrir el modal de producto
+function openProductModal(product) {
+  const modalContainer = document.getElementById('product-modal-container')
+  if (!modalContainer) return
+
+  modalContainer.innerHTML = renderProductModal(product)
+  
+  // Mostrar el modal
+  const modal = document.getElementById('product-modal')
+  if (modal) {
+    modal.classList.remove('hidden')
+    modal.classList.add('flex')
+    
+    // Inicializar listeners DESPUÉS de que el modal esté en el DOM
+    initModalListeners(product)
+  }
 }

@@ -2,6 +2,7 @@ import './style.css'
 import { renderHeader } from './js/components/header.js'
 import { renderHero } from './js/components/hero.js'
 import { renderCatalog } from './js/components/catalog.js'
+
 import { renderFooter } from './js/components/footer.js'
 import { renderCartDrawer } from './js/components/cartDrawer.js'
 import { renderCheckoutModal } from './js/components/checkoutModal.js'
@@ -17,6 +18,7 @@ app.innerHTML = `
   <div id="footer"></div>
   <div id="cart"></div>
   <div id="checkout"></div>
+  <div id="product-modal-container" class="hidden"></div>
 `
 
 renderHeader(document.getElementById('header'))
