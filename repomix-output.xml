@@ -1,0 +1,892 @@
+This file is a merged representation of the entire codebase, combined into a single document by Repomix.
+The content has been processed where content has been compressed (code blocks are separated by ⋮---- delimiter).
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of the entire repository's contents.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Content has been compressed - code blocks are separated by ⋮---- delimiter
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+</file_summary>
+
+<directory_structure>
+apps-script/
+  Code.gs
+  README.md
+public/
+  products/
+    brownie-arbol/
+      1.jpg
+      2.jpg
+      3.jpg
+      4.jpg
+      5.jpg
+      6.jpg
+      data.txt
+    galletas-navideñas/
+      1.jpg
+      2.jpg
+      3.jpg
+      data.txt
+    pan-dulces/
+      1.jpg
+      2.jpg
+      3.jpg
+      4.jpg
+      5.jpg
+      6.jpg
+      7.jpg
+      8.jpg
+      data.txt
+    manifest.json
+    README.md
+  README.md
+scripts/
+  README.md
+  sync-products.js
+src/
+  assets/
+    hero/
+      Fondo1.jpg
+      Fondo2.jpg
+      Fondo3.jpg
+      Fondo4.jpg
+      Fondo5.jpg
+    README.md
+  js/
+    components/
+      cartDrawer.js
+      catalog.js
+      checkoutModal.js
+      footer.js
+      header.js
+      hero.js
+      productCard.js
+      productModal.js
+      README.md
+    data/
+      cartStore.js
+      productService.js
+      README.md
+    utils/
+      README.md
+      sheets.js
+      whatsapp.js
+    config.js
+    README.md
+  main.js
+  README.md
+  style.css
+CLAUDE.md
+index.html
+netlify.toml
+package.json
+postcss.config.js
+README.md
+tailwind.config.js
+vite.config.js
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path="public/products/galletas-navideñas/data.txt">
+nombre: Galletas Navideña
+descripcion: Galletitas de vainilla de muñequitos y Papá Noel
+precio: 5000
+subtipos:
+</file>
+
+<file path="CLAUDE.md">
+# Convenciones del Proyecto
+
+## Comandos Principales
+- Compilación/Ejecución: `npm run dev`
+- Tests: `rtk npm test`
+
+## Reglas de Arquitectura
+- Usar JS, HTML 5 y CSS estricto.
+- Mantener funciones puras y archivos modulares.
+- Por cada directorio que contenga archivos de codigo, hay un .MD que explica el contenido de cada archivo de forma resumida para no tener que leer cada archivo para saber si contiene lo que se busca, simepre se lee primero ese archivo.
+</file>
+
+<file path="apps-script/README.md">
+# apps-script/
+
+## Descripción
+Código de Google Apps Script que se pega en script.google.com y se despliega como Web App. Recibe los datos del pedido por POST y escribe una fila en una hoja de cálculo de Google.
+
+## Archivos de este directorio
+| Archivo | Función |
+|---|---|
+| `Code.gs` | Función `doPost(e)` que parsea el payload (JSON o form data), obtiene la hoja activa y agrega una fila con: timestamp, nombre, teléfono, dirección, comentarios, items, total. Devuelve `ContentService` JSON de confirmación. |
+
+## Cómo desplegar
+1. Ir a https://script.google.com → crear nuevo proyecto.
+2. Pegar el contenido de `Code.gs`.
+3. Crear/ligar una hoja de cálculo de Google.
+4. Desplegar → Nueva implementación → Tipo: "Aplicación web".
+5. Acceso: "Cualquier persona".
+6. Copiar la URL generada y pegarla en `src/js/config.js` como `URL_SHEETS`.
+</file>
+
+<file path="public/products/brownie-arbol/data.txt">
+nombre: Arboles Navideños de Brownie
+descripcion: Brownies bien chocolatosos en forma de arbolitos navideños
+precio: 5000
+subtipos:
+</file>
+
+<file path="public/products/pan-dulces/data.txt">
+nombre: Pan Dulce
+descripcion: Pan Dulces caseros hechos con mucho amor y sabor.
+precio: 30000
+subtipos:
+Chips 1/2 kg | 30000
+Frutos Secos 1/2 kg | 40000
+Chips 1 kg | 40000
+Frutos Secos 1 kg | 45000
+</file>
+
+<file path="public/products/README.md">
+# public/products/
+
+## Descripción
+Aquí vive el **catálogo real**. El usuario agrega productos creando una carpeta por producto. El resto de la app consume el `manifest.json` generado.
+
+## Archivos de este directorio
+| Archivo | Función |
+|---|---|
+| `manifest.json` | Array con todos los productos. **AUTO-GENERADO**, no editar a mano. |
+
+## Estructura de cada producto
+Cada producto es una subcarpeta con un `slug` (nombre corto en minúsculas, guiones en vez de espacios):
+
+```
+public/products/torta-angel/
+├── 1.jpg          # foto principal (obligatoria)
+├── 2.jpg          # foto secundaria (opcional)
+├── 3.webp         # más fotos...
+└── data.txt       # metadatos del producto
+```
+
+## Formato de `data.txt`
+```
+nombre: Torta Angel
+descripcion: Bizcocho de chocolate blanco con crema de frambuesa.
+precio: 75000
+subtipos:
+Porción individual | 15000
+Torta entera 1kg | 75000
+Caja x6 porciones | 85000
+```
+
+- `precio` es el precio base (se usa si no hay subtipos).
+- Tras `subtipos:`, cada línea es `nombre del subtipo | precio`.
+- Las fotos se ordenan numéricamente por nombre de archivo.
+
+## Cómo agregar un producto
+1. Crear carpeta con el slug deseado.
+2. Agregar fotos (1.jpg, 2.jpg, ...)
+3. Crear `data.txt` con el formato anterior.
+4. Ejecutar `npm run sync` desde la raíz.
+</file>
+
+<file path="public/README.md">
+# public/
+
+## Descripción
+Recursos estáticos servidos **tal cual** por Vite. Todo lo que esté aquí es accesible vía URL directa.
+
+## Archivos de este directorio
+Ninguno aún.
+
+## Carpetas hijas
+| Carpeta | Propósito |
+|---|---|
+| `products/` | Catálogo de productos (fotos + `data.txt` + `manifest.json`) |
+
+## Notas
+- Las imágenes de productos NO van en `src/assets`, van en `public/products/` para que el usuario las agregue sin rebuild.
+- `manifest.json` es auto-generado por `scripts/sync-products.js`.
+</file>
+
+<file path="scripts/README.md">
+# scripts/
+
+## Descripción
+Scripts de utilidad que NO son parte de la app en runtime. Se ejecutan manualmente con `npm run`.
+
+## Archivos de este directorio
+| Archivo | Función |
+|---|---|
+| `sync-products.js` | Escanea `public/products/*/`, parsea cada `data.txt`, lista las fotos y genera `public/products/manifest.json`. Ejecutar con `npm run sync` cada vez que se agregue/modifique un producto. |
+
+## Cómo funciona `sync-products.js`
+1. Lee todas las carpetas dentro de `public/products/`.
+2. Por cada carpeta:
+   - Lee `data.txt` y parsea `nombre`, `descripcion`, `precio`, `subtipos`.
+   - Lista archivos de imagen (`.jpg`, `.jpeg`, `.png`, `.webp`, `.avif`) y los ordena numéricamente.
+3. Escribe el array resultante en `public/products/manifest.json`.
+</file>
+
+<file path="scripts/sync-products.js">
+function naturalCompare(a, b)
+⋮----
+function parseDataTxt(content)
+⋮----
+function scanProductFolder(slug)
+⋮----
+function main()
+</file>
+
+<file path="src/assets/README.md">
+# src/assets/
+
+## Descripción
+Recursos estáticos que Vite procesa y optimiza en build (compresión, hash en nombre). A diferencia de `public/`, estos NO son accesibles por URL directa sin procesar.
+
+## Archivos de este directorio
+| Archivo | Función |
+|---|---|
+| `logo.svg` | Logo del negocio (pendiente de agregar) |
+</file>
+
+<file path="src/js/components/cartDrawer.js">
+export function renderCartDrawer(container)
+⋮----
+function open()
+⋮----
+function close()
+⋮----
+function render()
+</file>
+
+<file path="src/js/components/catalog.js">
+export async function renderCatalog(container)
+</file>
+
+<file path="src/js/components/checkoutModal.js">
+export function renderCheckoutModal(container)
+⋮----
+function open()
+⋮----
+function close()
+⋮----
+function renderSummary()
+⋮----
+function showError(field, message)
+⋮----
+function clearErrors()
+⋮----
+function validateForm(data)
+⋮----
+async function handleSubmit(e)
+⋮----
+// 1. Enviar a Google Sheets (no bloqueante)
+sendToSheets(data).catch(() => {}) // fire & forget, log en consola
+⋮----
+// 2. Abrir WhatsApp (siempre)
+</file>
+
+<file path="src/js/components/footer.js">
+export function renderFooter(container)
+</file>
+
+<file path="src/js/components/header.js">
+export function renderHeader(container)
+⋮----
+function setupInteractions()
+</file>
+
+<file path="src/js/components/hero.js">
+export async function renderHero(container)
+⋮----
+async function initSlideshow()
+⋮----
+// Add click handlers to slideshow images
+</file>
+
+<file path="src/js/components/productModal.js">
+export function renderProductModal(product)
+⋮----
+// Función para adjuntar event listeners al modal DESPUÉS de que se renderice
+export function initModalListeners(product)
+⋮----
+// Cerrar modal con botón X
+⋮----
+// Cerrar al hacer click fuera del modal
+⋮----
+// Cerrar con Escape
+function handleKeydown(e)
+⋮----
+// Flecha anterior
+⋮----
+// Flecha siguiente
+⋮----
+// Thumbnails
+⋮----
+// Teclas de flecha para navegación
+⋮----
+function updateModalImage(idx)
+⋮----
+function closeModal()
+⋮----
+// Limpiar event listeners si es necesario
+</file>
+
+<file path="src/js/components/README.md">
+# src/js/components/
+
+## Descripción
+Componentes UI de la aplicación. Cada componente se encarga de renderizar su sección en el DOM y manejar sus eventos.
+
+## Archivos de este directorio
+| Archivo | Función |
+|---|---|
+| `header.js` | Barra superior: logo, menú hamburguesa (mobile), enlaces de navegación, badge de carrito. Sticky con efecto al hacer scroll. |
+| `hero.js` | Sección de presentación "Quiénes Somos". Fondo con slideshow de imágenes de productos (crossfade automático cada 5s). Overlay degradado para legibilidad. Botón CTA al catálogo. Al hacer clic en cualquier imagen del carrusel se abre el modal del producto correspondiente. |
+| `catalog.js` | Grid responsive de productos. Llama a `productService.getProducts()` y renderiza una `productCard` por cada producto. |
+| `productCard.js` | Tarjeta de producto: galería de fotos con flechas laterales para desplazarse entre imágenes y carrusel de miniaturas, nombre, descripción, selector de subtipos (si tiene), precio dinámico, botón "Agregar al carrito". Al hacer clic en la tarjeta (fuera de los botones) se abre el modal del producto. Exporta `openProductModal(product)` para usar desde otros componentes (ej: el hero). |
+| `cartDrawer.js` | Panel lateral deslizable que lista los items del carrito. Permite cambiar cantidades, eliminar items y muestra el total. Botón "Finalizar compra". |
+| `checkoutModal.js` | Modal con formulario (nombre, teléfono, dirección, comentarios). Al enviar: valida, POST a Google Sheets, construye mensaje de WhatsApp y abre `wa.me`. |
+| `footer.js` | Pie de página: datos de contacto, redes sociales, horarios, links rápidos, copyright. |
+</file>
+
+<file path="src/js/data/cartStore.js">
+function loadCart()
+⋮----
+function saveCart()
+⋮----
+function emit()
+⋮----
+export function subscribe(fn)
+⋮----
+export function getCart()
+⋮----
+export function getCartCount()
+⋮----
+export function getCartTotal()
+⋮----
+export function addToCart(
+⋮----
+export function removeFromCart(id)
+⋮----
+export function updateQty(id, cantidad)
+⋮----
+export function clearCart()
+</file>
+
+<file path="src/js/data/productService.js">
+export async function getProducts()
+⋮----
+export function getProductBySlug(slug)
+</file>
+
+<file path="src/js/data/README.md">
+# src/js/data/
+
+## Descripción
+Capa de datos: manejo del catálogo de productos y el estado del carrito.
+
+## Archivos de este directorio
+| Archivo | Función |
+|---|---|
+| `productService.js` | Expone `getProducts()` que hace `fetch('/products/manifest.json')`. Cachea el resultado en memoria tras el primer llamado para no repetir fetches. |
+| `cartStore.js` | Estado del carrito persistido en `localStorage`. Expose `getCart()`, `addToCart(item)`, `removeFromCart(id)`, `updateQty(id, qty)`, `clearCart()`, `getTotal()`. Emite eventos `cart:changed`. |
+</file>
+
+<file path="src/js/utils/README.md">
+# src/js/utils/
+
+## Descripción
+Funciones auxiliares reutilizables sin dependencias de UI.
+
+## Archivos de este directorio
+| Archivo | Función |
+|---|---|
+| `whatsapp.js` | `buildWhatsAppMessage(cart, formData)` → arma el texto del pedido. `openWhatsApp(nro, message)` → abre `https://wa.me/<nro>?text=<encoded>`. |
+| `sheets.js` | `sendToSheets(payload)` → `fetch POST` a `URL_SHEETS` (Google Apps Script). Devuelve `true/false` según éxito. NO debe bloquear el flujo de WhatsApp si falla. |
+| `format.js` | Helpers: `formatCurrency(n)` → `$ 75.000`, `slugify(text)`, etc. |
+</file>
+
+<file path="src/js/utils/sheets.js">
+export async function sendToSheets(formData)
+⋮----
+// Cambiado a text/plain para evitar la verificación de CORS de Google Apps Script
+</file>
+
+<file path="src/js/README.md">
+# src/js/
+
+## Descripción
+Toda la lógica JavaScript de la app, organizada por responsabilidad.
+
+## Archivos de este directorio
+| Archivo | Función |
+|---|---|
+| `app.js` | Orquestador: importa todos los componentes y los monta en el DOM. Inicializa el catálogo, header, hero, footer, carrito. |
+| `config.js` | Constantes globales: `NRO_WHATSAPP`, `URL_SHEETS`, `NOMBRE_NEGOCIO`. **Editar aquí** al configurar el proyecto. |
+
+## Carpetas hijas
+| Carpeta | Propósito |
+|---|---|
+| `data/` | Capa de datos: productos y carrito |
+| `components/` | Componentes UI (header, hero, catalog, cart, etc.) |
+| `utils/` | Funciones auxiliares (WhatsApp, Sheets, formato) |
+</file>
+
+<file path="src/README.md">
+# src/
+
+## Descripción
+Código fuente de la aplicación. Vite compila desde aquí.
+
+## Archivos de este directorio
+| Archivo | Función |
+|---|---|
+| `index.html` | HTML principal. Contiene `<div id="app">` donde se montan los componentes. Incluye `<meta name="viewport">` para mobile-first. |
+| `main.js` | Entry point. Importa `style.css` y orquesta la carga de todos los componentes. |
+| `style.css` | Directivas `@tailwind` + estilos globales custom (tipografía, scroll smooth, etc). |
+
+## Carpetas hijas
+| Carpeta | Propósito |
+|---|---|
+| `js/` | Lógica de la app (config, componentes, data, utils) |
+| `assets/` | Recursos estáticos compilados por Vite (logo, íconos, etc.) |
+</file>
+
+<file path="src/style.css">
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+⋮----
+@layer base {
+⋮----
+html {
+⋮----
+body {
+⋮----
+@layer components {
+⋮----
+.btn-primary {
+⋮----
+.btn-gold {
+⋮----
+.container-page {
+</file>
+
+<file path="postcss.config.js">
+
+</file>
+
+<file path="tailwind.config.js">
+/** @type {import('tailwindcss').Config} */
+</file>
+
+<file path="apps-script/Code.gs">
+// ============================================
+// Google Apps Script para Tentaciones de Sabor
+// ============================================
+// INSTRUCCIONES:
+// 1. Abrir script.google.com
+// 2. Crear nuevo proyecto
+// 3. Pegar este código en Code.gs
+// 4. Crear una hoja de cálculo en Google Sheets
+// 5. Copiar el ID de la hoja (de la URL: https://docs.google.com/spreadsheets/d/ID_DE_LA_HOJA/edit)
+// 6. Reemplazar SPREADSHEET_ID abajo (SOLO el ID, sin la URL completa)
+// 7. Deploy → New deployment → Web App → Execute as: Me, Who has access: Anyone
+// 8. Copiar la URL del Web App y ponerla en src/js/config.js → URL_SHEETS
+// ============================================
+
+// SOLO el ID de la hoja (el string entre /d/ y /edit)
+// Ejemplo: https://docs.google.com/spreadsheets/d/1AbC123.../edit → SPREADSHEET_ID = '1AbC123...'
+const SPREADSHEET_ID = '1Bw90ni7RcooEuj7L3tJTrJkn02RCphoCutWnm81YSB8'
+const SHEET_NAME = 'Pedidos'
+
+function doPost(e) {
+  try {
+    // Validar que venga body
+    if (!e || !e.postData || !e.postData.contents) {
+      throw new Error('No se recibieron datos POST')
+    }
+
+    const data = JSON.parse(e.postData.contents)
+    const sheet = getOrCreateSheet()
+
+    const row = [
+      data.timestamp,                           // A: Timestamp
+      data.negocio,                             // B: Negocio
+      data.cliente.nombre,                      // C: Cliente nombre
+      data.cliente.telefono,                    // D: Cliente teléfono
+      data.cliente.direccion,                   // E: Dirección
+      data.cliente.comentarios,                 // F: Comentarios
+      data.items.map(i => `${i.nombre}${i.subtipo ? ` (${i.subtipo})` : ''} x${i.cantidad} = $${i.subtotal.toLocaleString('es-AR')}`).join(' | '), // G: Items
+      data.total,                               // H: Total
+    ]
+
+    sheet.appendRow(row)
+
+    return ContentService
+      .createTextOutput(JSON.stringify({ ok: true }))
+      .setMimeType(ContentService.MimeType.JSON)
+  } catch (err) {
+    console.error('Error en doPost:', err)
+    return ContentService
+      .createTextOutput(JSON.stringify({ ok: false, error: err.message }))
+      .setMimeType(ContentService.MimeType.JSON)
+  }
+}
+
+// Necesario para que el Web App responda a GET (browser)
+function doGet(e) {
+  if (e && e.parameter && e.parameter.test === '1') {
+    return testPost()
+  }
+
+  return ContentService
+    .createTextOutput(JSON.stringify({ ok: true, message: 'Tentaciones de Sabor API v1' }))
+    .setMimeType(ContentService.MimeType.JSON)
+}
+
+function getOrCreateSheet() {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID)
+  let sheet = ss.getSheetByName(SHEET_NAME)
+
+  if (!sheet) {
+    sheet = ss.insertSheet(SHEET_NAME)
+    // Headers
+    sheet.appendRow([
+      'Timestamp', 'Negocio', 'Cliente', 'Teléfono', 'Dirección', 'Comentarios', 'Items', 'Total'
+    ])
+    // Formato
+    sheet.setFrozenRows(1)
+    sheet.getRange(1, 1, 1, 8).setFontWeight('bold').setBackground('#C1121F').setFontColor('#FFFFFF')
+    sheet.setColumnWidths(1, 8, [180, 120, 180, 150, 250, 200, 400, 100])
+  }
+
+  return sheet
+}
+
+// Función auxiliar para probar manualmente
+function testPost() {
+  const testData = {
+    timestamp: new Date().toISOString(),
+    negocio: 'Tentaciones de Sabor',
+    cliente: {
+      nombre: 'Juan Pérez',
+      telefono: '+54 9 11 1234-5678',
+      direccion: 'Av. Siempre Viva 123, CABA',
+      comentarios: 'Entregar por la tarde',
+    },
+    items: [
+      { nombre: 'Torta Angel', subtipo: 'Torta entera 1kg', precio: 75000, cantidad: 1, subtotal: 75000 },
+      { nombre: 'Desayuno Navideño', subtipo: 'Caja grande', precio: 35000, cantidad: 1, subtotal: 35000 },
+    ],
+    total: 110000,
+  }
+
+  const e = { postData: { contents: JSON.stringify(testData) } }
+  const result = doPost(e)
+  console.log('Test result:', result.getContent())
+}
+</file>
+
+<file path="public/products/manifest.json">
+[
+  {
+    "slug": "brownie-arbol",
+    "nombre": "Arboles Navideños de Brownie",
+    "descripcion": "Brownies bien chocolatosos en forma de arbolitos navideños",
+    "precio": 5000,
+    "subtipos": [],
+    "imagenes": [
+      "/products/brownie-arbol/1.jpg",
+      "/products/brownie-arbol/2.jpg",
+      "/products/brownie-arbol/3.jpg",
+      "/products/brownie-arbol/4.jpg",
+      "/products/brownie-arbol/5.jpg",
+      "/products/brownie-arbol/6.jpg"
+    ]
+  },
+  {
+    "slug": "galletas-navideñas",
+    "nombre": "Galletas Navideña",
+    "descripcion": "Galletitas de vainilla de muñequitos y Papá Noel",
+    "precio": 5000,
+    "subtipos": [],
+    "imagenes": [
+      "/products/galletas-navideñas/1.jpg",
+      "/products/galletas-navideñas/2.jpg",
+      "/products/galletas-navideñas/3.jpg"
+    ]
+  },
+  {
+    "slug": "pan-dulces",
+    "nombre": "Pan Dulce",
+    "descripcion": "Pan Dulces caseros hechos con mucho amor y sabor.",
+    "precio": 30000,
+    "subtipos": [
+      {
+        "nombre": "Chips 1/2 kg",
+        "precio": 30000
+      },
+      {
+        "nombre": "Frutos Secos 1/2 kg",
+        "precio": 40000
+      },
+      {
+        "nombre": "Chips 1 kg",
+        "precio": 40000
+      },
+      {
+        "nombre": "Frutos Secos 1 kg",
+        "precio": 45000
+      }
+    ],
+    "imagenes": [
+      "/products/pan-dulces/1.jpg",
+      "/products/pan-dulces/2.jpg",
+      "/products/pan-dulces/3.jpg",
+      "/products/pan-dulces/4.jpg",
+      "/products/pan-dulces/5.jpg",
+      "/products/pan-dulces/6.jpg",
+      "/products/pan-dulces/7.jpg",
+      "/products/pan-dulces/8.jpg"
+    ]
+  }
+]
+</file>
+
+<file path="src/js/components/productCard.js">
+export function renderProductCard(product)
+⋮----
+// Agregar dataset con datos del producto para el modal
+⋮----
+// Event listener para abrir el modal al hacer click en la tarjeta
+⋮----
+// Evitar que se abra el modal si se clickearon botones internos
+⋮----
+// Event listeners para navegación con flechas (nuevo componente)
+⋮----
+// Force image re-load by triggering a re-offset
+⋮----
+void mainImg.offsetWidth // Trigger reflow
+⋮----
+// Update thumbnail active state
+⋮----
+// Force image re-load by triggering a re-offset
+⋮----
+void mainImg.offsetWidth // Trigger reflow
+⋮----
+// Update thumbnail active state
+⋮----
+// Force image re-load by triggering a re-offset
+⋮----
+void mainImg.offsetWidth // Trigger reflow
+⋮----
+// Función para abrir el modal de producto
+export function openProductModal(product)
+⋮----
+// Limpiar contenido anterior y renderizar el modal
+⋮----
+// Quitar hidden del contenedor (display:none) para que el modal sea visible
+⋮----
+// Mostrar el modal
+⋮----
+// Inicializar listeners DESPUÉS de que el modal esté en el DOM
+</file>
+
+<file path="src/js/utils/whatsapp.js">
+export function buildWhatsAppMessage(formData)
+⋮----
+export function sendToWhatsApp(formData)
+</file>
+
+<file path="src/main.js">
+
+</file>
+
+<file path="index.html">
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
+    <meta name="theme-color" content="#C1121F" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="description" content="Tentaciones de Sabor — Productos artesanales de calidad. Pedí por WhatsApp y recibí en tu casa." />
+    <meta name="author" content="Tentaciones de Sabor" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Tentaciones de Sabor" />
+    <meta property="og:description" content="Catálogo de productos artesanales. Pedí por WhatsApp y recibí en tu casa." />
+    <meta property="og:image" content="/products/manifest.json" />
+    <meta property="og:locale" content="es_AR" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Tentaciones de Sabor" />
+    <meta name="twitter:description" content="Catálogo de productos artesanales. Pedí por WhatsApp." />
+
+    <title>Tentaciones de Sabor</title> 
+
+    <!-- Preload crítico -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://wa.me" crossorigin />
+    <link rel="preload" href="/src/style.css" as="style" />
+    <link rel="preload" href="/src/main.js" as="script" />
+    <link rel="icon" type="image/svg+xml" href="/assets/logo.svg" />
+  </head>
+  <body class="bg-navidad-crema text-navidad-oscuro font-sans antialiased">
+    <div id="app"></div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
+</file>
+
+<file path="netlify.toml">
+# Netlify Configuration
+
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+# Headers de cache para imágenes
+[[headers]]
+  for = "/products/**"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+    X-Content-Type-Options = "nosniff"
+
+# Headers de cache para assets
+[[headers]]
+  for = "/assets/**"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Headers de cache para JS/CSS
+[[headers]]
+  for = "/*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.css"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Headers de seguridad
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "SAMEORIGIN"
+    X-XSS-Protection = "1; mode=block"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+</file>
+
+<file path="package.json">
+{
+  "name": "ventas-pandul",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "npm run copy:assets && vite build",
+    "copy:assets": "cp -r 'src/assets/hero' 'dist/assets/hero' && cp -r 'public/products' 'dist/products'",
+    "preview": "vite preview --port 4173",
+    "sync": "node scripts/sync-products.js",
+    "sync:watch": "node scripts/sync-products.js --watch",
+    "analyze": "vite build --reporter",
+    "deploy": "npm run build && vercel --prod",
+    "deploy:netlify": "npm run build && netlify deploy --dir=dist --prod"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.47",
+    "tailwindcss": "^3.4.13",
+    "vite": "^5.4.8"
+  }
+}
+</file>
+
+<file path="README.md">
+# Tentaciones de Sabor — Directorio Raíz
+
+## Descripción General
+Sitio de ventas (e-commerce liviano) con catálogo de productos, carrito, checkout vía WhatsApp y registro de ventas en Google Sheets.
+
+## Stack
+- Vite + Vanilla JS (ES Modules)
+- Tailwind CSS 3 (paleta navideña)
+- Google Apps Script (Web App) para Google Sheets
+- API `wa.me` para WhatsApp
+
+## Archivos de este directorio
+| Archivo | Función |
+|---|---|
+| `package.json` | Scripts (`dev`, `build`, `sync`) y dependencias |
+| `vite.config.js` | Configuración del bundler (server, base, build) |
+| `tailwind.config.js` | Paleta navideña + rutas de contenido |
+| `postcss.config.js` | PostCSS + Tailwind + Autoprefixer |
+| `README.md` | Este archivo (contexto general del directorio) |
+
+## Carpetas hijas
+| Carpeta | Propósito |
+|---|---|
+| `public/` | Recursos estáticos servidos tal cual (incluye productos) |
+| `scripts/` | Scripts de herramientas (sincronización de productos) |
+| `src/` | Código fuente de la app |
+| `apps-script/` | Código Google Apps Script para Google Sheets |
+
+## Cómo agregar un producto
+1. Crear carpeta `public/products/<slug>/`
+2. Meter fotos `1.jpg`, `2.jpg`... y `data.txt`
+3. Ejecutar `npm run sync`
+</file>
+
+<file path="vite.config.js">
+
+</file>
+
+<file path="src/js/config.js">
+
+</file>
+
+</files>

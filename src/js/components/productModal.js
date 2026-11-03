@@ -1,3 +1,5 @@
+import { addToCart } from '../data/cartStore.js'
+
 export function renderProductModal(product) {
   if (!product) return ''
 
@@ -8,9 +10,9 @@ export function renderProductModal(product) {
 
   return `
     <div id="product-modal" class="fixed inset-0 bg-navidad-oscuro/80 backdrop-blur z-50 hidden items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-      <div class="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col transform transition-transform duration-300" style="transform: scale(0.9);">
+      <div class="bg-white rounded-2xl w-full max-w-2xl max-h-[95vh] overflow-hidden flex flex-col transform transition-transform duration-300" style="transform: scale(0.9);">
         <!-- Header del modal -->
-        <div class="p-6 border-b border-navidad-crema">
+        <div class="p-6 border-b border-navidad-crema relative">
           <h2 id="modal-title" class="font-display text-2xl font-bold text-navidad-rojo">${nombre}</h2>
           <button id="modal-close" class="absolute top-4 right-4 text-navidad-oscuro/60 hover:text-navidad-rojo" aria-label="Cerrar">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -19,40 +21,43 @@ export function renderProductModal(product) {
           </button>
         </div>
 
-        <!-- Slider de imágenes -->
-        <div class="flex-1 relative">
-          <div class="relative p-6">
-            <img id="modal-main-img"
-                 src="${imagenes[0]}"
-                 alt="${nombre} - imagen 1"
-                 class="w-full h-64 object-cover rounded-t-2xl"
-                 loading="lazy"
-                 decoding="async" />
-            
-            <!-- Flechas laterales -->
-            <div class="absolute top-1/2 -translate-y-1/2 w-full flex justify-between p-2">
-              <button id="modal-prev"
-                      class="bg-white/20 rounded-full p-2 hover:bg-white transition-colors"
-                      aria-label="Imagen anterior">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
-                </svg>
-              </button>
-              <button id="modal-next"
-                      class="bg-white/20 rounded-full p-2 hover:bg-white transition-colors"
-                      aria-label="Imagen siguiente">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
+        <!-- Contenido scrollable: imagen + info -->
+        <div class="flex-1 overflow-y-auto flex flex-col">
+          <!-- Slider de imágenes - altura fija -->
+          <div class="relative flex-shrink-0">
+            <div class="relative w-full aspect-square max-h-[60vh]">
+              <img id="modal-main-img"
+                   src="${imagenes[0]}"
+                   alt="${nombre} - imagen 1"
+                   class="w-full h-full object-cover rounded-t-2xl"
+                   loading="lazy"
+                   decoding="async" />
+
+              <!-- Flechas laterales centradas en la imagen -->
+              <div class="absolute inset-y-0 left-0 right-0 flex items-center justify-between px-4">
+                <button id="modal-prev"
+                        class="bg-white/20 rounded-full p-2 hover:bg-white transition-colors z-10"
+                        aria-label="Imagen anterior">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
+                <button id="modal-next"
+                        class="bg-white/20 rounded-full p-2 hover:bg-white transition-colors z-10"
+                        aria-label="Imagen siguiente">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7-7" />
+                  </svg>
+                </button>
+              </div>
             </div>
 
             <!-- Miniaturas -->
             <div id="modal-thumbs"
-                 class="mt-4 flex gap-2 overflow-x-auto justify-center">
+                 class="mt-4 flex gap-2 overflow-x-auto justify-center px-6 pb-4">
               ${imagenes.map((img, i) => `
                 <button data-img="${i}"
-                        class="w-16 h-16 rounded overflow-hidden object-cover ${
+                        class="w-16 h-16 rounded overflow-hidden object-cover flex-shrink-0 ${
                           i === 0 ? 'border-navidad-rojo border-2' : 'border-transparent'
                         } hover:border-navidad-oscuro transition-all">
                   <img src="${img}" alt="${nombre} - miniatura ${i + 1}" class="w-full h-full object-cover" loading="lazy" />
@@ -60,32 +65,35 @@ export function renderProductModal(product) {
               `).join('')}
             </div>
           </div>
+
+          <!-- Información del producto -->
+          <div class="p-6 flex flex-col gap-4 flex-1 min-h-0">
+            <p id="modal-desc" class="text-navidad-oscuro/70">${descripcion}</p>
+
+            ${hasSubtipos ? `
+              <div>
+                <p class="text-xs font-semibold text-navidad-oscuro/60 uppercase tracking-wide">Elegí una opción:</p>
+                <div class="flex flex-wrap gap-2 mt-2">
+                  ${subtipos.map((s, i) => `
+                    <button data-subtipo="${s.nombre}" data-precio="${s.precio}"
+                            class="subtipo-btn px-3 py-1.5 rounded-full text-xs font-medium border-2 transition-all ${
+                              i === 0 ? 'border-navidad-rojo bg-navidad-rojo text-white' : 'border-navidad-oscuro/20 text-navidad-oscuro/70 hover:border-navidad-rojo/50'
+                            }">
+                      ${s.nombre}
+                    </button>
+                  `).join('')}
+                </div>
+              </div>
+            ` : ''}
+          </div>
         </div>
 
-        <!-- Información del producto -->
-        <div class="p-6 flex flex-col gap-4">
-          <p id="modal-desc" class="text-navidad-oscuro/70 line-clamp-3">${descripcion}</p>
-          
-          ${hasSubtipos ? `
-            <div>
-              <p class="text-xs font-semibold text-navidad-oscuro/60 uppercase tracking-wide">Elegí una opción:</p>
-              <div class="flex flex-wrap gap-2">
-                ${subtipos.map((s, i) => `
-                  <button data-subtipo="${s.nombre}" data-precio="${s.precio}"
-                          class="subtipo-btn px-3 py-1.5 rounded-full text-xs font-medium border-2 transition-all ${
-                            i === 0 ? 'border-navidad-rojo bg-navidad-rojo text-white' : 'border-navidad-oscuro/20 text-navidad-oscuro/70 hover:border-navidad-rojo/50'
-                          }">
-                    ${s.nombre}
-                  </button>
-                `).join('')}
-              </div>
-            </div>
-          ` : ''}
-          
-          <div class="flex items-center justify-between">
-            <p class="text-2xl font-bold text-navidad-verde">$ ${precioMostrar.toLocaleString('es-AR')}</p>
+        <!-- Barra inferior fija con precio y botón -->
+        <div class="bg-white border-t border-navidad-crema p-4 sticky bottom-0">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <p id="modal-price" class="text-2xl font-bold text-navidad-verde">$ ${precioMostrar.toLocaleString('es-AR')}</p>
             <button id="modal-add-cart"
-                    class="btn-primary px-6 py-2">
+                    class="btn-primary px-6 py-3 w-full sm:w-auto text-base">
               Agregar al carrito
             </button>
           </div>
@@ -105,7 +113,11 @@ export function initModalListeners(product) {
   const modalPrev = document.getElementById('modal-prev')
   const modalNext = document.getElementById('modal-next')
   const modalThumbs = modal.querySelectorAll('#modal-thumbs button')
+  const modalPrice = document.getElementById('modal-price')
+  const modalAddCart = document.getElementById('modal-add-cart')
   let currentImgIndex = 0
+  let selectedSubtipo = null
+  let selectedPrecio = product.precio
 
   // Cerrar modal con botón X
   modalClose.addEventListener('click', closeModal)
@@ -162,6 +174,36 @@ export function initModalListeners(product) {
         updateModalImage(currentImgIndex)
       }
     }
+  })
+
+  // Selector de subtipos
+  const subtipoBtns = modal.querySelectorAll('.subtipo-btn')
+  subtipoBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      selectedSubtipo = btn.dataset.subtipo
+      selectedPrecio = parseInt(btn.dataset.precio, 10)
+      if (modalPrice) {
+        modalPrice.textContent = `$ ${selectedPrecio.toLocaleString('es-AR')}`
+      }
+      subtipoBtns.forEach((b) => {
+        b.classList.remove('border-navidad-rojo', 'bg-navidad-rojo', 'text-white')
+        b.classList.add('border-navidad-oscuro/20', 'text-navidad-oscuro/70')
+      })
+      btn.classList.add('border-navidad-rojo', 'bg-navidad-rojo', 'text-white')
+      btn.classList.remove('border-navidad-oscuro/20', 'text-navidad-oscuro/70')
+    })
+  })
+
+  // Botón agregar al carrito
+  modalAddCart.addEventListener('click', () => {
+    addToCart({
+      slug: product.slug,
+      nombre: product.nombre,
+      subtipoNombre: selectedSubtipo,
+      precio: selectedPrecio,
+      imagen: product.imagenes[currentImgIndex],
+    })
+    closeModal()
   })
 
   function updateModalImage(idx) {

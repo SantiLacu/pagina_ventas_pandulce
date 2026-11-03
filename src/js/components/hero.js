@@ -1,5 +1,6 @@
 import { getProducts } from '../data/productService.js'
 import { CONFIG } from '../config.js'
+import { openProductModal } from './productCard.js'
 
 export async function renderHero(container) {
   container.id = 'inicio'
@@ -8,8 +9,8 @@ export async function renderHero(container) {
 
   container.innerHTML = `
     <div id="hero-slides" class="absolute inset-0"></div>
-    <div class="absolute inset-0 bg-gradient-to-b from-navidad-rojo/70 via-navidad-oscuro/60 to-navidad-verde/70"></div>
-    <div class="absolute inset-0 bg-black/30"></div>
+    <div class="absolute inset-0 bg-gradient-to-b from-navidad-rojo/70 via-navidad-oscuro/60 to-navidad-verde/70 pointer-events-none"></div>
+    <div class="absolute inset-0 bg-black/30 pointer-events-none"></div>
 
     <div class="relative z-10 container-page text-center text-white px-4 py-20">
       <span class="inline-block px-4 py-1 rounded-full bg-navidad-dorado/90 text-navidad-oscuro text-sm font-bold uppercase tracking-wider mb-6 animate-fade-in">
@@ -50,34 +51,44 @@ async function initSlideshow() {
   if (!slidesContainer) return
 
   const products = await getProducts()
-  const images = products
+  const slides = products
     .filter((p) => p.imagenes && p.imagenes.length > 0)
-    .map((p) => p.imagenes[0])
+    .map((p) => ({ product: p, image: p.imagenes[0] }))
 
-  if (images.length === 0) {
+  if (slides.length === 0) {
     slidesContainer.style.background = 'linear-gradient(135deg, #C1121F, #065F46)'
     return
   }
 
-  slidesContainer.innerHTML = images
+  slidesContainer.innerHTML = slides
     .map(
-      (src, i) => `
+      ({ image }, i) => `
       <div class="absolute inset-0 transition-opacity duration-1000 ease-in-out ${
         i === 0 ? 'opacity-100' : 'opacity-0'
-      }" style="background-image: url('${src}'); background-size: cover; background-position: center;"></div>
+      }" style="background-image: url('${image}'); background-size: cover; background-position: center; cursor: pointer;"></div>
     `
     )
     .join('')
 
   let current = 0
-  const total = images.length
+  const total = slides.length
+
+  // Add click handlers to slideshow images
+  slidesContainer.querySelectorAll('div').forEach((slide, index) => {
+    slide.addEventListener('click', () => {
+      const { product } = slides[index]
+      if (product) {
+        openProductModal(product)
+      }
+    })
+  })
 
   if (total > 1) {
     setInterval(() => {
-      const slides = slidesContainer.children
-      slides[current].classList.replace('opacity-100', 'opacity-0')
+      const slideEls = slidesContainer.children
+      slideEls[current].classList.replace('opacity-100', 'opacity-0')
       current = (current + 1) % total
-      slides[current].classList.replace('opacity-0', 'opacity-100')
+      slideEls[current].classList.replace('opacity-0', 'opacity-100')
     }, CONFIG.HERO_INTERVAL_MS)
   }
 }

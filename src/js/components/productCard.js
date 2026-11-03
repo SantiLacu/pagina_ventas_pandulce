@@ -24,6 +24,24 @@ export function renderProductCard(product) {
            width="400"
            height="400" />
       ${product.imagenes.length > 1 ? `
+        <!-- Flechas laterales -->
+        <div class="absolute top-1/2 -translate-y-1/2 w-full flex justify-between p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none group-hover:pointer-events-auto">
+          <button id="card-prev-${product.slug}"
+                  class="bg-white/20 rounded-full p-2 hover:bg-white transition-colors pointer-events-auto"
+                  aria-label="Imagen anterior">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+          <button id="card-next-${product.slug}"
+                  class="bg-white/20 rounded-full p-2 hover:bg-white transition-colors pointer-events-auto"
+                  aria-label="Imagen siguiente">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        </div>
+
         <div class="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5 bg-black/40 backdrop-blur px-2 py-1.5 rounded-full">
           ${product.imagenes
             .map(
@@ -97,13 +115,61 @@ export function renderProductCard(product) {
   // Event listener para abrir el modal al hacer click en la tarjeta
   card.addEventListener('click', (e) => {
     // Evitar que se abra el modal si se clickearon botones internos
-    if (e.target.closest('#add-${product.slug}') || 
-        e.target.closest('.subtipo-btn') || 
+    if (e.target.closest(`#add-${product.slug}`) ||
+        e.target.closest('.subtipo-btn') ||
         e.target.closest('.thumb')) {
       return
     }
     openProductModal(product)
   })
+
+  // Event listeners para navegación con flechas (nuevo componente)
+  const prevBtn = card.querySelector(`#card-prev-${product.slug}`)
+  const nextBtn = card.querySelector(`#card-next-${product.slug}`)
+
+  if (prevBtn) {
+    prevBtn.addEventListener('click', (e) => {
+      e.stopPropagation()
+      currentImg--
+      if (currentImg < 0) currentImg = product.imagenes.length - 1
+      mainImg.src = product.imagenes[currentImg]
+      // Force image re-load by triggering a re-offset
+      mainImg.style.display = 'none'
+      void mainImg.offsetWidth // Trigger reflow
+      mainImg.style.display = ''
+      // Update thumbnail active state
+      card.querySelectorAll('.thumb').forEach((t, idx) => {
+        t.classList.remove('bg-navidad-dorado', 'scale-125')
+        t.classList.add('bg-white/60')
+        if (idx === currentImg) {
+          t.classList.add('bg-navidad-dorado', 'scale-125')
+          t.classList.remove('bg-white/60')
+        }
+      })
+    })
+  }
+
+  if (nextBtn) {
+    nextBtn.addEventListener('click', (e) => {
+      e.stopPropagation()
+      currentImg++
+      if (currentImg >= product.imagenes.length) currentImg = 0
+      mainImg.src = product.imagenes[currentImg]
+      // Force image re-load by triggering a re-offset
+      mainImg.style.display = 'none'
+      void mainImg.offsetWidth // Trigger reflow
+      mainImg.style.display = ''
+      // Update thumbnail active state
+      card.querySelectorAll('.thumb').forEach((t, idx) => {
+        t.classList.remove('bg-navidad-dorado', 'scale-125')
+        t.classList.add('bg-white/60')
+        if (idx === currentImg) {
+          t.classList.add('bg-navidad-dorado', 'scale-125')
+          t.classList.remove('bg-white/60')
+        }
+      })
+    })
+  }
 
   card.querySelectorAll('.thumb').forEach((thumb) => {
     thumb.addEventListener('click', () => {
@@ -114,12 +180,15 @@ export function renderProductCard(product) {
       mainImg.style.display = 'none'
       void mainImg.offsetWidth // Trigger reflow
       mainImg.style.display = ''
-      card.querySelectorAll('.thumb').forEach((t) => {
-        t.classList.remove('bg-navidad-dorado', 'scale-125')
-        t.classList.add('bg-white/60')
+      card.querySelectorAll('.thumb').forEach((t, thumbIdx) => {
+        if (thumbIdx === currentImg) {
+          t.classList.remove('bg-white/60')
+          t.classList.add('bg-navidad-dorado', 'scale-125')
+        } else {
+          t.classList.remove('bg-navidad-dorado', 'scale-125')
+          t.classList.add('bg-white/60')
+        }
       })
-      thumb.classList.add('bg-navidad-dorado', 'scale-125')
-      thumb.classList.remove('bg-white/60')
     })
   })
 
@@ -168,18 +237,23 @@ export function renderProductCard(product) {
 }
 
 // Función para abrir el modal de producto
-function openProductModal(product) {
+export function openProductModal(product) {
   const modalContainer = document.getElementById('product-modal-container')
   if (!modalContainer) return
 
+  // Limpiar contenido anterior y renderizar el modal
   modalContainer.innerHTML = renderProductModal(product)
-  
+
+  // Quitar hidden del contenedor (display:none) para que el modal sea visible
+  modalContainer.classList.remove('hidden')
+  modalContainer.classList.add('flex', 'items-center', 'justify-center')
+
   // Mostrar el modal
   const modal = document.getElementById('product-modal')
   if (modal) {
     modal.classList.remove('hidden')
     modal.classList.add('flex')
-    
+
     // Inicializar listeners DESPUÉS de que el modal esté en el DOM
     initModalListeners(product)
   }
