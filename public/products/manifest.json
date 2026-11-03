@@ -15,20 +15,8 @@
     ]
   },
   {
-    "slug": "galletas-navideñas",
-    "nombre": "Galletas Navideña",
-    "descripcion": "Galletitas de vainilla de muñequitos y Papá Noel",
-    "precio": 5000,
-    "subtipos": [],
-    "imagenes": [
-      "/products/galletas-navideñas/1.jpg",
-      "/products/galletas-navideñas/2.jpg",
-      "/products/galletas-navideñas/3.jpg"
-    ]
-  },
-  {
-    "slug": "pan-dulces",
-    "nombre": "Pan Dulce",
+    "slug": "pan-dulces1",
+    "nombre": "Pan Dulce de Chips",
     "descripcion": "Pan Dulces caseros hechos con mucho amor y sabor.",
     "precio": 30000,
     "subtipos": [
@@ -37,27 +25,37 @@
         "precio": 30000
       },
       {
-        "nombre": "Frutos Secos 1/2 kg",
+        "nombre": "Chips 1 kg",
+        "precio": 40000
+      }
+    ],
+    "imagenes": [
+      "/products/pan-dulces1/5.jpg",
+      "/products/pan-dulces1/6.jpg",
+      "/products/pan-dulces1/7.jpg",
+      "/products/pan-dulces1/8.jpg"
+    ]
+  },
+  {
+    "slug": "pan-dulces2",
+    "nombre": "Pan Dulce de Frutos Secos",
+    "descripcion": "Pan Dulces caseros hechos con mucho amor y sabor.",
+    "precio": 30000,
+    "subtipos": [
+      {
+        "nombre": "Chips 1/2 kg",
         "precio": 40000
       },
       {
         "nombre": "Chips 1 kg",
-        "precio": 40000
-      },
-      {
-        "nombre": "Frutos Secos 1 kg",
-        "precio": 45000
+        "precio": 50000
       }
     ],
     "imagenes": [
-      "/products/pan-dulces/1.jpg",
-      "/products/pan-dulces/2.jpg",
-      "/products/pan-dulces/3.jpg",
-      "/products/pan-dulces/4.jpg",
-      "/products/pan-dulces/5.jpg",
-      "/products/pan-dulces/6.jpg",
-      "/products/pan-dulces/7.jpg",
-      "/products/pan-dulces/8.jpg"
+      "/products/pan-dulces2/1.jpg",
+      "/products/pan-dulces2/2.jpg",
+      "/products/pan-dulces2/3.jpg",
+      "/products/pan-dulces2/4.jpg"
     ]
   }
 ]
