@@ -112,17 +112,17 @@
   },
   {
     "slug": "pan-dulces3",
-    "nombre": "Pan Dulce de Futos Secos",
+    "nombre": "Pan Dulce de Frutas Abrillantadas",
     "descripcion": "Pan Dulces caseros hechos con mucho amor y sabor.",
     "precio": 30000,
     "subtipos": [
       {
         "nombre": "Frutos Secos 1/2 kg",
-        "precio": 15000
+        "precio": 12000
       },
       {
         "nombre": "Frutos Secos 1 kg",
-        "precio": 30000
+        "precio": 24000
       }
     ],
     "terminaciones": [
