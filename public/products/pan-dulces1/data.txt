@@ -2,6 +2,6 @@ nombre: Pan Dulce de Futos Secos
 descripcion: Pan Dulces caseros hechos con mucho amor y sabor.
 precio: 30000
 subtipos:
-Chips 1/2 kg | 40000
-Chips 1 kg | 50000
-Bañado en choco | +2000
+Frutos Secos 1/2 kg | 15000
+Frutos Secos 1 kg | 30000
+

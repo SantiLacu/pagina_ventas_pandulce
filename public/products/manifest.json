@@ -15,47 +15,77 @@
     ]
   },
   {
+    "slug": "mantecol",
+    "nombre": "Mantecol",
+    "descripcion": "Mantecol casero hecho con maní y miel pura",
+    "precio": 21000,
+    "subtipos": [
+      {
+        "nombre": "1/2 kg",
+        "precio": 10000
+      },
+      {
+        "nombre": "1 kg",
+        "precio": 21000
+      }
+    ],
+    "imagenes": [
+      "/products/mantecol/mantecol1.jpeg",
+      "/products/mantecol/mantecol2.jpeg",
+      "/products/mantecol/mantecol3.jpeg",
+      "/products/mantecol/mantecol4.jpeg",
+      "/products/mantecol/mantecol.jpeg"
+    ]
+  },
+  {
     "slug": "pan-dulces1",
-    "nombre": "Pan Dulce de Chips",
+    "nombre": "Pan Dulce de Futos Secos",
     "descripcion": "Pan Dulces caseros hechos con mucho amor y sabor.",
     "precio": 30000,
     "subtipos": [
       {
-        "nombre": "Chips 1/2 kg",
-        "precio": 30000
+        "nombre": "Frutos Secos 1/2 kg",
+        "precio": 15000
       },
       {
-        "nombre": "Chips 1 kg",
-        "precio": 40000
+        "nombre": "Frutos Secos 1 kg",
+        "precio": 30000
       }
     ],
     "imagenes": [
-      "/products/pan-dulces1/5.jpg",
-      "/products/pan-dulces1/6.jpg",
-      "/products/pan-dulces1/7.jpg",
-      "/products/pan-dulces1/8.jpg"
+      "/products/pan-dulces1/1.jpeg",
+      "/products/pan-dulces1/2.jpeg",
+      "/products/pan-dulces1/3.jpeg",
+      "/products/pan-dulces1/4.jpeg",
+      "/products/pan-dulces1/5.jpeg",
+      "/products/pan-dulces1/6.jpeg",
+      "/products/pan-dulces1/7.jpeg",
+      "/products/pan-dulces1/8.jpeg"
     ]
   },
   {
     "slug": "pan-dulces2",
-    "nombre": "Pan Dulce de Frutos Secos",
+    "nombre": "Pan Dulce de Chips de chocolate",
     "descripcion": "Pan Dulces caseros hechos con mucho amor y sabor.",
     "precio": 30000,
     "subtipos": [
       {
         "nombre": "Chips 1/2 kg",
-        "precio": 40000
+        "precio": 14000
       },
       {
         "nombre": "Chips 1 kg",
-        "precio": 50000
+        "precio": 28000
       }
     ],
     "imagenes": [
-      "/products/pan-dulces2/1.jpg",
-      "/products/pan-dulces2/2.jpg",
-      "/products/pan-dulces2/3.jpg",
-      "/products/pan-dulces2/4.jpg"
+      "/products/pan-dulces2/1.jpeg",
+      "/products/pan-dulces2/2.jpeg",
+      "/products/pan-dulces2/3.jpeg",
+      "/products/pan-dulces2/4.jpeg",
+      "/products/pan-dulces2/5.jpeg",
+      "/products/pan-dulces2/6.jpeg",
+      "/products/pan-dulces2/7.jpeg"
     ]
   }
 ]

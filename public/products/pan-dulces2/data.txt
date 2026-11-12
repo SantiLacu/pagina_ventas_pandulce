@@ -2,6 +2,6 @@ nombre: Pan Dulce de Chips de chocolate
 descripcion: Pan Dulces caseros hechos con mucho amor y sabor.
 precio: 30000
 subtipos:
-Chips 1/2 kg | 30000
-Chips 1 kg | 40000
+Chips 1/2 kg | 14000
+Chips 1 kg | 28000
 
