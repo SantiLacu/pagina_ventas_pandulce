@@ -46,22 +46,6 @@ export function renderProductCard(product) {
             </svg>
           </button>
         </div>
-
-        <div class="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5 bg-black/40 backdrop-blur px-2 py-1.5 rounded-full">
-          ${product.imagenes
-            .map(
-              (_, i) => `
-              <button data-img="${i}"
-                      class="thumb w-7 h-7 flex items-center justify-center rounded-full"
-                      aria-label="Ver imagen ${i + 1}">
-                <span class="thumb-dot block w-2 h-2 rounded-full transition-all ${
-                        i === 0 ? 'bg-navidad-dorado scale-125' : 'bg-white/60'
-                      }"></span>
-              </button>
-            `
-            )
-            .join('')}
-        </div>
       ` : ''}
     </div>
 
@@ -156,8 +140,7 @@ export function renderProductCard(product) {
     // Evitar que se abra el modal si se clickearon botones internos
     if (e.target.closest(`#add-${product.slug}`) ||
         e.target.closest('.subtipo-btn') ||
-        e.target.closest('.terminacion-btn') ||
-        e.target.closest('.thumb')) {
+        e.target.closest('.terminacion-btn')) {
       return
     }
     openProductModal(product)
@@ -177,15 +160,6 @@ export function renderProductCard(product) {
       mainImg.style.display = 'none'
       void mainImg.offsetWidth // Trigger reflow
       mainImg.style.display = ''
-      // Update thumbnail active state
-      card.querySelectorAll('.thumb-dot').forEach((t, idx) => {
-        t.classList.remove('bg-navidad-dorado', 'scale-125')
-        t.classList.add('bg-white/60')
-        if (idx === currentImg) {
-          t.classList.add('bg-navidad-dorado', 'scale-125')
-          t.classList.remove('bg-white/60')
-        }
-      })
     })
   }
 
@@ -199,38 +173,8 @@ export function renderProductCard(product) {
       mainImg.style.display = 'none'
       void mainImg.offsetWidth // Trigger reflow
       mainImg.style.display = ''
-      // Update thumbnail active state
-      card.querySelectorAll('.thumb-dot').forEach((t, idx) => {
-        t.classList.remove('bg-navidad-dorado', 'scale-125')
-        t.classList.add('bg-white/60')
-        if (idx === currentImg) {
-          t.classList.add('bg-navidad-dorado', 'scale-125')
-          t.classList.remove('bg-white/60')
-        }
-      })
     })
   }
-
-  card.querySelectorAll('.thumb').forEach((thumb) => {
-    thumb.addEventListener('click', () => {
-      const idx = parseInt(thumb.dataset.img, 10)
-      currentImg = idx
-      mainImg.src = product.imagenes[idx]
-      // Force image re-load by triggering a re-offset
-      mainImg.style.display = 'none'
-      void mainImg.offsetWidth // Trigger reflow
-      mainImg.style.display = ''
-      card.querySelectorAll('.thumb-dot').forEach((t, thumbIdx) => {
-        if (thumbIdx === currentImg) {
-          t.classList.remove('bg-white/60')
-          t.classList.add('bg-navidad-dorado', 'scale-125')
-        } else {
-          t.classList.remove('bg-navidad-dorado', 'scale-125')
-          t.classList.add('bg-white/60')
-        }
-      })
-    })
-  })
 
   card.querySelectorAll('.subtipo-btn').forEach((btn) => {
     btn.addEventListener('click', () => {

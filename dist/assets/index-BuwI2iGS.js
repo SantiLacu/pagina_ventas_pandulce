@@ -1,4 +1,4 @@
-(function(){const t=document.createElement("link").relList;if(t&&t.supports&&t.supports("modulepreload"))return;for(const o of document.querySelectorAll('link[rel="modulepreload"]'))d(o);new MutationObserver(o=>{for(const a of o)if(a.type==="childList")for(const v of a.addedNodes)v.tagName==="LINK"&&v.rel==="modulepreload"&&d(v)}).observe(document,{childList:!0,subtree:!0});function n(o){const a={};return o.integrity&&(a.integrity=o.integrity),o.referrerPolicy&&(a.referrerPolicy=o.referrerPolicy),o.crossOrigin==="use-credentials"?a.credentials="include":o.crossOrigin==="anonymous"?a.credentials="omit":a.credentials="same-origin",a}function d(o){if(o.ep)return;o.ep=!0;const a=n(o);fetch(o.href,a)}})();const L={NOMBRE_NEGOCIO:"Tentaciones de Sabor",NRO_WHATSAPP:"5491151038957",URL_SHEETS:"https://script.google.com/macros/s/AKfycbzmB7g9Fs4-D7h0MbDlxOidVXLYOFsjvsnnVy8RtrfYMdzdIuWpjSYXNDI9G0atzMpykw/exec",HERO_INTERVAL_MS:5e3},T="pandul_cart",A=new Set;let k=P();function P(){try{const e=localStorage.getItem(T);return e?JSON.parse(e):[]}catch{return[]}}function C(){localStorage.setItem(T,JSON.stringify(k)),z()}function z(){A.forEach(e=>e(k))}function q(e){return A.add(e),e(k),()=>A.delete(e)}function j(){return k}function _(){return k.reduce((e,t)=>e+t.cantidad,0)}function M(){return k.reduce((e,t)=>e+t.precio*t.cantidad,0)}function O({slug:e,nombre:t,subtipoNombre:n,terminacionNombre:d,precio:o,imagen:a}){const v=[e,n,d].filter(Boolean).join("::"),l=k.find(g=>g.id===v);l?l.cantidad+=1:k.push({id:v,slug:e,nombre:t,subtipo:n||null,terminacion:d||null,precio:o,imagen:a,cantidad:1}),C()}function N(e){k=k.filter(t=>t.id!==e),C()}function I(e,t){const n=k.find(d=>d.id===e);if(n){if(t<=0){N(e);return}n.cantidad=t,C()}}function F(){k=[],C()}const B=[{href:"#inicio",label:"Inicio"},{href:"#catalogo",label:"Catálogo"},{href:"#contacto",label:"Contacto"}];function W(e){e.innerHTML=`
+(function(){const t=document.createElement("link").relList;if(t&&t.supports&&t.supports("modulepreload"))return;for(const o of document.querySelectorAll('link[rel="modulepreload"]'))d(o);new MutationObserver(o=>{for(const a of o)if(a.type==="childList")for(const u of a.addedNodes)u.tagName==="LINK"&&u.rel==="modulepreload"&&d(u)}).observe(document,{childList:!0,subtree:!0});function n(o){const a={};return o.integrity&&(a.integrity=o.integrity),o.referrerPolicy&&(a.referrerPolicy=o.referrerPolicy),o.crossOrigin==="use-credentials"?a.credentials="include":o.crossOrigin==="anonymous"?a.credentials="omit":a.credentials="same-origin",a}function d(o){if(o.ep)return;o.ep=!0;const a=n(o);fetch(o.href,a)}})();const L={NOMBRE_NEGOCIO:"Tentaciones de Sabor",NRO_WHATSAPP:"5491151038957",URL_SHEETS:"https://script.google.com/macros/s/AKfycbzmB7g9Fs4-D7h0MbDlxOidVXLYOFsjvsnnVy8RtrfYMdzdIuWpjSYXNDI9G0atzMpykw/exec",HERO_INTERVAL_MS:5e3},T="pandul_cart",B=new Set;let k=P();function P(){try{const e=localStorage.getItem(T);return e?JSON.parse(e):[]}catch{return[]}}function C(){localStorage.setItem(T,JSON.stringify(k)),z()}function z(){B.forEach(e=>e(k))}function q(e){return B.add(e),e(k),()=>B.delete(e)}function $(){return k}function _(){return k.reduce((e,t)=>e+t.cantidad,0)}function M(){return k.reduce((e,t)=>e+t.precio*t.cantidad,0)}function O({slug:e,nombre:t,subtipoNombre:n,terminacionNombre:d,precio:o,imagen:a}){const u=[e,n,d].filter(Boolean).join("::"),l=k.find(b=>b.id===u);l?l.cantidad+=1:k.push({id:u,slug:e,nombre:t,subtipo:n||null,terminacion:d||null,precio:o,imagen:a,cantidad:1}),C()}function N(e){k=k.filter(t=>t.id!==e),C()}function I(e,t){const n=k.find(d=>d.id===e);if(n){if(t<=0){N(e);return}n.cantidad=t,C()}}function F(){k=[],C()}const A=[{href:"#inicio",label:"Inicio"},{href:"#catalogo",label:"Catálogo"},{href:"#contacto",label:"Contacto"}];function W(e){e.innerHTML=`
     <header id="site-header" class="sticky top-0 z-50 bg-navidad-rojo text-white transition-shadow duration-300 pt-safe">
       <div class="container-page flex items-center justify-between h-16">
         <a href="#inicio" class="flex items-center gap-2 group" aria-label="${L.NOMBRE_NEGOCIO}">
@@ -9,7 +9,7 @@
         </a>
 
         <nav class="hidden md:flex items-center gap-1" aria-label="Navegación principal">
-          ${B.map(t=>`
+          ${A.map(t=>`
             <a href="${t.href}"
                class="px-3 py-2 rounded-lg text-sm font-medium hover:bg-white/10 hover:text-navidad-dorado transition-colors">
               ${t.label}
@@ -46,7 +46,7 @@
 
       <div id="mobile-menu" class="md:hidden hidden border-t border-white/10 bg-navidad-rojo">
         <nav class="container-page py-3 flex flex-col gap-1" aria-label="Navegación móvil">
-          ${B.map(t=>`
+          ${A.map(t=>`
             <a href="${t.href}"
                class="mobile-nav-link px-3 py-3 rounded-lg text-base font-medium hover:bg-white/10 hover:text-navidad-dorado transition-colors">
               ${t.label}
@@ -55,7 +55,7 @@
         </nav>
       </div>
     </header>
-  `,V()}function V(){const e=document.getElementById("menu-btn"),t=document.getElementById("mobile-menu"),n=document.getElementById("icon-menu"),d=document.getElementById("icon-close"),o=document.getElementById("cart-btn"),a=document.getElementById("cart-badge"),v=document.getElementById("site-header");e.addEventListener("click",()=>{!t.classList.contains("hidden")?(t.classList.add("hidden"),n.classList.remove("hidden"),d.classList.add("hidden"),e.setAttribute("aria-expanded","false")):(t.classList.remove("hidden"),n.classList.add("hidden"),d.classList.remove("hidden"),e.setAttribute("aria-expanded","true"))}),document.querySelectorAll(".mobile-nav-link").forEach(l=>{l.addEventListener("click",()=>{t.classList.add("hidden"),n.classList.remove("hidden"),d.classList.add("hidden"),e.setAttribute("aria-expanded","false")})}),o.addEventListener("click",()=>{document.dispatchEvent(new CustomEvent("cart:open"))}),q(l=>{const g=l.reduce((r,x)=>r+x.cantidad,0);g>0?(a.textContent=g,a.classList.remove("hidden")):a.classList.add("hidden")}),window.addEventListener("scroll",()=>{window.scrollY>10?v.classList.add("shadow-lg"):v.classList.remove("shadow-lg")},{passive:!0})}let S=null;async function H(){if(S)return S;try{const e=await fetch("/products/manifest.json",{cache:"no-cache"});if(!e.ok)throw new Error(`HTTP ${e.status}`);return S=await e.json(),S}catch(e){return console.error("Error al cargar productos:",e),[]}}function G(e){if(!e)return"";const{imagenes:t,nombre:n,descripcion:d,subtipos:o,terminaciones:a,precio:v}=e,l=o&&o.length>0,g=a&&a.length>0,r=l?o[0].precio:v,x=g?a[0].precio:0,w=r+x;return`
+  `,G()}function G(){const e=document.getElementById("menu-btn"),t=document.getElementById("mobile-menu"),n=document.getElementById("icon-menu"),d=document.getElementById("icon-close"),o=document.getElementById("cart-btn"),a=document.getElementById("cart-badge"),u=document.getElementById("site-header");e.addEventListener("click",()=>{!t.classList.contains("hidden")?(t.classList.add("hidden"),n.classList.remove("hidden"),d.classList.add("hidden"),e.setAttribute("aria-expanded","false")):(t.classList.remove("hidden"),n.classList.add("hidden"),d.classList.remove("hidden"),e.setAttribute("aria-expanded","true"))}),document.querySelectorAll(".mobile-nav-link").forEach(l=>{l.addEventListener("click",()=>{t.classList.add("hidden"),n.classList.remove("hidden"),d.classList.add("hidden"),e.setAttribute("aria-expanded","false")})}),o.addEventListener("click",()=>{document.dispatchEvent(new CustomEvent("cart:open"))}),q(l=>{const b=l.reduce((r,h)=>r+h.cantidad,0);b>0?(a.textContent=b,a.classList.remove("hidden")):a.classList.add("hidden")}),window.addEventListener("scroll",()=>{window.scrollY>10?u.classList.add("shadow-lg"):u.classList.remove("shadow-lg")},{passive:!0})}let S=null;async function H(){if(S)return S;try{const e=await fetch("/products/manifest.json",{cache:"no-cache"});if(!e.ok)throw new Error(`HTTP ${e.status}`);return S=await e.json(),S}catch(e){return console.error("Error al cargar productos:",e),[]}}function V(e){if(!e)return"";const{imagenes:t,nombre:n,descripcion:d,subtipos:o,terminaciones:a,precio:u}=e,l=o&&o.length>0,b=a&&a.length>0,r=l?o[0].precio:u,h=b?a[0].precio:0,x=r+h;return`
     <div id="product-modal" class="fixed inset-0 bg-navidad-oscuro/80 backdrop-blur z-50 hidden items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="modal-title">
       <div class="bg-white rounded-2xl w-full max-w-md max-h-[95dvh] overflow-hidden flex flex-col transform transition-transform duration-300" style="transform: scale(0.9);">
         <!-- Header del modal -->
@@ -102,10 +102,10 @@
             <!-- Miniaturas -->
             <div id="modal-thumbs"
                  class="mt-4 flex gap-2 overflow-x-auto no-scrollbar justify-center px-6 pb-4">
-              ${t.map((f,p)=>`
-                <button data-img="${p}"
-                        class="w-16 h-16 rounded overflow-hidden object-cover flex-shrink-0 ${p===0?"border-navidad-rojo border-2":"border-transparent"} hover:border-navidad-oscuro transition-all">
-                  <img src="${f}" alt="${n} - miniatura ${p+1}" class="w-full h-full object-cover" loading="lazy" />
+              ${t.map((p,m)=>`
+                <button data-img="${m}"
+                        class="w-16 h-16 rounded overflow-hidden object-cover flex-shrink-0 ${m===0?"border-navidad-rojo border-2":"border-transparent"} hover:border-navidad-oscuro transition-all">
+                  <img src="${p}" alt="${n} - miniatura ${m+1}" class="w-full h-full object-cover" loading="lazy" />
                 </button>
               `).join("")}
             </div>
@@ -119,24 +119,24 @@
               <div>
                 <p class="text-xs font-semibold text-navidad-oscuro/60 uppercase tracking-wide">Elegí una opción:</p>
                 <div class="flex flex-wrap gap-2 mt-2">
-                  ${o.map((f,p)=>`
-                    <button data-subtipo="${f.nombre}" data-precio="${f.precio}"
-                            class="subtipo-btn px-3 py-2 rounded-full text-xs font-medium border-2 transition-all ${p===0?"border-navidad-rojo bg-navidad-rojo text-white":"border-navidad-oscuro/20 text-navidad-oscuro/70 hover:border-navidad-rojo/50"}">
-                      ${f.nombre}
+                  ${o.map((p,m)=>`
+                    <button data-subtipo="${p.nombre}" data-precio="${p.precio}"
+                            class="subtipo-btn px-3 py-2 rounded-full text-xs font-medium border-2 transition-all ${m===0?"border-navidad-rojo bg-navidad-rojo text-white":"border-navidad-oscuro/20 text-navidad-oscuro/70 hover:border-navidad-rojo/50"}">
+                      ${p.nombre}
                     </button>
                   `).join("")}
                 </div>
               </div>
             `:""}
 
-            ${g?`
+            ${b?`
               <div>
                 <p class="text-xs font-semibold text-navidad-oscuro/60 uppercase tracking-wide">Terminación:</p>
                 <div class="flex flex-wrap gap-2 mt-2">
-                  ${a.map((f,p)=>`
-                    <button data-terminacion="${f.nombre}" data-extra="${f.precio}"
-                            class="terminacion-btn px-3 py-2 rounded-full text-xs font-medium border-2 transition-all ${p===0?"border-navidad-rojo bg-navidad-rojo text-white":"border-navidad-oscuro/20 text-navidad-oscuro/70 hover:border-navidad-rojo/50"}">
-                      ${f.nombre}${f.precio>0?` (+$ ${f.precio.toLocaleString("es-AR")})`:""}
+                  ${a.map((p,m)=>`
+                    <button data-terminacion="${p.nombre}" data-extra="${p.precio}"
+                            class="terminacion-btn px-3 py-2 rounded-full text-xs font-medium border-2 transition-all ${m===0?"border-navidad-rojo bg-navidad-rojo text-white":"border-navidad-oscuro/20 text-navidad-oscuro/70 hover:border-navidad-rojo/50"}">
+                      ${p.nombre}${p.precio>0?` (+$ ${p.precio.toLocaleString("es-AR")})`:""}
                     </button>
                   `).join("")}
                 </div>
@@ -148,7 +148,7 @@
         <!-- Barra inferior fija con precio y botón -->
         <div class="bg-white border-t border-navidad-crema p-4 pb-[max(1rem,env(safe-area-inset-bottom))] sticky bottom-0">
           <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-            <p id="modal-price" class="text-2xl font-bold text-navidad-verde">$ ${w.toLocaleString("es-AR")}</p>
+            <p id="modal-price" class="text-2xl font-bold text-navidad-verde">$ ${x.toLocaleString("es-AR")}</p>
             <button id="modal-add-cart"
                     class="btn-primary px-6 py-3 w-full sm:w-auto text-base">
               Agregar al carrito
@@ -157,7 +157,7 @@
         </div>
       </div>
     </div>
-  `}function D(e){const t=document.getElementById("product-modal");if(!t)return;const n=document.getElementById("modal-close"),d=document.getElementById("modal-main-img"),o=document.getElementById("modal-prev"),a=document.getElementById("modal-next"),v=t.querySelectorAll("#modal-thumbs button"),l=document.getElementById("modal-price"),g=document.getElementById("modal-add-cart");let r=0;const x=e.subtipos&&e.subtipos.length>0,w=e.terminaciones&&e.terminaciones.length>0;let f=x?e.subtipos[0].nombre:null,p=x?e.subtipos[0].precio:e.precio,c=w?e.terminaciones[0].nombre:null,s=w?e.terminaciones[0].precio:0;const h=()=>{l&&(l.textContent=`$ ${(p+s).toLocaleString("es-AR")}`)};n.addEventListener("click",m),t.addEventListener("click",u=>{u.target===t&&m()});function b(u){u.key==="Escape"&&(m(),document.removeEventListener("keydown",b))}document.addEventListener("keydown",b),o.addEventListener("click",()=>{r--,r<0&&(r=e.imagenes.length-1),i(r)}),a.addEventListener("click",()=>{r++,r>=e.imagenes.length&&(r=0),i(r)}),v.forEach(u=>{u.addEventListener("click",()=>{r=parseInt(u.dataset.img,10),i(r)})}),document.addEventListener("keydown",u=>{t.classList.contains("hidden")||(u.key==="ArrowLeft"?(r--,r<0&&(r=e.imagenes.length-1),i(r)):u.key==="ArrowRight"&&(r++,r>=e.imagenes.length&&(r=0),i(r)))});const $=t.querySelectorAll(".subtipo-btn");$.forEach(u=>{u.addEventListener("click",()=>{f=u.dataset.subtipo,p=parseInt(u.dataset.precio,10),h(),$.forEach(E=>{E.classList.remove("border-navidad-rojo","bg-navidad-rojo","text-white"),E.classList.add("border-navidad-oscuro/20","text-navidad-oscuro/70")}),u.classList.add("border-navidad-rojo","bg-navidad-rojo","text-white"),u.classList.remove("border-navidad-oscuro/20","text-navidad-oscuro/70")})});const y=t.querySelectorAll(".terminacion-btn");y.forEach(u=>{u.addEventListener("click",()=>{c=u.dataset.terminacion,s=parseInt(u.dataset.extra,10),h(),y.forEach(E=>{E.classList.remove("border-navidad-rojo","bg-navidad-rojo","text-white"),E.classList.add("border-navidad-oscuro/20","text-navidad-oscuro/70")}),u.classList.add("border-navidad-rojo","bg-navidad-rojo","text-white"),u.classList.remove("border-navidad-oscuro/20","text-navidad-oscuro/70")})}),g.addEventListener("click",()=>{O({slug:e.slug,nombre:e.nombre,subtipoNombre:f,terminacionNombre:c,precio:p+s,imagen:e.imagenes[r]}),m()});function i(u){r=u,e.imagenes[r]&&(d.src=e.imagenes[r],d.alt=`${e.nombre} - imagen ${r+1}`),v.forEach(E=>{E.classList.remove("border-navidad-rojo","border-2"),E.classList.add("border-transparent")}),v[r]&&v[r].classList.add("border-navidad-rojo","border-2")}function m(){t.classList.add("hidden"),t.classList.remove("flex"),document.body.style.overflow=""}}function K(e){const t=document.createElement("article");t.className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow flex flex-col",t.dataset.product=JSON.stringify(e);const n=e.subtipos&&e.subtipos.length>0,d=n?e.subtipos[0].precio:e.precio,o=n?e.subtipos[0].nombre:null,a=e.terminaciones&&e.terminaciones.length>0,v=a?e.terminaciones[0].nombre:null,l=a?e.terminaciones[0].precio:0,g=d+l;t.innerHTML=`
+  `}function D(e){const t=document.getElementById("product-modal");if(!t)return;const n=document.getElementById("modal-close"),d=document.getElementById("modal-main-img"),o=document.getElementById("modal-prev"),a=document.getElementById("modal-next"),u=t.querySelectorAll("#modal-thumbs button"),l=document.getElementById("modal-price"),b=document.getElementById("modal-add-cart");let r=0;const h=e.subtipos&&e.subtipos.length>0,x=e.terminaciones&&e.terminaciones.length>0;let p=h?e.subtipos[0].nombre:null,m=h?e.subtipos[0].precio:e.precio,c=x?e.terminaciones[0].nombre:null,i=x?e.terminaciones[0].precio:0;const g=()=>{l&&(l.textContent=`$ ${(m+i).toLocaleString("es-AR")}`)};n.addEventListener("click",y),t.addEventListener("click",f=>{f.target===t&&y()});function v(f){f.key==="Escape"&&(y(),document.removeEventListener("keydown",v))}document.addEventListener("keydown",v),o.addEventListener("click",()=>{r--,r<0&&(r=e.imagenes.length-1),s(r)}),a.addEventListener("click",()=>{r++,r>=e.imagenes.length&&(r=0),s(r)}),u.forEach(f=>{f.addEventListener("click",()=>{r=parseInt(f.dataset.img,10),s(r)})}),document.addEventListener("keydown",f=>{t.classList.contains("hidden")||(f.key==="ArrowLeft"?(r--,r<0&&(r=e.imagenes.length-1),s(r)):f.key==="ArrowRight"&&(r++,r>=e.imagenes.length&&(r=0),s(r)))});const E=t.querySelectorAll(".subtipo-btn");E.forEach(f=>{f.addEventListener("click",()=>{p=f.dataset.subtipo,m=parseInt(f.dataset.precio,10),g(),E.forEach(j=>{j.classList.remove("border-navidad-rojo","bg-navidad-rojo","text-white"),j.classList.add("border-navidad-oscuro/20","text-navidad-oscuro/70")}),f.classList.add("border-navidad-rojo","bg-navidad-rojo","text-white"),f.classList.remove("border-navidad-oscuro/20","text-navidad-oscuro/70")})});const w=t.querySelectorAll(".terminacion-btn");w.forEach(f=>{f.addEventListener("click",()=>{c=f.dataset.terminacion,i=parseInt(f.dataset.extra,10),g(),w.forEach(j=>{j.classList.remove("border-navidad-rojo","bg-navidad-rojo","text-white"),j.classList.add("border-navidad-oscuro/20","text-navidad-oscuro/70")}),f.classList.add("border-navidad-rojo","bg-navidad-rojo","text-white"),f.classList.remove("border-navidad-oscuro/20","text-navidad-oscuro/70")})}),b.addEventListener("click",()=>{O({slug:e.slug,nombre:e.nombre,subtipoNombre:p,terminacionNombre:c,precio:m+i,imagen:e.imagenes[r]}),y()});function s(f){r=f,e.imagenes[r]&&(d.src=e.imagenes[r],d.alt=`${e.nombre} - imagen ${r+1}`),u.forEach(j=>{j.classList.remove("border-navidad-rojo","border-2"),j.classList.add("border-transparent")}),u[r]&&u[r].classList.add("border-navidad-rojo","border-2")}function y(){t.classList.add("hidden"),t.classList.remove("flex"),document.body.style.overflow=""}}function K(e){const t=document.createElement("article");t.className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow flex flex-col",t.dataset.product=JSON.stringify(e);const n=e.subtipos&&e.subtipos.length>0,d=n?e.subtipos[0].precio:e.precio,o=n?e.subtipos[0].nombre:null,a=e.terminaciones&&e.terminaciones.length>0,u=a?e.terminaciones[0].nombre:null,l=a?e.terminaciones[0].precio:0,b=d+l;t.innerHTML=`
     <div class="relative aspect-square bg-navidad-crema overflow-hidden group cursor-pointer">
       <img id="main-img-${e.slug}"
            src="${e.imagenes[0]}"
@@ -185,16 +185,6 @@
             </svg>
           </button>
         </div>
-
-        <div class="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5 bg-black/40 backdrop-blur px-2 py-1.5 rounded-full">
-          ${e.imagenes.map((i,m)=>`
-              <button data-img="${m}"
-                      class="thumb w-7 h-7 flex items-center justify-center rounded-full"
-                      aria-label="Ver imagen ${m+1}">
-                <span class="thumb-dot block w-2 h-2 rounded-full transition-all ${m===0?"bg-navidad-dorado scale-125":"bg-white/60"}"></span>
-              </button>
-            `).join("")}
-        </div>
       `:""}
     </div>
 
@@ -206,10 +196,10 @@
         <div class="mt-4">
           <p class="text-xs font-semibold text-navidad-oscuro/60 uppercase tracking-wide mb-2">Elegí una opción:</p>
           <div class="flex flex-wrap gap-2">
-            ${e.subtipos.map((i,m)=>`
-                <button data-subtipo="${i.nombre}" data-precio="${i.precio}"
-                        class="subtipo-btn px-3 py-2 rounded-full text-xs font-medium border-2 transition-all ${m===0?"border-navidad-rojo bg-navidad-rojo text-white":"border-navidad-oscuro/20 text-navidad-oscuro/70 hover:border-navidad-rojo/50"}">
-                  ${i.nombre}
+            ${e.subtipos.map((s,y)=>`
+                <button data-subtipo="${s.nombre}" data-precio="${s.precio}"
+                        class="subtipo-btn px-3 py-2 rounded-full text-xs font-medium border-2 transition-all ${y===0?"border-navidad-rojo bg-navidad-rojo text-white":"border-navidad-oscuro/20 text-navidad-oscuro/70 hover:border-navidad-rojo/50"}">
+                  ${s.nombre}
                 </button>
               `).join("")}
           </div>
@@ -220,10 +210,10 @@
         <div class="mt-4">
           <p class="text-xs font-semibold text-navidad-oscuro/60 uppercase tracking-wide mb-2">Terminación:</p>
           <div class="flex flex-wrap gap-2">
-            ${e.terminaciones.map((i,m)=>`
-                <button data-terminacion="${i.nombre}" data-extra="${i.precio}"
-                        class="terminacion-btn px-3 py-2 rounded-full text-xs font-medium border-2 transition-all ${m===0?"border-navidad-rojo bg-navidad-rojo text-white":"border-navidad-oscuro/20 text-navidad-oscuro/70 hover:border-navidad-rojo/50"}">
-                  ${i.nombre}${i.precio>0?` (+$ ${i.precio.toLocaleString("es-AR")})`:""}
+            ${e.terminaciones.map((s,y)=>`
+                <button data-terminacion="${s.nombre}" data-extra="${s.precio}"
+                        class="terminacion-btn px-3 py-2 rounded-full text-xs font-medium border-2 transition-all ${y===0?"border-navidad-rojo bg-navidad-rojo text-white":"border-navidad-oscuro/20 text-navidad-oscuro/70 hover:border-navidad-rojo/50"}">
+                  ${s.nombre}${s.precio>0?` (+$ ${s.precio.toLocaleString("es-AR")})`:""}
                 </button>
               `).join("")}
           </div>
@@ -232,7 +222,7 @@
 
       <div class="mt-4 flex items-center justify-between">
         <p id="precio-${e.slug}" class="text-2xl font-bold text-navidad-verde">
-          $ ${g.toLocaleString("es-AR")}
+          $ ${b.toLocaleString("es-AR")}
         </p>
       </div>
 
@@ -244,12 +234,12 @@
         Agregar al carrito
       </button>
     </div>
-  `;let r=o,x=d,w=v,f=l,p=0;const c=()=>{h.textContent=`$ ${(x+f).toLocaleString("es-AR")}`},s=t.querySelector(`#main-img-${e.slug}`),h=t.querySelector(`#precio-${e.slug}`),b=t.querySelector(`#add-${e.slug}`);t.addEventListener("click",i=>{i.target.closest(`#add-${e.slug}`)||i.target.closest(".subtipo-btn")||i.target.closest(".terminacion-btn")||i.target.closest(".thumb")||R(e)});const $=t.querySelector(`#card-prev-${e.slug}`),y=t.querySelector(`#card-next-${e.slug}`);return $&&$.addEventListener("click",i=>{i.stopPropagation(),p--,p<0&&(p=e.imagenes.length-1),s.src=e.imagenes[p],s.style.display="none",s.offsetWidth,s.style.display="",t.querySelectorAll(".thumb-dot").forEach((m,u)=>{m.classList.remove("bg-navidad-dorado","scale-125"),m.classList.add("bg-white/60"),u===p&&(m.classList.add("bg-navidad-dorado","scale-125"),m.classList.remove("bg-white/60"))})}),y&&y.addEventListener("click",i=>{i.stopPropagation(),p++,p>=e.imagenes.length&&(p=0),s.src=e.imagenes[p],s.style.display="none",s.offsetWidth,s.style.display="",t.querySelectorAll(".thumb-dot").forEach((m,u)=>{m.classList.remove("bg-navidad-dorado","scale-125"),m.classList.add("bg-white/60"),u===p&&(m.classList.add("bg-navidad-dorado","scale-125"),m.classList.remove("bg-white/60"))})}),t.querySelectorAll(".thumb").forEach(i=>{i.addEventListener("click",()=>{const m=parseInt(i.dataset.img,10);p=m,s.src=e.imagenes[m],s.style.display="none",s.offsetWidth,s.style.display="",t.querySelectorAll(".thumb-dot").forEach((u,E)=>{E===p?(u.classList.remove("bg-white/60"),u.classList.add("bg-navidad-dorado","scale-125")):(u.classList.remove("bg-navidad-dorado","scale-125"),u.classList.add("bg-white/60"))})})}),t.querySelectorAll(".subtipo-btn").forEach(i=>{i.addEventListener("click",()=>{r=i.dataset.subtipo,x=parseInt(i.dataset.precio,10),c(),t.querySelectorAll(".subtipo-btn").forEach(m=>{m.classList.remove("border-navidad-rojo","bg-navidad-rojo","text-white"),m.classList.add("border-navidad-oscuro/20","text-navidad-oscuro/70")}),i.classList.add("border-navidad-rojo","bg-navidad-rojo","text-white"),i.classList.remove("border-navidad-oscuro/20","text-navidad-oscuro/70")})}),t.querySelectorAll(".terminacion-btn").forEach(i=>{i.addEventListener("click",()=>{w=i.dataset.terminacion,f=parseInt(i.dataset.extra,10),c(),t.querySelectorAll(".terminacion-btn").forEach(m=>{m.classList.remove("border-navidad-rojo","bg-navidad-rojo","text-white"),m.classList.add("border-navidad-oscuro/20","text-navidad-oscuro/70")}),i.classList.add("border-navidad-rojo","bg-navidad-rojo","text-white"),i.classList.remove("border-navidad-oscuro/20","text-navidad-oscuro/70")})}),b.addEventListener("click",()=>{O({slug:e.slug,nombre:e.nombre,subtipoNombre:r,terminacionNombre:w,precio:x+f,imagen:e.imagenes[p]});const i=b.innerHTML;b.innerHTML=`
+  `;let r=o,h=d,x=u,p=l,m=0;const c=()=>{g.textContent=`$ ${(h+p).toLocaleString("es-AR")}`},i=t.querySelector(`#main-img-${e.slug}`),g=t.querySelector(`#precio-${e.slug}`),v=t.querySelector(`#add-${e.slug}`);t.addEventListener("click",s=>{s.target.closest(`#add-${e.slug}`)||s.target.closest(".subtipo-btn")||s.target.closest(".terminacion-btn")||R(e)});const E=t.querySelector(`#card-prev-${e.slug}`),w=t.querySelector(`#card-next-${e.slug}`);return E&&E.addEventListener("click",s=>{s.stopPropagation(),m--,m<0&&(m=e.imagenes.length-1),i.src=e.imagenes[m],i.style.display="none",i.offsetWidth,i.style.display=""}),w&&w.addEventListener("click",s=>{s.stopPropagation(),m++,m>=e.imagenes.length&&(m=0),i.src=e.imagenes[m],i.style.display="none",i.offsetWidth,i.style.display=""}),t.querySelectorAll(".subtipo-btn").forEach(s=>{s.addEventListener("click",()=>{r=s.dataset.subtipo,h=parseInt(s.dataset.precio,10),c(),t.querySelectorAll(".subtipo-btn").forEach(y=>{y.classList.remove("border-navidad-rojo","bg-navidad-rojo","text-white"),y.classList.add("border-navidad-oscuro/20","text-navidad-oscuro/70")}),s.classList.add("border-navidad-rojo","bg-navidad-rojo","text-white"),s.classList.remove("border-navidad-oscuro/20","text-navidad-oscuro/70")})}),t.querySelectorAll(".terminacion-btn").forEach(s=>{s.addEventListener("click",()=>{x=s.dataset.terminacion,p=parseInt(s.dataset.extra,10),c(),t.querySelectorAll(".terminacion-btn").forEach(y=>{y.classList.remove("border-navidad-rojo","bg-navidad-rojo","text-white"),y.classList.add("border-navidad-oscuro/20","text-navidad-oscuro/70")}),s.classList.add("border-navidad-rojo","bg-navidad-rojo","text-white"),s.classList.remove("border-navidad-oscuro/20","text-navidad-oscuro/70")})}),v.addEventListener("click",()=>{O({slug:e.slug,nombre:e.nombre,subtipoNombre:r,terminacionNombre:x,precio:h+p,imagen:e.imagenes[m]});const s=v.innerHTML;v.innerHTML=`
       <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
         <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
       </svg>
       ¡Agregado!
-    `,b.classList.remove("bg-navidad-rojo","hover:bg-navidad-rojoClaro"),b.classList.add("bg-navidad-verde","hover:bg-navidad-verdeClaro"),setTimeout(()=>{b.innerHTML=i,b.classList.add("bg-navidad-rojo","hover:bg-navidad-rojoClaro"),b.classList.remove("bg-navidad-verde","hover:bg-navidad-verdeClaro")},1500)}),t}function R(e){const t=document.getElementById("product-modal-container");if(!t)return;t.innerHTML=G(e),t.classList.remove("hidden"),t.classList.add("flex","items-center","justify-center");const n=document.getElementById("product-modal");n&&(n.classList.remove("hidden"),n.classList.add("flex"),document.body.style.overflow="hidden",D(e))}async function X(e){e.id="inicio",e.className="relative min-h-[85svh] md:min-h-[90vh] flex items-center justify-center overflow-hidden bg-navidad-oscuro",e.innerHTML=`
+    `,v.classList.remove("bg-navidad-rojo","hover:bg-navidad-rojoClaro"),v.classList.add("bg-navidad-verde","hover:bg-navidad-verdeClaro"),setTimeout(()=>{v.innerHTML=s,v.classList.add("bg-navidad-rojo","hover:bg-navidad-rojoClaro"),v.classList.remove("bg-navidad-verde","hover:bg-navidad-verdeClaro")},1500)}),t}function R(e){const t=document.getElementById("product-modal-container");if(!t)return;t.innerHTML=V(e),t.classList.remove("hidden"),t.classList.add("flex","items-center","justify-center");const n=document.getElementById("product-modal");n&&(n.classList.remove("hidden"),n.classList.add("flex"),document.body.style.overflow="hidden",D(e))}async function X(e){e.id="inicio",e.className="relative min-h-[85svh] md:min-h-[90vh] flex items-center justify-center overflow-hidden bg-navidad-oscuro",e.innerHTML=`
     <div id="hero-slides" class="absolute inset-0"></div>
     <div class="absolute inset-0 bg-gradient-to-b from-navidad-rojo/70 via-navidad-oscuro/60 to-navidad-verde/70 pointer-events-none"></div>
     <div class="absolute inset-0 bg-black/30 pointer-events-none"></div>
@@ -283,9 +273,9 @@
         </a>
       </div>
     </div>
-  `,await Y()}async function Y(){const e=document.getElementById("hero-slides");if(!e)return;const n=(await H()).filter(a=>a.imagenes&&a.imagenes.length>0).map(a=>({product:a,image:a.imagenes[0]}));if(n.length===0){e.style.background="linear-gradient(135deg, #C1121F, #065F46)";return}e.innerHTML=n.map(({image:a,product:v},l)=>`
-      <div class="absolute inset-0 transition-opacity duration-1000 ease-in-out ${l===0?"opacity-100":"opacity-0"}" role="button" tabindex="0" aria-label="Ver ${v.nombre}" style="background-image: url('${a}'); background-size: cover; background-position: center; cursor: pointer;"></div>
-    `).join("");let d=0;const o=n.length;e.querySelectorAll("div").forEach((a,v)=>{const l=()=>{const{product:g}=n[v];g&&R(g)};a.addEventListener("click",l),a.addEventListener("keydown",g=>{(g.key==="Enter"||g.key===" ")&&(g.preventDefault(),l())})}),o>1&&setInterval(()=>{const a=e.children;a[d].classList.replace("opacity-100","opacity-0"),d=(d+1)%o,a[d].classList.replace("opacity-0","opacity-100")},L.HERO_INTERVAL_MS)}async function U(e){e.className="container-page py-8 sm:py-12",e.innerHTML=`
+  `,await Y()}async function Y(){const e=document.getElementById("hero-slides");if(!e)return;const n=(await H()).filter(a=>a.imagenes&&a.imagenes.length>0).map(a=>({product:a,image:a.imagenes[0]}));if(n.length===0){e.style.background="linear-gradient(135deg, #C1121F, #065F46)";return}e.innerHTML=n.map(({image:a,product:u},l)=>`
+      <div class="absolute inset-0 transition-opacity duration-1000 ease-in-out ${l===0?"opacity-100":"opacity-0"}" role="button" tabindex="0" aria-label="Ver ${u.nombre}" style="background-image: url('${a}'); background-size: cover; background-position: center; cursor: pointer;"></div>
+    `).join("");let d=0;const o=n.length;e.querySelectorAll("div").forEach((a,u)=>{const l=()=>{const{product:b}=n[u];b&&R(b)};a.addEventListener("click",l),a.addEventListener("keydown",b=>{(b.key==="Enter"||b.key===" ")&&(b.preventDefault(),l())})}),o>1&&setInterval(()=>{const a=e.children;a[d].classList.replace("opacity-100","opacity-0"),d=(d+1)%o,a[d].classList.replace("opacity-0","opacity-100")},L.HERO_INTERVAL_MS)}async function U(e){e.className="container-page py-8 sm:py-12",e.innerHTML=`
     <div class="flex items-center justify-between mb-6">
       <h2 id="catalog-title" class="font-display text-2xl sm:text-3xl font-bold text-navidad-rojo">
         🎄 Cargando productos...
@@ -295,7 +285,7 @@
     <div id="catalog-empty" class="hidden text-center py-16 text-navidad-oscuro/60">
       <p class="text-lg">No hay productos disponibles en este momento.</p>
     </div>
-  `;const t=await H(),n=e.querySelector("#catalogo"),d=e.querySelector("#catalog-title"),o=e.querySelector("#catalog-empty");if(t.length===0){d.textContent="Catálogo",n.classList.add("hidden"),o.classList.remove("hidden");return}d.textContent=`🎄 Catálogo (${t.length} productos)`;const a=document.createDocumentFragment();for(const v of t)a.appendChild(K(v));n.appendChild(a)}function J(e){const t=new Date().getFullYear();e.innerHTML=`
+  `;const t=await H(),n=e.querySelector("#catalogo"),d=e.querySelector("#catalog-title"),o=e.querySelector("#catalog-empty");if(t.length===0){d.textContent="Catálogo",n.classList.add("hidden"),o.classList.remove("hidden");return}d.textContent=`🎄 Catálogo (${t.length} productos)`;const a=document.createDocumentFragment();for(const u of t)a.appendChild(K(u));n.appendChild(a)}function J(e){const t=new Date().getFullYear();e.innerHTML=`
     <footer id="contacto" class="bg-navidad-verde text-white">
       <div class="container-page py-10">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -363,7 +353,7 @@
         </button>
       </div>
     </aside>
-  `;const t=e.querySelector("#cart-overlay"),n=e.querySelector("#cart-drawer"),d=e.querySelector("#cart-close"),o=e.querySelector("#cart-items"),a=e.querySelector("#cart-count"),v=e.querySelector("#cart-total"),l=e.querySelector("#cart-checkout");function g(){t.classList.remove("opacity-0","pointer-events-none"),t.classList.add("opacity-100"),n.classList.remove("translate-x-full"),n.setAttribute("aria-hidden","false"),document.body.style.overflow="hidden"}function r(){t.classList.add("opacity-0","pointer-events-none"),t.classList.remove("opacity-100"),n.classList.add("translate-x-full"),n.setAttribute("aria-hidden","true"),document.body.style.overflow=""}function x(){const w=j(),f=M(),p=_();if(a.textContent=p,v.textContent=`$ ${f.toLocaleString("es-AR")}`,w.length===0){o.innerHTML=`
+  `;const t=e.querySelector("#cart-overlay"),n=e.querySelector("#cart-drawer"),d=e.querySelector("#cart-close"),o=e.querySelector("#cart-items"),a=e.querySelector("#cart-count"),u=e.querySelector("#cart-total"),l=e.querySelector("#cart-checkout");function b(){t.classList.remove("opacity-0","pointer-events-none"),t.classList.add("opacity-100"),n.classList.remove("translate-x-full"),n.setAttribute("aria-hidden","false"),document.body.style.overflow="hidden"}function r(){t.classList.add("opacity-0","pointer-events-none"),t.classList.remove("opacity-100"),n.classList.add("translate-x-full"),n.setAttribute("aria-hidden","true"),document.body.style.overflow=""}function h(){const x=$(),p=M(),m=_();if(a.textContent=m,u.textContent=`$ ${p.toLocaleString("es-AR")}`,x.length===0){o.innerHTML=`
         <div class="flex flex-col items-center justify-center h-full text-center py-12">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-20 w-20 text-navidad-oscuro/20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
             <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -372,7 +362,7 @@
           <p class="mt-1 text-sm text-navidad-oscuro/40">Agregá productos desde el catálogo</p>
           <button id="cart-empty-close" class="mt-6 btn-gold">Ver catálogo</button>
         </div>
-      `,o.querySelector("#cart-empty-close").addEventListener("click",()=>{var c;r(),(c=document.querySelector("#catalogo"))==null||c.scrollIntoView({behavior:"smooth"})}),l.classList.add("opacity-50","pointer-events-none");return}l.classList.remove("opacity-50","pointer-events-none"),o.innerHTML=w.map(c=>`
+      `,o.querySelector("#cart-empty-close").addEventListener("click",()=>{var c;r(),(c=document.querySelector("#catalogo"))==null||c.scrollIntoView({behavior:"smooth"})}),l.classList.add("opacity-50","pointer-events-none");return}l.classList.remove("opacity-50","pointer-events-none"),o.innerHTML=x.map(c=>`
         <div class="flex gap-3 p-3 bg-white rounded-xl border border-navidad-oscuro/10">
           <img src="${c.imagen}" alt="${c.nombre}" class="w-16 h-16 rounded-lg object-cover flex-shrink-0" />
           <div class="flex-grow min-w-0">
@@ -391,7 +381,7 @@
             </div>
           </div>
         </div>
-      `).join(""),o.querySelectorAll("[data-inc]").forEach(c=>{c.addEventListener("click",()=>{const s=c.dataset.inc,h=j().find(b=>b.id===s);h&&I(s,h.cantidad+1)})}),o.querySelectorAll("[data-dec]").forEach(c=>{c.addEventListener("click",()=>{const s=c.dataset.dec,h=j().find(b=>b.id===s);h&&I(s,h.cantidad-1)})}),o.querySelectorAll("[data-del]").forEach(c=>{c.addEventListener("click",()=>{N(c.dataset.del)})})}q(x),d.addEventListener("click",r),t.addEventListener("click",r),l.addEventListener("click",()=>{r(),document.dispatchEvent(new CustomEvent("checkout:open"))}),document.addEventListener("cart:open",g),document.addEventListener("keydown",w=>{w.key==="Escape"&&!n.classList.contains("translate-x-full")&&r()}),x()}function Z(e){const t=j(),n=M();let o=` *Nuevo pedido - ${L.NOMBRE_NEGOCIO}*
+      `).join(""),o.querySelectorAll("[data-inc]").forEach(c=>{c.addEventListener("click",()=>{const i=c.dataset.inc,g=$().find(v=>v.id===i);g&&I(i,g.cantidad+1)})}),o.querySelectorAll("[data-dec]").forEach(c=>{c.addEventListener("click",()=>{const i=c.dataset.dec,g=$().find(v=>v.id===i);g&&I(i,g.cantidad-1)})}),o.querySelectorAll("[data-del]").forEach(c=>{c.addEventListener("click",()=>{N(c.dataset.del)})})}q(h),d.addEventListener("click",r),t.addEventListener("click",r),l.addEventListener("click",()=>{r(),document.dispatchEvent(new CustomEvent("checkout:open"))}),document.addEventListener("cart:open",b),document.addEventListener("keydown",x=>{x.key==="Escape"&&!n.classList.contains("translate-x-full")&&r()}),h()}function Z(e){const t=$(),n=M();let o=` *Nuevo pedido - ${L.NOMBRE_NEGOCIO}*
 
 `;return o+=` *Cliente:* ${e.nombre}
 `,o+=` *Teléfono:* ${e.telefono}
@@ -399,9 +389,9 @@
 `),e.comentarios&&(o+=`*Comentarios:* ${e.comentarios}
 `),o+=`
  *Detalle del pedido:*
-`,t.forEach((a,v)=>{const l=[a.subtipo,a.terminacion].filter(Boolean).join(", ");o+=`${v+1}. ${a.nombre}`,l&&(o+=` (${l})`),o+=` — $ ${a.precio.toLocaleString("es-AR")} x ${a.cantidad} = $ ${(a.precio*a.cantidad).toLocaleString("es-AR")}
+`,t.forEach((a,u)=>{const l=[a.subtipo,a.terminacion].filter(Boolean).join(", ");o+=`${u+1}. ${a.nombre}`,l&&(o+=` (${l})`),o+=` — $ ${a.precio.toLocaleString("es-AR")} x ${a.cantidad} = $ ${(a.precio*a.cantidad).toLocaleString("es-AR")}
 `}),o+=`
- *Total: $ ${n.toLocaleString("es-AR")}*`,o}function ee(e){const t=Z(e),n=`https://wa.me/${L.NRO_WHATSAPP}?text=${encodeURIComponent(t)}`;F(),window.open(n,"_blank","noopener,noreferrer")}async function te(e){if(L.URL_SHEETS.includes("XXXX"))return console.warn("[Sheets] URL_SHEETS no configurada, saltando envío a Sheets"),{ok:!0,skipped:!0};const t=j(),n=M(),d={negocio:L.NOMBRE_NEGOCIO,timestamp:new Date().toISOString(),cliente:{nombre:e.nombre,telefono:e.telefono,direccion:e.direccion||"",comentarios:e.comentarios||""},items:t.map(o=>({nombre:o.nombre,subtipo:[o.subtipo,o.terminacion].filter(Boolean).join(", "),precio:o.precio,cantidad:o.cantidad,subtotal:o.precio*o.cantidad})),total:n};try{const o=await fetch(L.URL_SHEETS,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(d),keepalive:!0});return o.ok?(console.log("[Sheets] Pedido enviado correctamente"),{ok:!0}):(console.warn("[Sheets] Respuesta no OK:",o.status),{ok:!1,error:`HTTP ${o.status}`})}catch(o){return console.warn("[Sheets] Error de red:",o.message),{ok:!1,error:o.message}}}function oe(e){e.innerHTML=`
+ *Total: $ ${n.toLocaleString("es-AR")}*`,o}function ee(e){const t=Z(e),n=`https://wa.me/${L.NRO_WHATSAPP}?text=${encodeURIComponent(t)}`;F(),window.open(n,"_blank","noopener,noreferrer")}async function te(e){if(L.URL_SHEETS.includes("XXXX"))return console.warn("[Sheets] URL_SHEETS no configurada, saltando envío a Sheets"),{ok:!0,skipped:!0};const t=$(),n=M(),d={negocio:L.NOMBRE_NEGOCIO,timestamp:new Date().toISOString(),cliente:{nombre:e.nombre,telefono:e.telefono,direccion:e.direccion||"",comentarios:e.comentarios||""},items:t.map(o=>({nombre:o.nombre,subtipo:[o.subtipo,o.terminacion].filter(Boolean).join(", "),precio:o.precio,cantidad:o.cantidad,subtotal:o.precio*o.cantidad})),total:n};try{const o=await fetch(L.URL_SHEETS,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(d),keepalive:!0});return o.ok?(console.log("[Sheets] Pedido enviado correctamente"),{ok:!0}):(console.warn("[Sheets] Respuesta no OK:",o.status),{ok:!1,error:`HTTP ${o.status}`})}catch(o){return console.warn("[Sheets] Error de red:",o.message),{ok:!1,error:o.message}}}function oe(e){e.innerHTML=`
     <div id="checkout-overlay" class="fixed inset-0 z-[80] bg-black/60 opacity-0 pointer-events-none transition-opacity duration-300"></div>
     <div id="checkout-modal"
          class="fixed inset-0 z-[90] flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300"
@@ -471,21 +461,21 @@
         </form>
       </div>
     </div>
-  `;const t=e.querySelector("#checkout-overlay"),n=e.querySelector("#checkout-modal"),d=e.querySelector("#checkout-close"),o=e.querySelector("#checkout-form"),a=e.querySelector("#checkout-submit"),v=e.querySelector(".btn-text"),l=e.querySelector(".btn-loading");function g(){x(),t.classList.remove("opacity-0","pointer-events-none"),t.classList.add("opacity-100"),n.classList.remove("opacity-0","pointer-events-none"),n.querySelector("div").classList.remove("scale-95"),n.querySelector("div").classList.add("scale-100"),document.body.style.overflow="hidden",setTimeout(()=>{var s;return(s=n.querySelector("#nombre"))==null?void 0:s.focus()},100)}function r(){t.classList.add("opacity-0","pointer-events-none"),t.classList.remove("opacity-100"),n.classList.add("opacity-0","pointer-events-none"),n.querySelector("div").classList.add("scale-95"),n.querySelector("div").classList.remove("scale-100"),document.body.style.overflow="",o.reset(),f()}function x(){const s=j(),h=M(),b=e.querySelector("#order-summary"),$=e.querySelector("#checkout-total");if(s.length===0){b.innerHTML='<p class="text-navidad-oscuro/60 text-center">Carrito vacío</p>';return}b.innerHTML=s.map(y=>`
+  `;const t=e.querySelector("#checkout-overlay"),n=e.querySelector("#checkout-modal"),d=e.querySelector("#checkout-close"),o=e.querySelector("#checkout-form"),a=e.querySelector("#checkout-submit"),u=e.querySelector(".btn-text"),l=e.querySelector(".btn-loading");function b(){h(),t.classList.remove("opacity-0","pointer-events-none"),t.classList.add("opacity-100"),n.classList.remove("opacity-0","pointer-events-none"),n.querySelector("div").classList.remove("scale-95"),n.querySelector("div").classList.add("scale-100"),document.body.style.overflow="hidden",setTimeout(()=>{var i;return(i=n.querySelector("#nombre"))==null?void 0:i.focus()},100)}function r(){t.classList.add("opacity-0","pointer-events-none"),t.classList.remove("opacity-100"),n.classList.add("opacity-0","pointer-events-none"),n.querySelector("div").classList.add("scale-95"),n.querySelector("div").classList.remove("scale-100"),document.body.style.overflow="",o.reset(),p()}function h(){const i=$(),g=M(),v=e.querySelector("#order-summary"),E=e.querySelector("#checkout-total");if(i.length===0){v.innerHTML='<p class="text-navidad-oscuro/60 text-center">Carrito vacío</p>';return}v.innerHTML=i.map(w=>`
         <div class="flex items-center justify-between text-sm">
           <div class="flex items-center gap-2">
-            <img src="${y.imagen}" alt="" class="w-10 h-10 rounded-lg object-cover" />
+            <img src="${w.imagen}" alt="" class="w-10 h-10 rounded-lg object-cover" />
             <div>
-              <p class="font-medium text-navidad-oscuro truncate max-w-[160px]">${y.nombre}</p>
-              ${[y.subtipo,y.terminacion].filter(Boolean).length?`<p class="text-xs text-navidad-oscuro/50">${[y.subtipo,y.terminacion].filter(Boolean).join(" · ")}</p>`:""}
+              <p class="font-medium text-navidad-oscuro truncate max-w-[160px]">${w.nombre}</p>
+              ${[w.subtipo,w.terminacion].filter(Boolean).length?`<p class="text-xs text-navidad-oscuro/50">${[w.subtipo,w.terminacion].filter(Boolean).join(" · ")}</p>`:""}
             </div>
           </div>
           <div class="text-right">
-            <p class="font-bold text-navidad-verde">$ ${(y.precio*y.cantidad).toLocaleString("es-AR")}</p>
-            <p class="text-xs text-navidad-oscuro/50">x ${y.cantidad}</p>
+            <p class="font-bold text-navidad-verde">$ ${(w.precio*w.cantidad).toLocaleString("es-AR")}</p>
+            <p class="text-xs text-navidad-oscuro/50">x ${w.cantidad}</p>
           </div>
         </div>
-      `).join(""),$.textContent=`$ ${h.toLocaleString("es-AR")}`}function w(s,h){const b=e.querySelector(`#${s}`),$=e.querySelector(`#error-${s}`);b.classList.add("border-navidad-rojo","focus:border-navidad-rojo","focus:ring-navidad-rojo/20"),$.textContent=h,$.classList.remove("hidden")}function f(){e.querySelectorAll(".error-message").forEach(s=>s.classList.add("hidden")),e.querySelectorAll("input, textarea").forEach(s=>{s.classList.remove("border-navidad-rojo","focus:border-navidad-rojo","focus:ring-navidad-rojo/20")})}function p(s){f();let h=!0;s.nombre.trim()||(w("nombre","El nombre es obligatorio"),h=!1);const b=/^[\+]?[(]?[0-9]{1,3}[)]?[-\s\.]?[(]?[0-9]{1,3}[)]?[-\s\.]?[0-9]{4,6}$/;return(!s.telefono.trim()||!b.test(s.telefono.replace(/\s/g,"")))&&(w("telefono","Ingresá un teléfono válido (ej: +54 9 11 1234-5678)"),h=!1),h}async function c(s){s.preventDefault();const h=new FormData(o),b=Object.fromEntries(h);if(p(b)&&j().length!==0){a.disabled=!0,v.classList.add("hidden"),l.classList.remove("hidden");try{te(b).catch(()=>{}),ee(b)}finally{a.disabled=!1,v.classList.remove("hidden"),l.classList.add("hidden"),r()}}}d.addEventListener("click",r),t.addEventListener("click",r),o.addEventListener("submit",c),document.addEventListener("keydown",s=>{s.key==="Escape"&&!n.classList.contains("opacity-0")&&r()}),document.addEventListener("checkout:open",g)}const ae=document.querySelector("#app");ae.innerHTML=`
+      `).join(""),E.textContent=`$ ${g.toLocaleString("es-AR")}`}function x(i,g){const v=e.querySelector(`#${i}`),E=e.querySelector(`#error-${i}`);v.classList.add("border-navidad-rojo","focus:border-navidad-rojo","focus:ring-navidad-rojo/20"),E.textContent=g,E.classList.remove("hidden")}function p(){e.querySelectorAll(".error-message").forEach(i=>i.classList.add("hidden")),e.querySelectorAll("input, textarea").forEach(i=>{i.classList.remove("border-navidad-rojo","focus:border-navidad-rojo","focus:ring-navidad-rojo/20")})}function m(i){p();let g=!0;i.nombre.trim()||(x("nombre","El nombre es obligatorio"),g=!1);const v=/^[\+]?[(]?[0-9]{1,3}[)]?[-\s\.]?[(]?[0-9]{1,3}[)]?[-\s\.]?[0-9]{4,6}$/;return(!i.telefono.trim()||!v.test(i.telefono.replace(/\s/g,"")))&&(x("telefono","Ingresá un teléfono válido (ej: +54 9 11 1234-5678)"),g=!1),g}async function c(i){i.preventDefault();const g=new FormData(o),v=Object.fromEntries(g);if(m(v)&&$().length!==0){a.disabled=!0,u.classList.add("hidden"),l.classList.remove("hidden");try{te(v).catch(()=>{}),ee(v)}finally{a.disabled=!1,u.classList.remove("hidden"),l.classList.add("hidden"),r()}}}d.addEventListener("click",r),t.addEventListener("click",r),o.addEventListener("submit",c),document.addEventListener("keydown",i=>{i.key==="Escape"&&!n.classList.contains("opacity-0")&&r()}),document.addEventListener("checkout:open",b)}const ae=document.querySelector("#app");ae.innerHTML=`
   <div id="header"></div>
   <main id="main">
     <div id="hero"></div>
