@@ -3,8 +3,17 @@
     "slug": "brownie-arbol",
     "nombre": "Arboles Navideños de Brownie",
     "descripcion": "Brownies bien chocolatosos en forma de arbolitos navideños",
-    "precio": 5000,
-    "subtipos": [],
+    "precio": 8000,
+    "subtipos": [
+      {
+        "nombre": "6 unidades",
+        "precio": 8000
+      },
+      {
+        "nombre": "12 unidades",
+        "precio": 16000
+      }
+    ],
     "terminaciones": [],
     "imagenes": [
       "/products/brownie-arbol/1.jpg",
