@@ -27,27 +27,38 @@ function parseDataTxt(content) {
     descripcion: '',
     precio: 0,
     subtipos: [],
+    terminaciones: [],
   }
   let inSubtipos = false
+  let inTerminaciones = false
 
   for (const rawLine of lines) {
     const line = rawLine.trim()
     if (!line) {
       if (inSubtipos) inSubtipos = false
+      if (inTerminaciones) inTerminaciones = false
       continue
     }
 
     if (line.toLowerCase().startsWith('subtipos:')) {
       inSubtipos = true
+      inTerminaciones = false
       continue
     }
 
-    if (inSubtipos) {
+    if (line.toLowerCase().startsWith('terminaciones:')) {
+      inTerminaciones = true
+      inSubtipos = false
+      continue
+    }
+
+    if (inSubtipos || inTerminaciones) {
       const parts = line.split('|').map((p) => p.trim())
       if (parts.length >= 2) {
         const precio = parseInt(parts[1].replace(/\D/g, ''), 10)
         if (!isNaN(precio)) {
-          result.subtipos.push({ nombre: parts[0], precio })
+          if (inSubtipos) result.subtipos.push({ nombre: parts[0], precio })
+          else result.terminaciones.push({ nombre: parts[0], precio })
         }
       }
       continue
@@ -98,6 +109,7 @@ function scanProductFolder(slug) {
     descripcion: parsed.descripcion || '',
     precio: parsed.precio,
     subtipos: parsed.subtipos,
+    terminaciones: parsed.terminaciones,
     imagenes: images,
   }
 }
@@ -122,7 +134,7 @@ function main() {
   writeFileSync(MANIFEST_PATH, JSON.stringify(products, null, 2), 'utf-8')
   console.log(`✓ manifest.json generado con ${products.length} producto(s)`)
   for (const p of products) {
-    console.log(`  - ${p.slug} (${p.imagenes.length} img, ${p.subtipos.length} subtipos)`)
+    console.log(`  - ${p.slug} (${p.imagenes.length} img, ${p.subtipos.length} subtipos, ${p.terminaciones.length} terminaciones)`)
   }
 }
 

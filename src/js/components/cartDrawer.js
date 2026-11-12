@@ -94,7 +94,7 @@ export function renderCartDrawer(container) {
           <img src="${item.imagen}" alt="${item.nombre}" class="w-16 h-16 rounded-lg object-cover flex-shrink-0" />
           <div class="flex-grow min-w-0">
             <h4 class="font-semibold text-sm text-navidad-oscuro truncate">${item.nombre}</h4>
-            ${item.subtipo ? `<p class="text-xs text-navidad-oscuro/50">${item.subtipo}</p>` : ''}
+            ${[item.subtipo, item.terminacion].filter(Boolean).length ? `<p class="text-xs text-navidad-oscuro/50">${[item.subtipo, item.terminacion].filter(Boolean).join(' · ')}</p>` : ''}
             <p class="text-sm font-bold text-navidad-verde mt-1">$ ${item.precio.toLocaleString('es-AR')}</p>
             <div class="flex items-center gap-2 mt-2">
               <button data-dec="${item.id}" class="w-7 h-7 rounded-full bg-navidad-oscuro/10 hover:bg-navidad-oscuro/20 flex items-center justify-center text-navidad-oscuro font-bold transition-colors" aria-label="Disminuir cantidad">−</button>

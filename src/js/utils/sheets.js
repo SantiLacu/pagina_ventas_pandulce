@@ -21,7 +21,9 @@ export async function sendToSheets(formData) {
     },
     items: cart.map((item) => ({
       nombre: item.nombre,
-      subtipo: item.subtipo || '',
+      // Se combina subtipo + terminación (glaseado/bañado) para que llegue
+      // así a Google Sheets sin tener que redesplegar el Apps Script.
+      subtipo: [item.subtipo, item.terminacion].filter(Boolean).join(', '),
       precio: item.precio,
       cantidad: item.cantidad,
       subtotal: item.precio * item.cantidad,

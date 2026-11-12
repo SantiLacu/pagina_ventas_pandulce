@@ -39,8 +39,8 @@ export function getCartTotal() {
   return cart.reduce((sum, item) => sum + item.precio * item.cantidad, 0)
 }
 
-export function addToCart({ slug, nombre, subtipoNombre, precio, imagen }) {
-  const id = subtipoNombre ? `${slug}::${subtipoNombre}` : slug
+export function addToCart({ slug, nombre, subtipoNombre, terminacionNombre, precio, imagen }) {
+  const id = [slug, subtipoNombre, terminacionNombre].filter(Boolean).join('::')
   const existing = cart.find((item) => item.id === id)
 
   if (existing) {
@@ -51,6 +51,7 @@ export function addToCart({ slug, nombre, subtipoNombre, precio, imagen }) {
       slug,
       nombre,
       subtipo: subtipoNombre || null,
+      terminacion: terminacionNombre || null,
       precio,
       imagen,
       cantidad: 1,

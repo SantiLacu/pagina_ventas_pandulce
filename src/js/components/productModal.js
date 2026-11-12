@@ -3,14 +3,17 @@ import { addToCart } from '../data/cartStore.js'
 export function renderProductModal(product) {
   if (!product) return ''
 
-  const { imagenes, nombre, descripcion, subtipos, precio } = product
+  const { imagenes, nombre, descripcion, subtipos, terminaciones, precio } = product
 
   const hasSubtipos = subtipos && subtipos.length > 0
-  const precioMostrar = hasSubtipos ? subtipos[0].precio : precio
+  const hasTerminaciones = terminaciones && terminaciones.length > 0
+  const baseInicial = hasSubtipos ? subtipos[0].precio : precio
+  const extraInicial = hasTerminaciones ? terminaciones[0].precio : 0
+  const precioMostrar = baseInicial + extraInicial
 
   return `
     <div id="product-modal" class="fixed inset-0 bg-navidad-oscuro/80 backdrop-blur z-50 hidden items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-      <div class="bg-white rounded-2xl w-full max-w-2xl max-h-[95vh] overflow-hidden flex flex-col transform transition-transform duration-300" style="transform: scale(0.9);">
+      <div class="bg-white rounded-2xl w-full max-w-md max-h-[95vh] overflow-hidden flex flex-col transform transition-transform duration-300" style="transform: scale(0.9);">
         <!-- Header del modal -->
         <div class="p-6 border-b border-navidad-crema relative">
           <h2 id="modal-title" class="font-display text-2xl font-bold text-navidad-rojo">${nombre}</h2>
@@ -25,11 +28,11 @@ export function renderProductModal(product) {
         <div class="flex-1 overflow-y-auto flex flex-col">
           <!-- Slider de imágenes - altura fija -->
           <div class="relative flex-shrink-0">
-            <div class="relative w-full aspect-square max-h-[60vh]">
+            <div class="relative w-full aspect-[4/5] max-h-[65vh] bg-navidad-crema">
               <img id="modal-main-img"
                    src="${imagenes[0]}"
                    alt="${nombre} - imagen 1"
-                   class="w-full h-full object-cover rounded-t-2xl"
+                   class="w-full h-full object-contain rounded-t-2xl"
                    loading="lazy"
                    decoding="async" />
 
@@ -85,6 +88,22 @@ export function renderProductModal(product) {
                 </div>
               </div>
             ` : ''}
+
+            ${hasTerminaciones ? `
+              <div>
+                <p class="text-xs font-semibold text-navidad-oscuro/60 uppercase tracking-wide">Terminación:</p>
+                <div class="flex flex-wrap gap-2 mt-2">
+                  ${terminaciones.map((t, i) => `
+                    <button data-terminacion="${t.nombre}" data-extra="${t.precio}"
+                            class="terminacion-btn px-3 py-1.5 rounded-full text-xs font-medium border-2 transition-all ${
+                              i === 0 ? 'border-navidad-rojo bg-navidad-rojo text-white' : 'border-navidad-oscuro/20 text-navidad-oscuro/70 hover:border-navidad-rojo/50'
+                            }">
+                      ${t.nombre}${t.precio > 0 ? ` (+$ ${t.precio.toLocaleString('es-AR')})` : ''}
+                    </button>
+                  `).join('')}
+                </div>
+              </div>
+            ` : ''}
           </div>
         </div>
 
@@ -116,8 +135,18 @@ export function initModalListeners(product) {
   const modalPrice = document.getElementById('modal-price')
   const modalAddCart = document.getElementById('modal-add-cart')
   let currentImgIndex = 0
-  let selectedSubtipo = null
-  let selectedPrecio = product.precio
+  const hasSubtipos = product.subtipos && product.subtipos.length > 0
+  const hasTerminaciones = product.terminaciones && product.terminaciones.length > 0
+  let selectedSubtipo = hasSubtipos ? product.subtipos[0].nombre : null
+  let selectedBasePrecio = hasSubtipos ? product.subtipos[0].precio : product.precio
+  let selectedTerminacion = hasTerminaciones ? product.terminaciones[0].nombre : null
+  let selectedTerminacionExtra = hasTerminaciones ? product.terminaciones[0].precio : 0
+
+  const actualizarPrecio = () => {
+    if (modalPrice) {
+      modalPrice.textContent = `$ ${(selectedBasePrecio + selectedTerminacionExtra).toLocaleString('es-AR')}`
+    }
+  }
 
   // Cerrar modal con botón X
   modalClose.addEventListener('click', closeModal)
@@ -181,11 +210,25 @@ export function initModalListeners(product) {
   subtipoBtns.forEach((btn) => {
     btn.addEventListener('click', () => {
       selectedSubtipo = btn.dataset.subtipo
-      selectedPrecio = parseInt(btn.dataset.precio, 10)
-      if (modalPrice) {
-        modalPrice.textContent = `$ ${selectedPrecio.toLocaleString('es-AR')}`
-      }
+      selectedBasePrecio = parseInt(btn.dataset.precio, 10)
+      actualizarPrecio()
       subtipoBtns.forEach((b) => {
+        b.classList.remove('border-navidad-rojo', 'bg-navidad-rojo', 'text-white')
+        b.classList.add('border-navidad-oscuro/20', 'text-navidad-oscuro/70')
+      })
+      btn.classList.add('border-navidad-rojo', 'bg-navidad-rojo', 'text-white')
+      btn.classList.remove('border-navidad-oscuro/20', 'text-navidad-oscuro/70')
+    })
+  })
+
+  // Selector de terminación (glaseado/bañado)
+  const terminacionBtns = modal.querySelectorAll('.terminacion-btn')
+  terminacionBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      selectedTerminacion = btn.dataset.terminacion
+      selectedTerminacionExtra = parseInt(btn.dataset.extra, 10)
+      actualizarPrecio()
+      terminacionBtns.forEach((b) => {
         b.classList.remove('border-navidad-rojo', 'bg-navidad-rojo', 'text-white')
         b.classList.add('border-navidad-oscuro/20', 'text-navidad-oscuro/70')
       })
@@ -200,7 +243,8 @@ export function initModalListeners(product) {
       slug: product.slug,
       nombre: product.nombre,
       subtipoNombre: selectedSubtipo,
-      precio: selectedPrecio,
+      terminacionNombre: selectedTerminacion,
+      precio: selectedBasePrecio + selectedTerminacionExtra,
       imagen: product.imagenes[currentImgIndex],
     })
     closeModal()

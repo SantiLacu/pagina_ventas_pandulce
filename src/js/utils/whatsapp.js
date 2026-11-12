@@ -14,8 +14,9 @@ export function buildWhatsAppMessage(formData) {
   mensaje += `\n *Detalle del pedido:*\n`
 
   cart.forEach((item, i) => {
+    const detalle = [item.subtipo, item.terminacion].filter(Boolean).join(', ')
     mensaje += `${i + 1}. ${item.nombre}`
-    if (item.subtipo) mensaje += ` (${item.subtipo})`
+    if (detalle) mensaje += ` (${detalle})`
     mensaje += ` — $ ${item.precio.toLocaleString('es-AR')} x ${item.cantidad} = $ ${(item.precio * item.cantidad).toLocaleString('es-AR')}\n`
   })
 

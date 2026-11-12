@@ -4,4 +4,7 @@ precio: 30000
 subtipos:
 Chips 1/2 kg | 14000
 Chips 1 kg | 28000
+terminaciones:
+Glaseado | 0
+Bañado | 2000
 

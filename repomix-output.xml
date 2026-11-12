@@ -1,5 +1,4 @@
 This file is a merged representation of the entire codebase, combined into a single document by Repomix.
-The content has been processed where content has been compressed (code blocks are separated by ⋮---- delimiter).
 
 <file_summary>
 This section contains a summary of this file.
@@ -35,7 +34,6 @@ The content is organized as follows:
 - Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
 - Files matching patterns in .gitignore are excluded
 - Files matching default ignore patterns are excluded
-- Content has been compressed - code blocks are separated by ⋮---- delimiter
 - Files are sorted by Git change count (files with more changes are at the bottom)
 </notes>
 
@@ -55,35 +53,51 @@ public/
       5.jpg
       6.jpg
       data.txt
-    galletas-navideñas/
-      1.jpg
-      2.jpg
-      3.jpg
+    mantecol/
       data.txt
-    pan-dulces/
-      1.jpg
-      2.jpg
-      3.jpg
-      4.jpg
-      5.jpg
-      6.jpg
-      7.jpg
-      8.jpg
+      mantecol.jpeg
+      mantecol1.jpeg
+      mantecol2.jpeg
+      mantecol3.jpeg
+      mantecol4.jpeg
+    pan-dulces1/
+      1.jpeg
+      2.jpeg
+      3.jpeg
+      4.jpeg
+      5.jpeg
+      6.jpeg
+      7.jpeg
+      8.jpeg
+      data.txt
+    pan-dulces2/
+      1.jpeg
+      2.jpeg
+      3.jpeg
+      4.jpeg
+      5.jpeg
+      6.jpeg
+      7.jpeg
       data.txt
     manifest.json
     README.md
   README.md
 scripts/
+  fix-images.js
   README.md
   sync-products.js
 src/
   assets/
     hero/
       Fondo1.jpg
-      Fondo2.jpg
-      Fondo3.jpg
-      Fondo4.jpg
-      Fondo5.jpg
+      Fondo2.jpeg
+      Fondo3.jpeg
+      Fondo4.jpeg
+      Fondo5.jpeg
+      Fondo6.jpeg
+      Fondo7.jpeg
+      Fondo8.jpeg
+      Fondo9.jpeg
     README.md
   js/
     components/
@@ -109,6 +123,7 @@ src/
   main.js
   README.md
   style.css
+.gitignore
 CLAUDE.md
 index.html
 netlify.toml
@@ -122,24 +137,126 @@ vite.config.js
 <files>
 This section contains the contents of the repository's files.
 
-<file path="public/products/galletas-navideñas/data.txt">
-nombre: Galletas Navideña
-descripcion: Galletitas de vainilla de muñequitos y Papá Noel
-precio: 5000
-subtipos:
+<file path="scripts/fix-images.js">
+// ============================================
+// fix-images.js — Adapta las imágenes a los
+// contenedores donde se muestran, sin recortarlas.
+// ============================================
+// Contenedores del sitio:
+//   - Tarjeta de producto, modal, thumbnails,
+//     carrito y checkout: todos cuadrados
+//     (aspect-square + object-cover)  -> objetivo 1:1
+//   - Hero (pantalla completa):        -> objetivo 16:9
+// Estrategia:
+//   - Productos: "contain" sobre fondo navidad-crema
+//     (#FFFBF0, igual que el fondo de las tarjetas).
+//   - Hero: "contain" sobre una copia de la misma
+//     imagen ampliada, desenfocada y oscurecida.
+// Las imágenes originales se respaldan una sola vez
+// en .backup-imagenes/ (no se commitea).
+// ============================================
+import { execFileSync } from 'node:child_process'
+import {
+  readdirSync,
+  mkdirSync,
+  copyFileSync,
+  existsSync,
+  renameSync,
+} from 'node:fs'
+import { join, extname, dirname, relative } from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
+const BACKUP_DIR = join(ROOT, '.backup-imagenes')
+
+const IMAGE_EXT = new Set(['.jpg', '.jpeg', '.png', '.webp', '.avif'])
+
+const CARMA = '#FFFBF0' // navidad-crema (fondo de tarjetas)
+
+/** Lista recursiva de archivos de imagen bajo `dir`. */
+function listImages(dir) {
+  if (!existsSync(dir)) return []
+  return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+    const full = join(dir, entry.name)
+    if (entry.isDirectory()) return listImages(full)
+    return IMAGE_EXT.has(extname(entry.name).toLowerCase()) ? [full] : []
+  })
+}
+
+/** Respalda el archivo una sola vez, preservando la ruta relativa. */
+function backupOnce(file) {
+  const dest = join(BACKUP_DIR, relative(ROOT, file))
+  if (existsSync(dest)) return
+  mkdirSync(dirname(dest), { recursive: true })
+  copyFileSync(file, dest)
+}
+
+/** Ejecuta magick mogrify sobre el archivo y lo reemplaza in-place. */
+function runMagick(args) {
+  execFileSync('magick', args, { stdio: 'inherit' })
+}
+
+/** Productos: contain + padding crema hasta 1200x1200. */
+function fixProductImage(file) {
+  backupOnce(file)
+  const tmp = `${file}.tmp${extname(file)}`
+  runMagick([
+    file,
+    '-resize', '1200x1200',
+    '-background', CARMA,
+    '-gravity', 'center',
+    '-extent', '1200x1200',
+    tmp,
+  ])
+  renameSync(tmp, file)
+}
+
+/** Hero: contain sobre copia desenfocada de la misma imagen, 1920x1080. */
+function fixHeroImage(file) {
+  backupOnce(file)
+  const tmp = `${file}.tmp${extname(file)}`
+  runMagick([
+    file,
+    '(', '+clone',
+    '-resize', '1920x1080^', '-gravity', 'center', '-extent', '1920x1080',
+    '-blur', '0x30', '-modulate', '60,80',
+    ')',
+    '(', '-clone', '0', '-resize', '1920x1080', ')',
+    '-delete', '0',
+    '-gravity', 'center',
+    '-composite',
+    tmp,
+  ])
+  renameSync(tmp, file)
+}
+
+function main() {
+  const productsDir = join(ROOT, 'public', 'products')
+  const heroDir = join(ROOT, 'src', 'assets', 'hero')
+
+  const productImages = listImages(productsDir)
+  const heroImages = listImages(heroDir)
+
+  console.log(`Productos (→ 1200x1200, fondo ${CARMA}): ${productImages.length}`)
+  for (const file of productImages) {
+    fixProductImage(file)
+    console.log(`  ✓ ${relative(ROOT, file)}`)
+  }
+
+  console.log(`Hero (→ 1920x1080, fondo difuminado): ${heroImages.length}`)
+  for (const file of heroImages) {
+    fixHeroImage(file)
+    console.log(`  ✓ ${relative(ROOT, file)}`)
+  }
+
+  console.log('\nListo. Originales respaldados en .backup-imagenes/')
+}
+
+main()
 </file>
 
-<file path="CLAUDE.md">
-# Convenciones del Proyecto
-
-## Comandos Principales
-- Compilación/Ejecución: `npm run dev`
-- Tests: `rtk npm test`
-
-## Reglas de Arquitectura
-- Usar JS, HTML 5 y CSS estricto.
-- Mantener funciones puras y archivos modulares.
-- Por cada directorio que contenga archivos de codigo, hay un .MD que explica el contenido de cada archivo de forma resumida para no tener que leer cada archivo para saber si contiene lo que se busca, simepre se lee primero ese archivo.
+<file path=".gitignore">
+.backup-imagenes/
 </file>
 
 <file path="apps-script/README.md">
@@ -169,15 +286,13 @@ precio: 5000
 subtipos:
 </file>
 
-<file path="public/products/pan-dulces/data.txt">
-nombre: Pan Dulce
-descripcion: Pan Dulces caseros hechos con mucho amor y sabor.
-precio: 30000
+<file path="public/products/mantecol/data.txt">
+nombre: Mantecol
+descripcion: Mantecol casero hecho con maní y miel pura
+precio: 21000
 subtipos:
-Chips 1/2 kg | 30000
-Frutos Secos 1/2 kg | 40000
-Chips 1 kg | 40000
-Frutos Secos 1 kg | 45000
+1/2 kg | 10000
+1 kg | 21000
 </file>
 
 <file path="public/products/README.md">
@@ -211,10 +326,14 @@ subtipos:
 Porción individual | 15000
 Torta entera 1kg | 75000
 Caja x6 porciones | 85000
+terminaciones:
+Glaseado | 0
+Bañado | 2000
 ```
 
 - `precio` es el precio base (se usa si no hay subtipos).
 - Tras `subtipos:`, cada línea es `nombre del subtipo | precio`.
+- Tras `terminaciones:` (opcional), cada línea es `nombre de la terminación | adicional`. El adicional se **suma** al precio del subtipo seleccionado. La primera opción es la que viene seleccionada por defecto (usar `Glaseado | 0` como primera). Usado en los pan dulces: `Bañado` suma $2000.
 - Las fotos se ordenan numéricamente por nombre de archivo.
 
 ## Cómo agregar un producto
@@ -253,23 +372,158 @@ Scripts de utilidad que NO son parte de la app en runtime. Se ejecutan manualmen
 | Archivo | Función |
 |---|---|
 | `sync-products.js` | Escanea `public/products/*/`, parsea cada `data.txt`, lista las fotos y genera `public/products/manifest.json`. Ejecutar con `npm run sync` cada vez que se agregue/modifique un producto. |
+| `fix-images.js` | Adapta las imágenes a los contenedores donde se muestran (sin recortarlas): productos → `1200x1200` con fondo crema (`#FFFBF0`); hero → `1920x1080` con la misma imagen desenfocada de fondo. Respalda los originales en `.backup-imagenes/` (no commitear). Ejecutar con `npm run fix:images`. Requiere ImageMagick (`magick`). |
 
 ## Cómo funciona `sync-products.js`
 1. Lee todas las carpetas dentro de `public/products/`.
 2. Por cada carpeta:
-   - Lee `data.txt` y parsea `nombre`, `descripcion`, `precio`, `subtipos`.
+   - Lee `data.txt` y parsea `nombre`, `descripcion`, `precio`, `subtipos` y `terminaciones` (opcional; adicional que se suma al precio del subtipo, ej: `Bañado | 2000`).
    - Lista archivos de imagen (`.jpg`, `.jpeg`, `.png`, `.webp`, `.avif`) y los ordena numéricamente.
 3. Escribe el array resultante en `public/products/manifest.json`.
 </file>
 
 <file path="scripts/sync-products.js">
-function naturalCompare(a, b)
-⋮----
-function parseDataTxt(content)
-⋮----
-function scanProductFolder(slug)
-⋮----
-function main()
+import { readdirSync, readFileSync, writeFileSync, existsSync, statSync } from 'node:fs'
+import { join } from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { dirname } from 'node:path'
+
+const __dirname = dirname(fileURLToPath(import.meta.url))
+const PRODUCTS_DIR = join(__dirname, '..', 'public', 'products')
+const MANIFEST_PATH = join(PRODUCTS_DIR, 'manifest.json')
+const IMG_EXTENSIONS = /\.(jpg|jpeg|png|webp|avif|gif|svg)$/i
+
+function naturalCompare(a, b) {
+  const ax = [], bx = []
+  a.replace(/(\d+)|(\D+)/g, (_, $1, $2) => ax.push([$1 || Infinity, $2 || '']))
+  b.replace(/(\d+)|(\D+)/g, (_, $1, $2) => bx.push([$1 || Infinity, $2 || '']))
+  while (ax.length && bx.length) {
+    const an = ax.shift(), bn = bx.shift()
+    const nn = (an[0] - bn[0]) || an[1].localeCompare(bn[1])
+    if (nn) return nn
+  }
+  return ax.length - bx.length
+}
+
+function parseDataTxt(content) {
+  const lines = content.split(/\r?\n/)
+  const result = {
+    nombre: '',
+    descripcion: '',
+    precio: 0,
+    subtipos: [],
+    terminaciones: [],
+  }
+  let inSubtipos = false
+  let inTerminaciones = false
+
+  for (const rawLine of lines) {
+    const line = rawLine.trim()
+    if (!line) {
+      if (inSubtipos) inSubtipos = false
+      if (inTerminaciones) inTerminaciones = false
+      continue
+    }
+
+    if (line.toLowerCase().startsWith('subtipos:')) {
+      inSubtipos = true
+      inTerminaciones = false
+      continue
+    }
+
+    if (line.toLowerCase().startsWith('terminaciones:')) {
+      inTerminaciones = true
+      inSubtipos = false
+      continue
+    }
+
+    if (inSubtipos || inTerminaciones) {
+      const parts = line.split('|').map((p) => p.trim())
+      if (parts.length >= 2) {
+        const precio = parseInt(parts[1].replace(/\D/g, ''), 10)
+        if (!isNaN(precio)) {
+          if (inSubtipos) result.subtipos.push({ nombre: parts[0], precio })
+          else result.terminaciones.push({ nombre: parts[0], precio })
+        }
+      }
+      continue
+    }
+
+    const colonIdx = line.indexOf(':')
+    if (colonIdx === -1) continue
+
+    const key = line.slice(0, colonIdx).trim().toLowerCase()
+    const value = line.slice(colonIdx + 1).trim()
+
+    if (key === 'nombre') result.nombre = value
+    else if (key === 'descripcion') result.descripcion = value
+    else if (key === 'precio') {
+      const n = parseInt(value.replace(/\D/g, ''), 10)
+      if (!isNaN(n)) result.precio = n
+    }
+  }
+
+  return result
+}
+
+function scanProductFolder(slug) {
+  const folder = join(PRODUCTS_DIR, slug)
+  const dataPath = join(folder, 'data.txt')
+
+  if (!existsSync(dataPath)) {
+    console.warn(`[skip] ${slug}: falta data.txt`)
+    return null
+  }
+
+  const dataContent = readFileSync(dataPath, 'utf-8')
+  const parsed = parseDataTxt(dataContent)
+
+  const allFiles = readdirSync(folder)
+  const images = allFiles
+    .filter((f) => IMG_EXTENSIONS.test(f))
+    .sort(naturalCompare)
+    .map((f) => `/products/${slug}/${f}`)
+
+  if (images.length === 0) {
+    console.warn(`[warn] ${slug}: no tiene imágenes`)
+  }
+
+  return {
+    slug,
+    nombre: parsed.nombre || slug,
+    descripcion: parsed.descripcion || '',
+    precio: parsed.precio,
+    subtipos: parsed.subtipos,
+    terminaciones: parsed.terminaciones,
+    imagenes: images,
+  }
+}
+
+function main() {
+  if (!existsSync(PRODUCTS_DIR)) {
+    console.error(`No existe ${PRODUCTS_DIR}`)
+    process.exit(1)
+  }
+
+  const entries = readdirSync(PRODUCTS_DIR, { withFileTypes: true })
+  const productFolders = entries
+    .filter((e) => e.isDirectory())
+    .map((e) => e.name)
+
+  const products = []
+  for (const slug of productFolders) {
+    const product = scanProductFolder(slug)
+    if (product) products.push(product)
+  }
+
+  writeFileSync(MANIFEST_PATH, JSON.stringify(products, null, 2), 'utf-8')
+  console.log(`✓ manifest.json generado con ${products.length} producto(s)`)
+  for (const p of products) {
+    console.log(`  - ${p.slug} (${p.imagenes.length} img, ${p.subtipos.length} subtipos, ${p.terminaciones.length} terminaciones)`)
+  }
+}
+
+main()
 </file>
 
 <file path="src/assets/README.md">
@@ -285,134 +539,713 @@ Recursos estáticos que Vite procesa y optimiza en build (compresión, hash en n
 </file>
 
 <file path="src/js/components/cartDrawer.js">
-export function renderCartDrawer(container)
-⋮----
-function open()
-⋮----
-function close()
-⋮----
-function render()
+import { getCart, getCartTotal, getCartCount, updateQty, removeFromCart, subscribe } from '../data/cartStore.js'
+
+export function renderCartDrawer(container) {
+  container.innerHTML = `
+    <div id="cart-overlay" class="fixed inset-0 z-[60] bg-black/50 opacity-0 pointer-events-none transition-opacity duration-300"></div>
+    <aside id="cart-drawer"
+           class="fixed top-0 right-0 z-[70] h-full w-full max-w-md bg-white shadow-2xl transform translate-x-full transition-transform duration-300 flex flex-col"
+           role="dialog"
+           aria-label="Carrito de compras"
+           aria-hidden="true">
+      <div class="flex items-center justify-between p-4 border-b border-navidad-oscuro/10 bg-navidad-rojo text-white">
+        <h2 class="font-display text-xl font-bold flex items-center gap-2">
+          🛒 Tu Carrito
+          <span id="cart-count" class="text-sm bg-navidad-dorado text-navidad-oscuro rounded-full px-2 py-0.5 font-bold">0</span>
+        </h2>
+        <button id="cart-close" class="p-2 rounded-lg hover:bg-white/10 transition-colors" aria-label="Cerrar carrito">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <div id="cart-items" class="flex-grow overflow-y-auto p-4 space-y-3"></div>
+
+      <div id="cart-footer" class="border-t border-navidad-oscuro/10 p-4 bg-navidad-crema">
+        <div class="flex items-center justify-between mb-4">
+          <span class="font-display text-lg font-bold text-navidad-oscuro">Total:</span>
+          <span id="cart-total" class="font-display text-2xl font-bold text-navidad-verde">$ 0</span>
+        </div>
+        <button id="cart-checkout" class="btn-primary w-full">
+          Finalizar compra
+        </button>
+      </div>
+    </aside>
+  `
+
+  const overlay = container.querySelector('#cart-overlay')
+  const drawer = container.querySelector('#cart-drawer')
+  const closeBtn = container.querySelector('#cart-close')
+  const itemsEl = container.querySelector('#cart-items')
+  const countEl = container.querySelector('#cart-count')
+  const totalEl = container.querySelector('#cart-total')
+  const checkoutBtn = container.querySelector('#cart-checkout')
+
+  function open() {
+    overlay.classList.remove('opacity-0', 'pointer-events-none')
+    overlay.classList.add('opacity-100')
+    drawer.classList.remove('translate-x-full')
+    drawer.setAttribute('aria-hidden', 'false')
+    document.body.style.overflow = 'hidden'
+  }
+
+  function close() {
+    overlay.classList.add('opacity-0', 'pointer-events-none')
+    overlay.classList.remove('opacity-100')
+    drawer.classList.add('translate-x-full')
+    drawer.setAttribute('aria-hidden', 'true')
+    document.body.style.overflow = ''
+  }
+
+  function render() {
+    const cart = getCart()
+    const total = getCartTotal()
+    const count = getCartCount()
+
+    countEl.textContent = count
+    totalEl.textContent = `$ ${total.toLocaleString('es-AR')}`
+
+    if (cart.length === 0) {
+      itemsEl.innerHTML = `
+        <div class="flex flex-col items-center justify-center h-full text-center py-12">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-20 w-20 text-navidad-oscuro/20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+          </svg>
+          <p class="mt-4 text-navidad-oscuro/60 font-medium">Tu carrito está vacío</p>
+          <p class="mt-1 text-sm text-navidad-oscuro/40">Agregá productos desde el catálogo</p>
+          <button id="cart-empty-close" class="mt-6 btn-gold">Ver catálogo</button>
+        </div>
+      `
+      itemsEl.querySelector('#cart-empty-close').addEventListener('click', () => {
+        close()
+        document.querySelector('#catalogo')?.scrollIntoView({ behavior: 'smooth' })
+      })
+      checkoutBtn.classList.add('opacity-50', 'pointer-events-none')
+      return
+    }
+
+    checkoutBtn.classList.remove('opacity-50', 'pointer-events-none')
+
+    itemsEl.innerHTML = cart
+      .map(
+        (item) => `
+        <div class="flex gap-3 p-3 bg-white rounded-xl border border-navidad-oscuro/10">
+          <img src="${item.imagen}" alt="${item.nombre}" class="w-16 h-16 rounded-lg object-cover flex-shrink-0" />
+          <div class="flex-grow min-w-0">
+            <h4 class="font-semibold text-sm text-navidad-oscuro truncate">${item.nombre}</h4>
+            ${[item.subtipo, item.terminacion].filter(Boolean).length ? `<p class="text-xs text-navidad-oscuro/50">${[item.subtipo, item.terminacion].filter(Boolean).join(' · ')}</p>` : ''}
+            <p class="text-sm font-bold text-navidad-verde mt-1">$ ${item.precio.toLocaleString('es-AR')}</p>
+            <div class="flex items-center gap-2 mt-2">
+              <button data-dec="${item.id}" class="w-7 h-7 rounded-full bg-navidad-oscuro/10 hover:bg-navidad-oscuro/20 flex items-center justify-center text-navidad-oscuro font-bold transition-colors" aria-label="Disminuir cantidad">−</button>
+              <span class="text-sm font-medium w-6 text-center">${item.cantidad}</span>
+              <button data-inc="${item.id}" class="w-7 h-7 rounded-full bg-navidad-rojo text-white hover:bg-navidad-rojoClaro flex items-center justify-center font-bold transition-colors" aria-label="Aumentar cantidad">+</button>
+              <button data-del="${item.id}" class="ml-auto text-navidad-rojo/60 hover:text-navidad-rojo transition-colors" aria-label="Eliminar item">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      `
+      )
+      .join('')
+
+    itemsEl.querySelectorAll('[data-inc]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.inc
+        const item = getCart().find((i) => i.id === id)
+        if (item) updateQty(id, item.cantidad + 1)
+      })
+    })
+
+    itemsEl.querySelectorAll('[data-dec]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.dec
+        const item = getCart().find((i) => i.id === id)
+        if (item) updateQty(id, item.cantidad - 1)
+      })
+    })
+
+    itemsEl.querySelectorAll('[data-del]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        removeFromCart(btn.dataset.del)
+      })
+    })
+  }
+
+  subscribe(render)
+
+  closeBtn.addEventListener('click', close)
+  overlay.addEventListener('click', close)
+
+  checkoutBtn.addEventListener('click', () => {
+    close()
+    document.dispatchEvent(new CustomEvent('checkout:open'))
+  })
+
+  document.addEventListener('cart:open', open)
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !drawer.classList.contains('translate-x-full')) {
+      close()
+    }
+  })
+
+  render()
+}
 </file>
 
 <file path="src/js/components/catalog.js">
-export async function renderCatalog(container)
+import { getProducts } from '../data/productService.js'
+import { renderProductCard } from './productCard.js'
+
+export async function renderCatalog(container) {
+  container.className = 'container-page py-12'
+
+  container.innerHTML = `
+    <div class="flex items-center justify-between mb-6">
+      <h2 id="catalog-title" class="font-display text-3xl font-bold text-navidad-rojo">
+        🎄 Cargando productos...
+      </h2>
+    </div>
+    <div id="catalogo" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+    <div id="catalog-empty" class="hidden text-center py-16 text-navidad-oscuro/60">
+      <p class="text-lg">No hay productos disponibles en este momento.</p>
+    </div>
+  `
+
+  const products = await getProducts()
+  const grid = container.querySelector('#catalogo')
+  const title = container.querySelector('#catalog-title')
+  const empty = container.querySelector('#catalog-empty')
+
+  if (products.length === 0) {
+    title.textContent = 'Catálogo'
+    grid.classList.add('hidden')
+    empty.classList.remove('hidden')
+    return
+  }
+
+  title.textContent = `🎄 Catálogo (${products.length} productos)`
+
+  const frag = document.createDocumentFragment()
+  for (const product of products) {
+    frag.appendChild(renderProductCard(product))
+  }
+  grid.appendChild(frag)
+}
 </file>
 
 <file path="src/js/components/checkoutModal.js">
-export function renderCheckoutModal(container)
-⋮----
-function open()
-⋮----
-function close()
-⋮----
-function renderSummary()
-⋮----
-function showError(field, message)
-⋮----
-function clearErrors()
-⋮----
-function validateForm(data)
-⋮----
-async function handleSubmit(e)
-⋮----
-// 1. Enviar a Google Sheets (no bloqueante)
-sendToSheets(data).catch(() => {}) // fire & forget, log en consola
-⋮----
-// 2. Abrir WhatsApp (siempre)
+import { sendToWhatsApp } from '../utils/whatsapp.js'
+import { sendToSheets } from '../utils/sheets.js'
+import { getCart, getCartTotal } from '../data/cartStore.js'
+
+export function renderCheckoutModal(container) {
+  container.innerHTML = `
+    <div id="checkout-overlay" class="fixed inset-0 z-[80] bg-black/60 opacity-0 pointer-events-none transition-opacity duration-300"></div>
+    <div id="checkout-modal"
+         class="fixed inset-0 z-[90] flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300"
+         role="dialog"
+         aria-modal="true"
+         aria-labelledby="checkout-title">
+      <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto transform scale-95 transition-transform duration-300">
+        <div class="p-6 border-b border-navidad-oscuro/10 bg-navidad-rojo text-white rounded-t-2xl flex items-center justify-between">
+          <h2 id="checkout-title" class="font-display text-xl font-bold flex items-center gap-2">
+            🎄 Finalizar compra
+          </h2>
+          <button id="checkout-close" class="p-2 rounded-lg hover:bg-white/10 transition-colors" aria-label="Cerrar">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <form id="checkout-form" class="p-6 space-y-4" novalidate>
+          <div id="order-summary" class="bg-navidad-crema rounded-xl p-4 space-y-2"></div>
+
+          <div>
+            <label for="nombre" class="block text-sm font-medium text-navidad-oscuro mb-1">Nombre completo *</label>
+            <input type="text" id="nombre" name="nombre" required autocomplete="name"
+                   class="w-full px-4 py-3 rounded-xl border border-navidad-oscuro/20 focus:border-navidad-rojo focus:ring-2 focus:ring-navidad-rojo/20 outline-none transition-all" />
+            <p class="error-message mt-1 text-sm text-navidad-rojo hidden" id="error-nombre">El nombre es obligatorio</p>
+          </div>
+
+          <div>
+            <label for="telefono" class="block text-sm font-medium text-navidad-oscuro mb-1">Teléfono *</label>
+            <input type="tel" id="telefono" name="telefono" required autocomplete="tel"
+                   class="w-full px-4 py-3 rounded-xl border border-navidad-oscuro/20 focus:border-navidad-rojo focus:ring-2 focus:ring-navidad-rojo/20 outline-none transition-all"
+                   placeholder="+54 9 11 1234-5678" />
+            <p class="error-message mt-1 text-sm text-navidad-rojo hidden" id="error-telefono">Teléfono válido requerido</p>
+          </div>
+
+          <div>
+            <label for="direccion" class="block text-sm font-medium text-navidad-oscuro mb-1">Dirección de entrega</label>
+            <textarea id="direccion" name="direccion" rows="2" autocomplete="street-address"
+                      class="w-full px-4 py-3 rounded-xl border border-navidad-oscuro/20 focus:border-navidad-rojo focus:ring-2 focus:ring-navidad-rojo/20 outline-none transition-all resize-none"
+                      placeholder="Calle, número, piso, depto, localidad"></textarea>
+          </div>
+
+          <div>
+            <label for="comentarios" class="block text-sm font-medium text-navidad-oscuro mb-1">Comentarios adicionales</label>
+            <textarea id="comentarios" name="comentarios" rows="2"
+                      class="w-full px-4 py-3 rounded-xl border border-navidad-oscuro/20 focus:border-navidad-rojo focus:ring-2 focus:ring-navidad-rojo/20 outline-none transition-all resize-none"
+                      placeholder="Horario preferido, referencias, alergias, etc."></textarea>
+          </div>
+
+          <div class="flex items-center justify-between pt-2 border-t border-navidad-oscuro/10">
+            <span class="font-display text-lg font-bold text-navidad-oscuro">Total:</span>
+            <span id="checkout-total" class="font-display text-2xl font-bold text-navidad-verde">$ 0</span>
+          </div>
+
+          <button type="submit" id="checkout-submit" class="btn-primary w-full py-4 text-lg disabled:opacity-50 disabled:cursor-not-allowed">
+            <span class="btn-text">Confirmar y abrir WhatsApp</span>
+            <span class="btn-loading hidden flex items-center gap-2">
+              <svg class="animate-spin h-5 w-5" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/></svg>
+              Enviando...
+            </span>
+          </button>
+
+          <p class="text-xs text-center text-navidad-oscuro/50">
+            Se abrirá WhatsApp con tu pedido completo. No se cobra nada aquí.
+          </p>
+        </form>
+      </div>
+    </div>
+  `
+
+  const overlay = container.querySelector('#checkout-overlay')
+  const modal = container.querySelector('#checkout-modal')
+  const closeBtn = container.querySelector('#checkout-close')
+  const form = container.querySelector('#checkout-form')
+  const submitBtn = container.querySelector('#checkout-submit')
+  const btnText = container.querySelector('.btn-text')
+  const btnLoading = container.querySelector('.btn-loading')
+
+  function open() {
+    renderSummary()
+    overlay.classList.remove('opacity-0', 'pointer-events-none')
+    overlay.classList.add('opacity-100')
+    modal.classList.remove('opacity-0', 'pointer-events-none')
+    modal.querySelector('div').classList.remove('scale-95')
+    modal.querySelector('div').classList.add('scale-100')
+    document.body.style.overflow = 'hidden'
+    setTimeout(() => modal.querySelector('#nombre')?.focus(), 100)
+  }
+
+  function close() {
+    overlay.classList.add('opacity-0', 'pointer-events-none')
+    overlay.classList.remove('opacity-100')
+    modal.classList.add('opacity-0', 'pointer-events-none')
+    modal.querySelector('div').classList.add('scale-95')
+    modal.querySelector('div').classList.remove('scale-100')
+    document.body.style.overflow = ''
+    form.reset()
+    clearErrors()
+  }
+
+  function renderSummary() {
+    const cart = getCart()
+    const total = getCartTotal()
+    const summary = container.querySelector('#order-summary')
+    const totalEl = container.querySelector('#checkout-total')
+
+    if (cart.length === 0) {
+      summary.innerHTML = '<p class="text-navidad-oscuro/60 text-center">Carrito vacío</p>'
+      return
+    }
+
+    summary.innerHTML = cart
+      .map(
+        (item) => `
+        <div class="flex items-center justify-between text-sm">
+          <div class="flex items-center gap-2">
+            <img src="${item.imagen}" alt="" class="w-10 h-10 rounded-lg object-cover" />
+            <div>
+              <p class="font-medium text-navidad-oscuro truncate max-w-[160px]">${item.nombre}</p>
+              ${[item.subtipo, item.terminacion].filter(Boolean).length ? `<p class="text-xs text-navidad-oscuro/50">${[item.subtipo, item.terminacion].filter(Boolean).join(' · ')}</p>` : ''}
+            </div>
+          </div>
+          <div class="text-right">
+            <p class="font-bold text-navidad-verde">$ ${(item.precio * item.cantidad).toLocaleString('es-AR')}</p>
+            <p class="text-xs text-navidad-oscuro/50">x ${item.cantidad}</p>
+          </div>
+        </div>
+      `
+      )
+      .join('')
+
+    totalEl.textContent = `$ ${total.toLocaleString('es-AR')}`
+  }
+
+  function showError(field, message) {
+    const input = container.querySelector(`#${field}`)
+    const error = container.querySelector(`#error-${field}`)
+    input.classList.add('border-navidad-rojo', 'focus:border-navidad-rojo', 'focus:ring-navidad-rojo/20')
+    error.textContent = message
+    error.classList.remove('hidden')
+  }
+
+  function clearErrors() {
+    container.querySelectorAll('.error-message').forEach((e) => e.classList.add('hidden'))
+    container.querySelectorAll('input, textarea').forEach((i) => {
+      i.classList.remove('border-navidad-rojo', 'focus:border-navidad-rojo', 'focus:ring-navidad-rojo/20')
+    })
+  }
+
+  function validateForm(data) {
+    clearErrors()
+    let valid = true
+
+    if (!data.nombre.trim()) {
+      showError('nombre', 'El nombre es obligatorio')
+      valid = false
+    }
+
+    const phoneRegex = /^[\+]?[(]?[0-9]{1,3}[)]?[-\s\.]?[(]?[0-9]{1,3}[)]?[-\s\.]?[0-9]{4,6}$/
+    if (!data.telefono.trim() || !phoneRegex.test(data.telefono.replace(/\s/g, ''))) {
+      showError('telefono', 'Ingresá un teléfono válido (ej: +54 9 11 1234-5678)')
+      valid = false
+    }
+
+    return valid
+  }
+
+  async function handleSubmit(e) {
+    e.preventDefault()
+
+    const formData = new FormData(form)
+    const data = Object.fromEntries(formData)
+
+    if (!validateForm(data)) return
+
+    if (getCart().length === 0) return
+
+    submitBtn.disabled = true
+    btnText.classList.add('hidden')
+    btnLoading.classList.remove('hidden')
+
+    try {
+      // 1. Enviar a Google Sheets (no bloqueante)
+      sendToSheets(data).catch(() => {}) // fire & forget, log en consola
+
+      // 2. Abrir WhatsApp (siempre)
+      sendToWhatsApp(data)
+    } finally {
+      submitBtn.disabled = false
+      btnText.classList.remove('hidden')
+      btnLoading.classList.add('hidden')
+      close()
+    }
+  }
+
+  closeBtn.addEventListener('click', close)
+  overlay.addEventListener('click', close)
+  form.addEventListener('submit', handleSubmit)
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !modal.classList.contains('opacity-0')) {
+      close()
+    }
+  })
+
+  document.addEventListener('checkout:open', open)
+}
 </file>
 
 <file path="src/js/components/footer.js">
-export function renderFooter(container)
+import { CONFIG } from '../config.js'
+
+export function renderFooter(container) {
+  const year = new Date().getFullYear()
+  container.innerHTML = `
+    <footer id="contacto" class="bg-navidad-verde text-white">
+      <div class="container-page py-10">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="text-2xl">🎄</span>
+              <span class="font-display text-xl font-bold">${CONFIG.NOMBRE_NEGOCIO}</span>
+            </div>
+            <p class="mt-3 text-sm text-white/80">
+              Productos artesanales de calidad para estas fiestas. Pedí por WhatsApp y recibí en tu casa.
+            </p>
+          </div>
+
+          <div>
+            <h3 class="font-display text-lg font-bold text-navidad-dorado">Contacto</h3>
+            <ul class="mt-3 space-y-2 text-sm text-white/80">
+              <li>📱 WhatsApp: ${CONFIG.NRO_WHATSAPP}</li>
+              <li>📍 Envíos a domicilio</li>
+              <li>🕐 Lun a Sáb · 9 a 19 hs</li>
+            </ul>
+          </div>
+
+          <div>
+            <h3 class="font-display text-lg font-bold text-navidad-dorado">Navegación</h3>
+            <ul class="mt-3 space-y-2 text-sm">
+              <li><a href="#inicio" class="hover:text-navidad-dorado transition-colors">Inicio</a></li>
+              <li><a href="#catalogo" class="hover:text-navidad-dorado transition-colors">Catálogo</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="mt-8 pt-6 border-t border-white/10 text-center text-xs text-white/60">
+          © ${year} ${CONFIG.NOMBRE_NEGOCIO}. Todos los derechos reservados.
+        </div>
+      </div>
+    </footer>
+  `
+}
 </file>
 
 <file path="src/js/components/header.js">
-export function renderHeader(container)
-⋮----
-function setupInteractions()
-</file>
+import { CONFIG } from '../config.js'
+import { getCartCount, subscribe } from '../data/cartStore.js'
 
-<file path="src/js/components/hero.js">
-export async function renderHero(container)
-⋮----
-async function initSlideshow()
-⋮----
-// Add click handlers to slideshow images
-</file>
+const NAV_LINKS = [
+  { href: '#inicio', label: 'Inicio' },
+  { href: '#catalogo', label: 'Catálogo' },
+  { href: '#contacto', label: 'Contacto' },
+]
 
-<file path="src/js/components/productModal.js">
-export function renderProductModal(product)
-⋮----
-// Función para adjuntar event listeners al modal DESPUÉS de que se renderice
-export function initModalListeners(product)
-⋮----
-// Cerrar modal con botón X
-⋮----
-// Cerrar al hacer click fuera del modal
-⋮----
-// Cerrar con Escape
-function handleKeydown(e)
-⋮----
-// Flecha anterior
-⋮----
-// Flecha siguiente
-⋮----
-// Thumbnails
-⋮----
-// Teclas de flecha para navegación
-⋮----
-function updateModalImage(idx)
-⋮----
-function closeModal()
-⋮----
-// Limpiar event listeners si es necesario
-</file>
+export function renderHeader(container) {
+  container.innerHTML = `
+    <header id="site-header" class="sticky top-0 z-50 bg-navidad-rojo text-white transition-shadow duration-300">
+      <div class="container-page flex items-center justify-between h-16">
+        <a href="#inicio" class="flex items-center gap-2 group" aria-label="${CONFIG.NOMBRE_NEGOCIO}">
+          <span class="text-2xl">🎄</span>
+          <span class="font-display text-xl font-bold tracking-wide group-hover:text-navidad-dorado transition-colors">
+            ${CONFIG.NOMBRE_NEGOCIO}
+          </span>
+        </a>
 
-<file path="src/js/components/README.md">
-# src/js/components/
+        <nav class="hidden md:flex items-center gap-1" aria-label="Navegación principal">
+          ${NAV_LINKS.map(
+            (link) => `
+            <a href="${link.href}"
+               class="px-3 py-2 rounded-lg text-sm font-medium hover:bg-white/10 hover:text-navidad-dorado transition-colors">
+              ${link.label}
+            </a>
+          `
+          ).join('')}
+        </nav>
 
-## Descripción
-Componentes UI de la aplicación. Cada componente se encarga de renderizar su sección en el DOM y manejar sus eventos.
+        <div class="flex items-center gap-2">
+          <button id="cart-btn"
+                  class="relative p-2 rounded-lg hover:bg-white/10 transition-colors"
+                  aria-label="Abrir carrito">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+            <span id="cart-badge"
+                  class="absolute -top-1 -right-1 min-w-[20px] h-5 px-1 flex items-center justify-center rounded-full bg-navidad-dorado text-navidad-oscuro text-xs font-bold hidden">
+              0
+            </span>
+          </button>
 
-## Archivos de este directorio
-| Archivo | Función |
-|---|---|
-| `header.js` | Barra superior: logo, menú hamburguesa (mobile), enlaces de navegación, badge de carrito. Sticky con efecto al hacer scroll. |
-| `hero.js` | Sección de presentación "Quiénes Somos". Fondo con slideshow de imágenes de productos (crossfade automático cada 5s). Overlay degradado para legibilidad. Botón CTA al catálogo. Al hacer clic en cualquier imagen del carrusel se abre el modal del producto correspondiente. |
-| `catalog.js` | Grid responsive de productos. Llama a `productService.getProducts()` y renderiza una `productCard` por cada producto. |
-| `productCard.js` | Tarjeta de producto: galería de fotos con flechas laterales para desplazarse entre imágenes y carrusel de miniaturas, nombre, descripción, selector de subtipos (si tiene), precio dinámico, botón "Agregar al carrito". Al hacer clic en la tarjeta (fuera de los botones) se abre el modal del producto. Exporta `openProductModal(product)` para usar desde otros componentes (ej: el hero). |
-| `cartDrawer.js` | Panel lateral deslizable que lista los items del carrito. Permite cambiar cantidades, eliminar items y muestra el total. Botón "Finalizar compra". |
-| `checkoutModal.js` | Modal con formulario (nombre, teléfono, dirección, comentarios). Al enviar: valida, POST a Google Sheets, construye mensaje de WhatsApp y abre `wa.me`. |
-| `footer.js` | Pie de página: datos de contacto, redes sociales, horarios, links rápidos, copyright. |
+          <button id="menu-btn"
+                  class="md:hidden p-2 rounded-lg hover:bg-white/10 transition-colors"
+                  aria-label="Abrir menú"
+                  aria-expanded="false">
+            <svg id="icon-menu" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+            <svg id="icon-close" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div id="mobile-menu" class="md:hidden hidden border-t border-white/10 bg-navidad-rojo">
+        <nav class="container-page py-3 flex flex-col gap-1" aria-label="Navegación móvil">
+          ${NAV_LINKS.map(
+            (link) => `
+            <a href="${link.href}"
+               class="mobile-nav-link px-3 py-3 rounded-lg text-base font-medium hover:bg-white/10 hover:text-navidad-dorado transition-colors">
+              ${link.label}
+            </a>
+          `
+          ).join('')}
+        </nav>
+      </div>
+    </header>
+  `
+
+  setupInteractions()
+}
+
+function setupInteractions() {
+  const menuBtn = document.getElementById('menu-btn')
+  const mobileMenu = document.getElementById('mobile-menu')
+  const iconMenu = document.getElementById('icon-menu')
+  const iconClose = document.getElementById('icon-close')
+  const cartBtn = document.getElementById('cart-btn')
+  const cartBadge = document.getElementById('cart-badge')
+  const header = document.getElementById('site-header')
+
+  menuBtn.addEventListener('click', () => {
+    const isOpen = !mobileMenu.classList.contains('hidden')
+    if (isOpen) {
+      mobileMenu.classList.add('hidden')
+      iconMenu.classList.remove('hidden')
+      iconClose.classList.add('hidden')
+      menuBtn.setAttribute('aria-expanded', 'false')
+    } else {
+      mobileMenu.classList.remove('hidden')
+      iconMenu.classList.add('hidden')
+      iconClose.classList.remove('hidden')
+      menuBtn.setAttribute('aria-expanded', 'true')
+    }
+  })
+
+  document.querySelectorAll('.mobile-nav-link').forEach((link) => {
+    link.addEventListener('click', () => {
+      mobileMenu.classList.add('hidden')
+      iconMenu.classList.remove('hidden')
+      iconClose.classList.add('hidden')
+      menuBtn.setAttribute('aria-expanded', 'false')
+    })
+  })
+
+  cartBtn.addEventListener('click', () => {
+    document.dispatchEvent(new CustomEvent('cart:open'))
+  })
+
+  subscribe((cart) => {
+    const count = cart.reduce((sum, item) => sum + item.cantidad, 0)
+    if (count > 0) {
+      cartBadge.textContent = count
+      cartBadge.classList.remove('hidden')
+    } else {
+      cartBadge.classList.add('hidden')
+    }
+  })
+
+  let lastScroll = 0
+  window.addEventListener('scroll', () => {
+    const current = window.scrollY
+    if (current > 10) {
+      header.classList.add('shadow-lg')
+    } else {
+      header.classList.remove('shadow-lg')
+    }
+    lastScroll = current
+  }, { passive: true })
+}
 </file>
 
 <file path="src/js/data/cartStore.js">
-function loadCart()
-⋮----
-function saveCart()
-⋮----
-function emit()
-⋮----
-export function subscribe(fn)
-⋮----
-export function getCart()
-⋮----
-export function getCartCount()
-⋮----
-export function getCartTotal()
-⋮----
-export function addToCart(
-⋮----
-export function removeFromCart(id)
-⋮----
-export function updateQty(id, cantidad)
-⋮----
-export function clearCart()
+const STORAGE_KEY = 'pandul_cart'
+const listeners = new Set()
+
+let cart = loadCart()
+
+function loadCart() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY)
+    return raw ? JSON.parse(raw) : []
+  } catch {
+    return []
+  }
+}
+
+function saveCart() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(cart))
+  emit()
+}
+
+function emit() {
+  listeners.forEach((fn) => fn(cart))
+}
+
+export function subscribe(fn) {
+  listeners.add(fn)
+  fn(cart)
+  return () => listeners.delete(fn)
+}
+
+export function getCart() {
+  return cart
+}
+
+export function getCartCount() {
+  return cart.reduce((sum, item) => sum + item.cantidad, 0)
+}
+
+export function getCartTotal() {
+  return cart.reduce((sum, item) => sum + item.precio * item.cantidad, 0)
+}
+
+export function addToCart({ slug, nombre, subtipoNombre, terminacionNombre, precio, imagen }) {
+  const id = [slug, subtipoNombre, terminacionNombre].filter(Boolean).join('::')
+  const existing = cart.find((item) => item.id === id)
+
+  if (existing) {
+    existing.cantidad += 1
+  } else {
+    cart.push({
+      id,
+      slug,
+      nombre,
+      subtipo: subtipoNombre || null,
+      terminacion: terminacionNombre || null,
+      precio,
+      imagen,
+      cantidad: 1,
+    })
+  }
+
+  saveCart()
+}
+
+export function removeFromCart(id) {
+  cart = cart.filter((item) => item.id !== id)
+  saveCart()
+}
+
+export function updateQty(id, cantidad) {
+  const item = cart.find((i) => i.id === id)
+  if (!item) return
+  if (cantidad <= 0) {
+    removeFromCart(id)
+    return
+  }
+  item.cantidad = cantidad
+  saveCart()
+}
+
+export function clearCart() {
+  cart = []
+  saveCart()
+}
 </file>
 
 <file path="src/js/data/productService.js">
-export async function getProducts()
-⋮----
-export function getProductBySlug(slug)
+let cachedProducts = null
+
+export async function getProducts() {
+  if (cachedProducts) return cachedProducts
+
+  try {
+    const res = await fetch('/products/manifest.json', { cache: 'no-cache' })
+    if (!res.ok) throw new Error(`HTTP ${res.status}`)
+    cachedProducts = await res.json()
+    return cachedProducts
+  } catch (err) {
+    console.error('Error al cargar productos:', err)
+    return []
+  }
+}
+
+export function getProductBySlug(slug) {
+  if (!cachedProducts) return null
+  return cachedProducts.find((p) => p.slug === slug) || null
+}
 </file>
 
 <file path="src/js/data/README.md">
@@ -425,7 +1258,7 @@ Capa de datos: manejo del catálogo de productos y el estado del carrito.
 | Archivo | Función |
 |---|---|
 | `productService.js` | Expone `getProducts()` que hace `fetch('/products/manifest.json')`. Cachea el resultado en memoria tras el primer llamado para no repetir fetches. |
-| `cartStore.js` | Estado del carrito persistido en `localStorage`. Expose `getCart()`, `addToCart(item)`, `removeFromCart(id)`, `updateQty(id, qty)`, `clearCart()`, `getTotal()`. Emite eventos `cart:changed`. |
+| `cartStore.js` | Estado del carrito persistido en `localStorage`. Expose `getCart()`, `addToCart(item)`, `removeFromCart(id)`, `updateQty(id, qty)`, `clearCart()`, `getTotal()`. Emite eventos `cart:changed`. Cada item guarda `subtipo` y `terminacion` (ej: `Glaseado`/`Bañado`); el `id` se arma como `slug::subtipo::terminacion`. |
 </file>
 
 <file path="src/js/utils/README.md">
@@ -437,15 +1270,66 @@ Funciones auxiliares reutilizables sin dependencias de UI.
 ## Archivos de este directorio
 | Archivo | Función |
 |---|---|
-| `whatsapp.js` | `buildWhatsAppMessage(cart, formData)` → arma el texto del pedido. `openWhatsApp(nro, message)` → abre `https://wa.me/<nro>?text=<encoded>`. |
-| `sheets.js` | `sendToSheets(payload)` → `fetch POST` a `URL_SHEETS` (Google Apps Script). Devuelve `true/false` según éxito. NO debe bloquear el flujo de WhatsApp si falla. |
+| `whatsapp.js` | `buildWhatsAppMessage(formData)` → arma el texto del pedido (incluye `subtipo, terminación` en cada línea). `sendToWhatsApp(formData)` → vacía el carrito y abre `https://wa.me/<nro>?text=<encoded>`. |
+| `sheets.js` | `sendToSheets(payload)` → `fetch POST` a `URL_SHEETS` (Google Apps Script). Devuelve objeto `{ok}`. NO debe bloquear el flujo de WhatsApp si falla. Envía `subtipo` combinado con la terminación (`Subtipo, Terminación`) para que llegue a la planilla sin redesplegar el Apps Script. |
 | `format.js` | Helpers: `formatCurrency(n)` → `$ 75.000`, `slugify(text)`, etc. |
 </file>
 
 <file path="src/js/utils/sheets.js">
-export async function sendToSheets(formData)
-⋮----
-// Cambiado a text/plain para evitar la verificación de CORS de Google Apps Script
+import { CONFIG } from '../config.js'
+import { getCart, getCartTotal } from '../data/cartStore.js'
+
+export async function sendToSheets(formData) {
+  if (!CONFIG.URL_SHEETS || CONFIG.URL_SHEETS.includes('XXXX')) {
+    console.warn('[Sheets] URL_SHEETS no configurada, saltando envío a Sheets')
+    return { ok: true, skipped: true }
+  }
+
+  const cart = getCart()
+  const total = getCartTotal()
+
+  const payload = {
+    negocio: CONFIG.NOMBRE_NEGOCIO,
+    timestamp: new Date().toISOString(),
+    cliente: {
+      nombre: formData.nombre,
+      telefono: formData.telefono,
+      direccion: formData.direccion || '',
+      comentarios: formData.comentarios || '',
+    },
+    items: cart.map((item) => ({
+      nombre: item.nombre,
+      // Se combina subtipo + terminación (glaseado/bañado) para que llegue
+      // así a Google Sheets sin tener que redesplegar el Apps Script.
+      subtipo: [item.subtipo, item.terminacion].filter(Boolean).join(', '),
+      precio: item.precio,
+      cantidad: item.cantidad,
+      subtotal: item.precio * item.cantidad,
+    })),
+    total,
+  }
+
+  try {
+    const response = await fetch(CONFIG.URL_SHEETS, {
+      method: 'POST',
+      // Cambiado a text/plain para evitar la verificación de CORS de Google Apps Script
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload),
+      keepalive: true,
+    })
+
+    if (!response.ok) {
+      console.warn('[Sheets] Respuesta no OK:', response.status)
+      return { ok: false, error: `HTTP ${response.status}` }
+    }
+
+    console.log('[Sheets] Pedido enviado correctamente')
+    return { ok: true }
+  } catch (err) {
+    console.warn('[Sheets] Error de red:', err.message)
+    return { ok: false, error: err.message }
+  }
+}
 </file>
 
 <file path="src/js/README.md">
@@ -492,28 +1376,96 @@ Código fuente de la aplicación. Vite compila desde aquí.
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-⋮----
+
 @layer base {
-⋮----
-html {
-⋮----
-body {
-⋮----
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
 @layer components {
-⋮----
-.btn-primary {
-⋮----
-.btn-gold {
-⋮----
-.container-page {
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-navidad-rojo px-6 py-3 font-semibold text-white shadow-lg transition-all duration-200 hover:bg-navidad-rojoClaro hover:shadow-xl active:scale-95;
+  }
+
+  .btn-gold {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-navidad-dorado px-6 py-3 font-semibold text-navidad-oscuro shadow-lg transition-all duration-200 hover:bg-navidad-doradoClaro hover:shadow-xl active:scale-95;
+  }
+
+  .container-page {
+    @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+}
+</file>
+
+<file path="CLAUDE.md">
+# Convenciones del Proyecto
+
+## Comandos Principales
+- Compilación/Ejecución: `npm run dev`
+- Tests: `rtk npm test`
+
+## Reglas de Arquitectura
+- Usar JS, HTML 5 y CSS estricto.
+- Mantener funciones puras y archivos modulares.
+- Siempre ante cualquier empezar leyendo repomix-output.xml y
 </file>
 
 <file path="postcss.config.js">
-
+export default {
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {},
+  },
+}
 </file>
 
 <file path="tailwind.config.js">
 /** @type {import('tailwindcss').Config} */
+export default {
+  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+  theme: {
+    extend: {
+      colors: {
+        navidad: {
+          rojo: '#C1121F',
+          rojoClaro: '#DC2626',
+          rojoOscuro: '#8B0000',
+          verde: '#065F46',
+          verdeClaro: '#047857',
+          dorado: '#D4AF37',
+          doradoClaro: '#F59E0B',
+          crema: '#FFFBF0',
+          nieve: '#FFFFFF',
+          oscuro: '#1A1A1A',
+        },
+      },
+      fontFamily: {
+        display: ['Georgia', 'serif'],
+        sans: ['system-ui', '-apple-system', 'sans-serif'],
+      },
+      animation: {
+        'fade-in': 'fadeIn 0.8s ease-in-out',
+        'slide-up': 'slideUp 0.5s ease-out',
+      },
+      keyframes: {
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        slideUp: {
+          '0%': { opacity: '0', transform: 'translateY(20px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+      },
+    },
+  },
+  plugins: [],
+}
 </file>
 
 <file path="apps-script/Code.gs">
@@ -624,119 +1576,467 @@ function testPost() {
 }
 </file>
 
-<file path="public/products/manifest.json">
-[
-  {
-    "slug": "brownie-arbol",
-    "nombre": "Arboles Navideños de Brownie",
-    "descripcion": "Brownies bien chocolatosos en forma de arbolitos navideños",
-    "precio": 5000,
-    "subtipos": [],
-    "imagenes": [
-      "/products/brownie-arbol/1.jpg",
-      "/products/brownie-arbol/2.jpg",
-      "/products/brownie-arbol/3.jpg",
-      "/products/brownie-arbol/4.jpg",
-      "/products/brownie-arbol/5.jpg",
-      "/products/brownie-arbol/6.jpg"
-    ]
-  },
-  {
-    "slug": "galletas-navideñas",
-    "nombre": "Galletas Navideña",
-    "descripcion": "Galletitas de vainilla de muñequitos y Papá Noel",
-    "precio": 5000,
-    "subtipos": [],
-    "imagenes": [
-      "/products/galletas-navideñas/1.jpg",
-      "/products/galletas-navideñas/2.jpg",
-      "/products/galletas-navideñas/3.jpg"
-    ]
-  },
-  {
-    "slug": "pan-dulces",
-    "nombre": "Pan Dulce",
-    "descripcion": "Pan Dulces caseros hechos con mucho amor y sabor.",
-    "precio": 30000,
-    "subtipos": [
-      {
-        "nombre": "Chips 1/2 kg",
-        "precio": 30000
-      },
-      {
-        "nombre": "Frutos Secos 1/2 kg",
-        "precio": 40000
-      },
-      {
-        "nombre": "Chips 1 kg",
-        "precio": 40000
-      },
-      {
-        "nombre": "Frutos Secos 1 kg",
-        "precio": 45000
-      }
-    ],
-    "imagenes": [
-      "/products/pan-dulces/1.jpg",
-      "/products/pan-dulces/2.jpg",
-      "/products/pan-dulces/3.jpg",
-      "/products/pan-dulces/4.jpg",
-      "/products/pan-dulces/5.jpg",
-      "/products/pan-dulces/6.jpg",
-      "/products/pan-dulces/7.jpg",
-      "/products/pan-dulces/8.jpg"
-    ]
+<file path="src/js/components/hero.js">
+import { getProducts } from '../data/productService.js'
+import { CONFIG } from '../config.js'
+import { openProductModal } from './productCard.js'
+
+export async function renderHero(container) {
+  container.id = 'inicio'
+  container.className =
+    'relative min-h-[90vh] flex items-center justify-center overflow-hidden bg-navidad-oscuro'
+
+  container.innerHTML = `
+    <div id="hero-slides" class="absolute inset-0"></div>
+    <div class="absolute inset-0 bg-gradient-to-b from-navidad-rojo/70 via-navidad-oscuro/60 to-navidad-verde/70 pointer-events-none"></div>
+    <div class="absolute inset-0 bg-black/30 pointer-events-none"></div>
+
+    <div class="relative z-10 container-page text-center text-white px-4 py-20">
+      <span class="inline-block px-4 py-1 rounded-full bg-navidad-dorado/90 text-navidad-oscuro text-sm font-bold uppercase tracking-wider mb-6 animate-fade-in">
+        🎄 Felices Fiestas
+      </span>
+      <h1 class="font-display text-4xl sm:text-5xl md:text-6xl font-bold leading-tight animate-slide-up">
+        ${CONFIG.NOMBRE_NEGOCIO}
+      </h1>
+      <p class="mt-6 max-w-2xl mx-auto text-lg sm:text-xl text-white/90 animate-slide-up" style="animation-delay: 0.1s">
+        Productos artesanales hechos con amor para estas fiestas.
+        Pedí por WhatsApp y recibí en tu casa.
+      </p>
+      <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4 animate-slide-up" style="animation-delay: 0.2s">
+        <a href="#catalogo" class="btn-gold w-full sm:w-auto">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+          </svg>
+          Ver Catálogo
+        </a>
+        <a href="https://wa.me/${CONFIG.NRO_WHATSAPP}"
+           target="_blank"
+           rel="noopener noreferrer"
+           class="inline-flex items-center justify-center gap-2 rounded-full bg-white/15 backdrop-blur border border-white/30 px-6 py-3 font-semibold text-white transition-all hover:bg-white/25 w-full sm:w-auto">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+          </svg>
+          Pedir por WhatsApp
+        </a>
+      </div>
+    </div>
+  `
+
+  await initSlideshow()
+}
+
+async function initSlideshow() {
+  const slidesContainer = document.getElementById('hero-slides')
+  if (!slidesContainer) return
+
+  const products = await getProducts()
+  const slides = products
+    .filter((p) => p.imagenes && p.imagenes.length > 0)
+    .map((p) => ({ product: p, image: p.imagenes[0] }))
+
+  if (slides.length === 0) {
+    slidesContainer.style.background = 'linear-gradient(135deg, #C1121F, #065F46)'
+    return
   }
-]
+
+  slidesContainer.innerHTML = slides
+    .map(
+      ({ image }, i) => `
+      <div class="absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+        i === 0 ? 'opacity-100' : 'opacity-0'
+      }" style="background-image: url('${image}'); background-size: cover; background-position: center; cursor: pointer;"></div>
+    `
+    )
+    .join('')
+
+  let current = 0
+  const total = slides.length
+
+  // Add click handlers to slideshow images
+  slidesContainer.querySelectorAll('div').forEach((slide, index) => {
+    slide.addEventListener('click', () => {
+      const { product } = slides[index]
+      if (product) {
+        openProductModal(product)
+      }
+    })
+  })
+
+  if (total > 1) {
+    setInterval(() => {
+      const slideEls = slidesContainer.children
+      slideEls[current].classList.replace('opacity-100', 'opacity-0')
+      current = (current + 1) % total
+      slideEls[current].classList.replace('opacity-0', 'opacity-100')
+    }, CONFIG.HERO_INTERVAL_MS)
+  }
+}
 </file>
 
-<file path="src/js/components/productCard.js">
-export function renderProductCard(product)
-⋮----
-// Agregar dataset con datos del producto para el modal
-⋮----
-// Event listener para abrir el modal al hacer click en la tarjeta
-⋮----
-// Evitar que se abra el modal si se clickearon botones internos
-⋮----
-// Event listeners para navegación con flechas (nuevo componente)
-⋮----
-// Force image re-load by triggering a re-offset
-⋮----
-void mainImg.offsetWidth // Trigger reflow
-⋮----
-// Update thumbnail active state
-⋮----
-// Force image re-load by triggering a re-offset
-⋮----
-void mainImg.offsetWidth // Trigger reflow
-⋮----
-// Update thumbnail active state
-⋮----
-// Force image re-load by triggering a re-offset
-⋮----
-void mainImg.offsetWidth // Trigger reflow
-⋮----
-// Función para abrir el modal de producto
-export function openProductModal(product)
-⋮----
-// Limpiar contenido anterior y renderizar el modal
-⋮----
-// Quitar hidden del contenedor (display:none) para que el modal sea visible
-⋮----
-// Mostrar el modal
-⋮----
-// Inicializar listeners DESPUÉS de que el modal esté en el DOM
+<file path="src/js/components/productModal.js">
+import { addToCart } from '../data/cartStore.js'
+
+export function renderProductModal(product) {
+  if (!product) return ''
+
+  const { imagenes, nombre, descripcion, subtipos, terminaciones, precio } = product
+
+  const hasSubtipos = subtipos && subtipos.length > 0
+  const hasTerminaciones = terminaciones && terminaciones.length > 0
+  const baseInicial = hasSubtipos ? subtipos[0].precio : precio
+  const extraInicial = hasTerminaciones ? terminaciones[0].precio : 0
+  const precioMostrar = baseInicial + extraInicial
+
+  return `
+    <div id="product-modal" class="fixed inset-0 bg-navidad-oscuro/80 backdrop-blur z-50 hidden items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="bg-white rounded-2xl w-full max-w-2xl max-h-[95vh] overflow-hidden flex flex-col transform transition-transform duration-300" style="transform: scale(0.9);">
+        <!-- Header del modal -->
+        <div class="p-6 border-b border-navidad-crema relative">
+          <h2 id="modal-title" class="font-display text-2xl font-bold text-navidad-rojo">${nombre}</h2>
+          <button id="modal-close" class="absolute top-4 right-4 text-navidad-oscuro/60 hover:text-navidad-rojo" aria-label="Cerrar">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <!-- Contenido scrollable: imagen + info -->
+        <div class="flex-1 overflow-y-auto flex flex-col">
+          <!-- Slider de imágenes - altura fija -->
+          <div class="relative flex-shrink-0">
+            <div class="relative w-full aspect-square max-h-[60vh]">
+              <img id="modal-main-img"
+                   src="${imagenes[0]}"
+                   alt="${nombre} - imagen 1"
+                   class="w-full h-full object-cover rounded-t-2xl"
+                   loading="lazy"
+                   decoding="async" />
+
+              <!-- Flechas laterales centradas en la imagen -->
+              <div class="absolute inset-y-0 left-0 right-0 flex items-center justify-between px-4">
+                <button id="modal-prev"
+                        class="bg-white/20 rounded-full p-2 hover:bg-white transition-colors z-10"
+                        aria-label="Imagen anterior">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
+                <button id="modal-next"
+                        class="bg-white/20 rounded-full p-2 hover:bg-white transition-colors z-10"
+                        aria-label="Imagen siguiente">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7-7" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Miniaturas -->
+            <div id="modal-thumbs"
+                 class="mt-4 flex gap-2 overflow-x-auto justify-center px-6 pb-4">
+              ${imagenes.map((img, i) => `
+                <button data-img="${i}"
+                        class="w-16 h-16 rounded overflow-hidden object-cover flex-shrink-0 ${
+                          i === 0 ? 'border-navidad-rojo border-2' : 'border-transparent'
+                        } hover:border-navidad-oscuro transition-all">
+                  <img src="${img}" alt="${nombre} - miniatura ${i + 1}" class="w-full h-full object-cover" loading="lazy" />
+                </button>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- Información del producto -->
+          <div class="p-6 flex flex-col gap-4 flex-1 min-h-0">
+            <p id="modal-desc" class="text-navidad-oscuro/70">${descripcion}</p>
+
+            ${hasSubtipos ? `
+              <div>
+                <p class="text-xs font-semibold text-navidad-oscuro/60 uppercase tracking-wide">Elegí una opción:</p>
+                <div class="flex flex-wrap gap-2 mt-2">
+                  ${subtipos.map((s, i) => `
+                    <button data-subtipo="${s.nombre}" data-precio="${s.precio}"
+                            class="subtipo-btn px-3 py-1.5 rounded-full text-xs font-medium border-2 transition-all ${
+                              i === 0 ? 'border-navidad-rojo bg-navidad-rojo text-white' : 'border-navidad-oscuro/20 text-navidad-oscuro/70 hover:border-navidad-rojo/50'
+                            }">
+                      ${s.nombre}
+                    </button>
+                  `).join('')}
+                </div>
+              </div>
+            ` : ''}
+
+            ${hasTerminaciones ? `
+              <div>
+                <p class="text-xs font-semibold text-navidad-oscuro/60 uppercase tracking-wide">Terminación:</p>
+                <div class="flex flex-wrap gap-2 mt-2">
+                  ${terminaciones.map((t, i) => `
+                    <button data-terminacion="${t.nombre}" data-extra="${t.precio}"
+                            class="terminacion-btn px-3 py-1.5 rounded-full text-xs font-medium border-2 transition-all ${
+                              i === 0 ? 'border-navidad-rojo bg-navidad-rojo text-white' : 'border-navidad-oscuro/20 text-navidad-oscuro/70 hover:border-navidad-rojo/50'
+                            }">
+                      ${t.nombre}${t.precio > 0 ? ` (+$ ${t.precio.toLocaleString('es-AR')})` : ''}
+                    </button>
+                  `).join('')}
+                </div>
+              </div>
+            ` : ''}
+          </div>
+        </div>
+
+        <!-- Barra inferior fija con precio y botón -->
+        <div class="bg-white border-t border-navidad-crema p-4 sticky bottom-0">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <p id="modal-price" class="text-2xl font-bold text-navidad-verde">$ ${precioMostrar.toLocaleString('es-AR')}</p>
+            <button id="modal-add-cart"
+                    class="btn-primary px-6 py-3 w-full sm:w-auto text-base">
+              Agregar al carrito
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `
+}
+
+// Función para adjuntar event listeners al modal DESPUÉS de que se renderice
+export function initModalListeners(product) {
+  const modal = document.getElementById('product-modal')
+  if (!modal) return
+
+  const modalClose = document.getElementById('modal-close')
+  const modalMainImg = document.getElementById('modal-main-img')
+  const modalPrev = document.getElementById('modal-prev')
+  const modalNext = document.getElementById('modal-next')
+  const modalThumbs = modal.querySelectorAll('#modal-thumbs button')
+  const modalPrice = document.getElementById('modal-price')
+  const modalAddCart = document.getElementById('modal-add-cart')
+  let currentImgIndex = 0
+  const hasSubtipos = product.subtipos && product.subtipos.length > 0
+  const hasTerminaciones = product.terminaciones && product.terminaciones.length > 0
+  let selectedSubtipo = hasSubtipos ? product.subtipos[0].nombre : null
+  let selectedBasePrecio = hasSubtipos ? product.subtipos[0].precio : product.precio
+  let selectedTerminacion = hasTerminaciones ? product.terminaciones[0].nombre : null
+  let selectedTerminacionExtra = hasTerminaciones ? product.terminaciones[0].precio : 0
+
+  const actualizarPrecio = () => {
+    if (modalPrice) {
+      modalPrice.textContent = `$ ${(selectedBasePrecio + selectedTerminacionExtra).toLocaleString('es-AR')}`
+    }
+  }
+
+  // Cerrar modal con botón X
+  modalClose.addEventListener('click', closeModal)
+
+  // Cerrar al hacer click fuera del modal
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      closeModal()
+    }
+  })
+
+  // Cerrar con Escape
+  function handleKeydown(e) {
+    if (e.key === 'Escape') {
+      closeModal()
+      document.removeEventListener('keydown', handleKeydown)
+    }
+  }
+  document.addEventListener('keydown', handleKeydown)
+
+  // Flecha anterior
+  modalPrev.addEventListener('click', () => {
+    currentImgIndex--
+    if (currentImgIndex < 0) currentImgIndex = product.imagenes.length - 1
+    updateModalImage(currentImgIndex)
+  })
+
+  // Flecha siguiente
+  modalNext.addEventListener('click', () => {
+    currentImgIndex++
+    if (currentImgIndex >= product.imagenes.length) currentImgIndex = 0
+    updateModalImage(currentImgIndex)
+  })
+
+  // Thumbnails
+  modalThumbs.forEach((thumb) => {
+    thumb.addEventListener('click', () => {
+      const idx = parseInt(thumb.dataset.img, 10)
+      currentImgIndex = idx
+      updateModalImage(currentImgIndex)
+    })
+  })
+
+  // Teclas de flecha para navegación
+  document.addEventListener('keydown', (e) => {
+    if (!modal.classList.contains('hidden')) {
+      if (e.key === 'ArrowLeft') {
+        currentImgIndex--
+        if (currentImgIndex < 0) currentImgIndex = product.imagenes.length - 1
+        updateModalImage(currentImgIndex)
+      } else if (e.key === 'ArrowRight') {
+        currentImgIndex++
+        if (currentImgIndex >= product.imagenes.length) currentImgIndex = 0
+        updateModalImage(currentImgIndex)
+      }
+    }
+  })
+
+  // Selector de subtipos
+  const subtipoBtns = modal.querySelectorAll('.subtipo-btn')
+  subtipoBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      selectedSubtipo = btn.dataset.subtipo
+      selectedBasePrecio = parseInt(btn.dataset.precio, 10)
+      actualizarPrecio()
+      subtipoBtns.forEach((b) => {
+        b.classList.remove('border-navidad-rojo', 'bg-navidad-rojo', 'text-white')
+        b.classList.add('border-navidad-oscuro/20', 'text-navidad-oscuro/70')
+      })
+      btn.classList.add('border-navidad-rojo', 'bg-navidad-rojo', 'text-white')
+      btn.classList.remove('border-navidad-oscuro/20', 'text-navidad-oscuro/70')
+    })
+  })
+
+  // Selector de terminación (glaseado/bañado)
+  const terminacionBtns = modal.querySelectorAll('.terminacion-btn')
+  terminacionBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      selectedTerminacion = btn.dataset.terminacion
+      selectedTerminacionExtra = parseInt(btn.dataset.extra, 10)
+      actualizarPrecio()
+      terminacionBtns.forEach((b) => {
+        b.classList.remove('border-navidad-rojo', 'bg-navidad-rojo', 'text-white')
+        b.classList.add('border-navidad-oscuro/20', 'text-navidad-oscuro/70')
+      })
+      btn.classList.add('border-navidad-rojo', 'bg-navidad-rojo', 'text-white')
+      btn.classList.remove('border-navidad-oscuro/20', 'text-navidad-oscuro/70')
+    })
+  })
+
+  // Botón agregar al carrito
+  modalAddCart.addEventListener('click', () => {
+    addToCart({
+      slug: product.slug,
+      nombre: product.nombre,
+      subtipoNombre: selectedSubtipo,
+      terminacionNombre: selectedTerminacion,
+      precio: selectedBasePrecio + selectedTerminacionExtra,
+      imagen: product.imagenes[currentImgIndex],
+    })
+    closeModal()
+  })
+
+  function updateModalImage(idx) {
+    currentImgIndex = idx
+    if (product.imagenes[currentImgIndex]) {
+      modalMainImg.src = product.imagenes[currentImgIndex]
+      modalMainImg.alt = `${product.nombre} - imagen ${currentImgIndex + 1}`
+    }
+    modalThumbs.forEach((t) => {
+      t.classList.remove('border-navidad-rojo', 'border-2')
+      t.classList.add('border-transparent')
+    })
+    if (modalThumbs[currentImgIndex]) {
+      modalThumbs[currentImgIndex].classList.add('border-navidad-rojo', 'border-2')
+    }
+  }
+
+  function closeModal() {
+    modal.classList.add('hidden')
+    modal.classList.remove('flex')
+    // Limpiar event listeners si es necesario
+  }
+}
+</file>
+
+<file path="src/js/components/README.md">
+# src/js/components/
+
+## Descripción
+Componentes UI de la aplicación. Cada componente se encarga de renderizar su sección en el DOM y manejar sus eventos.
+
+## Archivos de este directorio
+| Archivo | Función |
+|---|---|
+| `header.js` | Barra superior: logo, menú hamburguesa (mobile), enlaces de navegación, badge de carrito. Sticky con efecto al hacer scroll. |
+| `hero.js` | Sección de presentación "Quiénes Somos". Fondo con slideshow de imágenes de productos (crossfade automático cada 5s). Overlay degradado para legibilidad. Botón CTA al catálogo. Al hacer clic en cualquier imagen del carrusel se abre el modal del producto correspondiente. |
+| `catalog.js` | Grid responsive de productos. Llama a `productService.getProducts()` y renderiza una `productCard` por cada producto. |
+| `productCard.js` | Tarjeta de producto: galería de fotos con flechas laterales para desplazarse entre imágenes y carrusel de miniaturas, nombre, descripción, selector de subtipos (si tiene), selector de terminación (si el producto tiene `terminaciones`, ej: Glaseado/Bañado con +$2000; por defecto la primera opción), precio dinámico (subtipo + terminación), botón "Agregar al carrito". Al hacer clic en la tarjeta (fuera de los botones) se abre el modal del producto. Exporta `openProductModal(product)` para usar desde otros componentes (ej: el hero). |
+| `productModal.js` | Modal de producto: slider de imágenes con flechas y miniaturas, descripción, selector de subtipos (si tiene), selector de terminación (si el producto tiene `terminaciones`), precio dinámico (subtipo + terminación), botón "Agregar al carrito". Exporta `renderProductModal(product)` y `initModalListeners(product)`, usados por `productCard.js`. |
+| `cartDrawer.js` | Panel lateral deslizable que lista los items del carrito. Permite cambiar cantidades, eliminar items y muestra el total. Botón "Finalizar compra". |
+| `checkoutModal.js` | Modal con formulario (nombre, teléfono, dirección, comentarios). Al enviar: valida, POST a Google Sheets, construye mensaje de WhatsApp y abre `wa.me`. |
+| `footer.js` | Pie de página: datos de contacto, redes sociales, horarios, links rápidos, copyright. |
 </file>
 
 <file path="src/js/utils/whatsapp.js">
-export function buildWhatsAppMessage(formData)
-⋮----
-export function sendToWhatsApp(formData)
+import { CONFIG } from '../config.js'
+import { getCart, getCartTotal, clearCart } from '../data/cartStore.js'
+
+export function buildWhatsAppMessage(formData) {
+  const cart = getCart()
+  const total = getCartTotal()
+  const negocio = CONFIG.NOMBRE_NEGOCIO
+
+  let mensaje = ` *Nuevo pedido - ${negocio}*\n\n`
+  mensaje += ` *Cliente:* ${formData.nombre}\n`
+  mensaje += ` *Teléfono:* ${formData.telefono}\n`
+  if (formData.direccion) mensaje += ` *Dirección:* ${formData.direccion}\n`
+  if (formData.comentarios) mensaje += `*Comentarios:* ${formData.comentarios}\n`
+  mensaje += `\n *Detalle del pedido:*\n`
+
+  cart.forEach((item, i) => {
+    const detalle = [item.subtipo, item.terminacion].filter(Boolean).join(', ')
+    mensaje += `${i + 1}. ${item.nombre}`
+    if (detalle) mensaje += ` (${detalle})`
+    mensaje += ` — $ ${item.precio.toLocaleString('es-AR')} x ${item.cantidad} = $ ${(item.precio * item.cantidad).toLocaleString('es-AR')}\n`
+  })
+
+  mensaje += `\n *Total: $ ${total.toLocaleString('es-AR')}*`
+  return mensaje
+}
+
+export function sendToWhatsApp(formData) {
+  const mensaje = buildWhatsAppMessage(formData)
+  const url = `https://wa.me/${CONFIG.NRO_WHATSAPP}?text=${encodeURIComponent(mensaje)}`
+
+  clearCart()
+  window.open(url, '_blank', 'noopener,noreferrer')
+}
 </file>
 
 <file path="src/main.js">
+import './style.css'
+import { renderHeader } from './js/components/header.js'
+import { renderHero } from './js/components/hero.js'
+import { renderCatalog } from './js/components/catalog.js'
 
+import { renderFooter } from './js/components/footer.js'
+import { renderCartDrawer } from './js/components/cartDrawer.js'
+import { renderCheckoutModal } from './js/components/checkoutModal.js'
+
+const app = document.querySelector('#app')
+
+app.innerHTML = `
+  <div id="header"></div>
+  <main id="main">
+    <div id="hero"></div>
+    <div id="catalogo"></div>
+  </main>
+  <div id="footer"></div>
+  <div id="cart"></div>
+  <div id="checkout"></div>
+  <div id="product-modal-container" class="hidden"></div>
+`
+
+renderHeader(document.getElementById('header'))
+renderFooter(document.getElementById('footer'))
+renderCartDrawer(document.getElementById('cart'))
+renderCheckoutModal(document.getElementById('checkout'))
+
+;(async () => {
+  await renderHero(document.getElementById('hero'))
+  await renderCatalog(document.getElementById('catalogo'))
+})()
 </file>
 
 <file path="index.html">
@@ -820,32 +2120,6 @@ export function sendToWhatsApp(formData)
     Referrer-Policy = "strict-origin-when-cross-origin"
 </file>
 
-<file path="package.json">
-{
-  "name": "ventas-pandul",
-  "private": true,
-  "version": "1.0.0",
-  "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "npm run copy:assets && vite build",
-    "copy:assets": "cp -r 'src/assets/hero' 'dist/assets/hero' && cp -r 'public/products' 'dist/products'",
-    "preview": "vite preview --port 4173",
-    "sync": "node scripts/sync-products.js",
-    "sync:watch": "node scripts/sync-products.js --watch",
-    "analyze": "vite build --reporter",
-    "deploy": "npm run build && vercel --prod",
-    "deploy:netlify": "npm run build && netlify deploy --dir=dist --prod"
-  },
-  "devDependencies": {
-    "autoprefixer": "^10.4.20",
-    "postcss": "^8.4.47",
-    "tailwindcss": "^3.4.13",
-    "vite": "^5.4.8"
-  }
-}
-</file>
-
 <file path="README.md">
 # Tentaciones de Sabor — Directorio Raíz
 
@@ -882,11 +2156,511 @@ Sitio de ventas (e-commerce liviano) con catálogo de productos, carrito, checko
 </file>
 
 <file path="vite.config.js">
+import { defineConfig } from 'vite'
 
+export default defineConfig({
+  server: {
+    port: 5173,
+    open: true,
+  },
+  build: {
+    outDir: 'dist',
+    assetsInlineLimit: 4096,
+  },
+})
+</file>
+
+<file path="public/products/pan-dulces1/data.txt">
+nombre: Pan Dulce de Futos Secos
+descripcion: Pan Dulces caseros hechos con mucho amor y sabor.
+precio: 30000
+subtipos:
+Frutos Secos 1/2 kg | 15000
+Frutos Secos 1 kg | 30000
+terminaciones:
+Glaseado | 0
+Bañado | 2000
+</file>
+
+<file path="public/products/pan-dulces2/data.txt">
+nombre: Pan Dulce de Chips de chocolate
+descripcion: Pan Dulces caseros hechos con mucho amor y sabor.
+precio: 30000
+subtipos:
+Chips 1/2 kg | 14000
+Chips 1 kg | 28000
+terminaciones:
+Glaseado | 0
+Bañado | 2000
+</file>
+
+<file path="src/js/components/productCard.js">
+import { addToCart } from '../data/cartStore.js'
+import { renderProductModal, initModalListeners } from './productModal.js'
+
+export function renderProductCard(product) {
+  const card = document.createElement('article')
+  card.className =
+    'bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow flex flex-col'
+
+  // Agregar dataset con datos del producto para el modal
+  card.dataset.product = JSON.stringify(product)
+
+  const hasSubtipos = product.subtipos && product.subtipos.length > 0
+  const baseInicial = hasSubtipos ? product.subtipos[0].precio : product.precio
+  const subtipoInicial = hasSubtipos ? product.subtipos[0].nombre : null
+
+  const hasTerminaciones = product.terminaciones && product.terminaciones.length > 0
+  const terminacionInicial = hasTerminaciones ? product.terminaciones[0].nombre : null
+  const terminacionExtraInicial = hasTerminaciones ? product.terminaciones[0].precio : 0
+  const precioInicial = baseInicial + terminacionExtraInicial
+
+  card.innerHTML = `
+    <div class="relative aspect-square bg-navidad-crema overflow-hidden group cursor-pointer">
+      <img id="main-img-${product.slug}"
+           src="${product.imagenes[0]}"
+           alt="${product.nombre}"
+           class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+           loading="lazy"
+           decoding="async"
+           width="400"
+           height="400" />
+      ${product.imagenes.length > 1 ? `
+        <!-- Flechas laterales -->
+        <div class="absolute top-1/2 -translate-y-1/2 w-full flex justify-between p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none group-hover:pointer-events-auto">
+          <button id="card-prev-${product.slug}"
+                  class="bg-white/20 rounded-full p-2 hover:bg-white transition-colors pointer-events-auto"
+                  aria-label="Imagen anterior">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+          <button id="card-next-${product.slug}"
+                  class="bg-white/20 rounded-full p-2 hover:bg-white transition-colors pointer-events-auto"
+                  aria-label="Imagen siguiente">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        </div>
+
+        <div class="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5 bg-black/40 backdrop-blur px-2 py-1.5 rounded-full">
+          ${product.imagenes
+            .map(
+              (_, i) => `
+              <button data-img="${i}"
+                      class="thumb w-2 h-2 rounded-full transition-all ${
+                        i === 0 ? 'bg-navidad-dorado scale-125' : 'bg-white/60 hover:bg-white'
+                      }"
+                      aria-label="Ver imagen ${i + 1}"></button>
+            `
+            )
+            .join('')}
+        </div>
+      ` : ''}
+    </div>
+
+    <div class="p-5 flex flex-col flex-grow">
+      <h3 class="font-display text-xl font-bold text-navidad-rojo">${product.nombre}</h3>
+      <p class="mt-2 text-sm text-navidad-oscuro/70 line-clamp-2 flex-grow">${product.descripcion}</p>
+
+      ${
+        hasSubtipos
+          ? `
+        <div class="mt-4">
+          <p class="text-xs font-semibold text-navidad-oscuro/60 uppercase tracking-wide mb-2">Elegí una opción:</p>
+          <div class="flex flex-wrap gap-2">
+            ${product.subtipos
+              .map(
+                (s, i) => `
+                <button data-subtipo="${s.nombre}" data-precio="${s.precio}"
+                        class="subtipo-btn px-3 py-1.5 rounded-full text-xs font-medium border-2 transition-all ${
+                          i === 0
+                            ? 'border-navidad-rojo bg-navidad-rojo text-white'
+                            : 'border-navidad-oscuro/20 text-navidad-oscuro/70 hover:border-navidad-rojo/50'
+                        }">
+                  ${s.nombre}
+                </button>
+              `
+              )
+              .join('')}
+          </div>
+        </div>
+      `
+          : ''
+      }
+
+      ${
+        hasTerminaciones
+          ? `
+        <div class="mt-4">
+          <p class="text-xs font-semibold text-navidad-oscuro/60 uppercase tracking-wide mb-2">Terminación:</p>
+          <div class="flex flex-wrap gap-2">
+            ${product.terminaciones
+              .map(
+                (t, i) => `
+                <button data-terminacion="${t.nombre}" data-extra="${t.precio}"
+                        class="terminacion-btn px-3 py-1.5 rounded-full text-xs font-medium border-2 transition-all ${
+                          i === 0
+                            ? 'border-navidad-rojo bg-navidad-rojo text-white'
+                            : 'border-navidad-oscuro/20 text-navidad-oscuro/70 hover:border-navidad-rojo/50'
+                        }">
+                  ${t.nombre}${t.precio > 0 ? ` (+$ ${t.precio.toLocaleString('es-AR')})` : ''}
+                </button>
+              `
+              )
+              .join('')}
+          </div>
+        </div>
+      `
+          : ''
+      }
+
+      <div class="mt-4 flex items-center justify-between">
+        <p id="precio-${product.slug}" class="text-2xl font-bold text-navidad-verde">
+          $ ${precioInicial.toLocaleString('es-AR')}
+        </p>
+      </div>
+
+      <button id="add-${product.slug}"
+              class="mt-4 btn-primary w-full">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+        </svg>
+        Agregar al carrito
+      </button>
+    </div>
+  `
+
+  let selectedSubtipo = subtipoInicial
+  let selectedBasePrecio = baseInicial
+  let selectedTerminacion = terminacionInicial
+  let selectedTerminacionExtra = terminacionExtraInicial
+  let currentImg = 0
+
+  const actualizarPrecio = () => {
+    precioEl.textContent = `$ ${(selectedBasePrecio + selectedTerminacionExtra).toLocaleString('es-AR')}`
+  }
+
+  const mainImg = card.querySelector(`#main-img-${product.slug}`)
+  const precioEl = card.querySelector(`#precio-${product.slug}`)
+  const addBtn = card.querySelector(`#add-${product.slug}`)
+
+  // Event listener para abrir el modal al hacer click en la tarjeta
+  card.addEventListener('click', (e) => {
+    // Evitar que se abra el modal si se clickearon botones internos
+    if (e.target.closest(`#add-${product.slug}`) ||
+        e.target.closest('.subtipo-btn') ||
+        e.target.closest('.terminacion-btn') ||
+        e.target.closest('.thumb')) {
+      return
+    }
+    openProductModal(product)
+  })
+
+  // Event listeners para navegación con flechas (nuevo componente)
+  const prevBtn = card.querySelector(`#card-prev-${product.slug}`)
+  const nextBtn = card.querySelector(`#card-next-${product.slug}`)
+
+  if (prevBtn) {
+    prevBtn.addEventListener('click', (e) => {
+      e.stopPropagation()
+      currentImg--
+      if (currentImg < 0) currentImg = product.imagenes.length - 1
+      mainImg.src = product.imagenes[currentImg]
+      // Force image re-load by triggering a re-offset
+      mainImg.style.display = 'none'
+      void mainImg.offsetWidth // Trigger reflow
+      mainImg.style.display = ''
+      // Update thumbnail active state
+      card.querySelectorAll('.thumb').forEach((t, idx) => {
+        t.classList.remove('bg-navidad-dorado', 'scale-125')
+        t.classList.add('bg-white/60')
+        if (idx === currentImg) {
+          t.classList.add('bg-navidad-dorado', 'scale-125')
+          t.classList.remove('bg-white/60')
+        }
+      })
+    })
+  }
+
+  if (nextBtn) {
+    nextBtn.addEventListener('click', (e) => {
+      e.stopPropagation()
+      currentImg++
+      if (currentImg >= product.imagenes.length) currentImg = 0
+      mainImg.src = product.imagenes[currentImg]
+      // Force image re-load by triggering a re-offset
+      mainImg.style.display = 'none'
+      void mainImg.offsetWidth // Trigger reflow
+      mainImg.style.display = ''
+      // Update thumbnail active state
+      card.querySelectorAll('.thumb').forEach((t, idx) => {
+        t.classList.remove('bg-navidad-dorado', 'scale-125')
+        t.classList.add('bg-white/60')
+        if (idx === currentImg) {
+          t.classList.add('bg-navidad-dorado', 'scale-125')
+          t.classList.remove('bg-white/60')
+        }
+      })
+    })
+  }
+
+  card.querySelectorAll('.thumb').forEach((thumb) => {
+    thumb.addEventListener('click', () => {
+      const idx = parseInt(thumb.dataset.img, 10)
+      currentImg = idx
+      mainImg.src = product.imagenes[idx]
+      // Force image re-load by triggering a re-offset
+      mainImg.style.display = 'none'
+      void mainImg.offsetWidth // Trigger reflow
+      mainImg.style.display = ''
+      card.querySelectorAll('.thumb').forEach((t, thumbIdx) => {
+        if (thumbIdx === currentImg) {
+          t.classList.remove('bg-white/60')
+          t.classList.add('bg-navidad-dorado', 'scale-125')
+        } else {
+          t.classList.remove('bg-navidad-dorado', 'scale-125')
+          t.classList.add('bg-white/60')
+        }
+      })
+    })
+  })
+
+  card.querySelectorAll('.subtipo-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      selectedSubtipo = btn.dataset.subtipo
+      selectedBasePrecio = parseInt(btn.dataset.precio, 10)
+      actualizarPrecio()
+
+      card.querySelectorAll('.subtipo-btn').forEach((b) => {
+        b.classList.remove('border-navidad-rojo', 'bg-navidad-rojo', 'text-white')
+        b.classList.add('border-navidad-oscuro/20', 'text-navidad-oscuro/70')
+      })
+      btn.classList.add('border-navidad-rojo', 'bg-navidad-rojo', 'text-white')
+      btn.classList.remove('border-navidad-oscuro/20', 'text-navidad-oscuro/70')
+    })
+  })
+
+  card.querySelectorAll('.terminacion-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      selectedTerminacion = btn.dataset.terminacion
+      selectedTerminacionExtra = parseInt(btn.dataset.extra, 10)
+      actualizarPrecio()
+
+      card.querySelectorAll('.terminacion-btn').forEach((b) => {
+        b.classList.remove('border-navidad-rojo', 'bg-navidad-rojo', 'text-white')
+        b.classList.add('border-navidad-oscuro/20', 'text-navidad-oscuro/70')
+      })
+      btn.classList.add('border-navidad-rojo', 'bg-navidad-rojo', 'text-white')
+      btn.classList.remove('border-navidad-oscuro/20', 'text-navidad-oscuro/70')
+    })
+  })
+
+  addBtn.addEventListener('click', () => {
+    addToCart({
+      slug: product.slug,
+      nombre: product.nombre,
+      subtipoNombre: selectedSubtipo,
+      terminacionNombre: selectedTerminacion,
+      precio: selectedBasePrecio + selectedTerminacionExtra,
+      imagen: product.imagenes[currentImg],
+    })
+
+    const originalText = addBtn.innerHTML
+    addBtn.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+      </svg>
+      ¡Agregado!
+    `
+    addBtn.classList.remove('bg-navidad-rojo', 'hover:bg-navidad-rojoClaro')
+    addBtn.classList.add('bg-navidad-verde', 'hover:bg-navidad-verdeClaro')
+
+    setTimeout(() => {
+      addBtn.innerHTML = originalText
+      addBtn.classList.add('bg-navidad-rojo', 'hover:bg-navidad-rojoClaro')
+      addBtn.classList.remove('bg-navidad-verde', 'hover:bg-navidad-verdeClaro')
+    }, 1500)
+  })
+
+  return card
+}
+
+// Función para abrir el modal de producto
+export function openProductModal(product) {
+  const modalContainer = document.getElementById('product-modal-container')
+  if (!modalContainer) return
+
+  // Limpiar contenido anterior y renderizar el modal
+  modalContainer.innerHTML = renderProductModal(product)
+
+  // Quitar hidden del contenedor (display:none) para que el modal sea visible
+  modalContainer.classList.remove('hidden')
+  modalContainer.classList.add('flex', 'items-center', 'justify-center')
+
+  // Mostrar el modal
+  const modal = document.getElementById('product-modal')
+  if (modal) {
+    modal.classList.remove('hidden')
+    modal.classList.add('flex')
+
+    // Inicializar listeners DESPUÉS de que el modal esté en el DOM
+    initModalListeners(product)
+  }
+}
 </file>
 
 <file path="src/js/config.js">
+export const CONFIG = {
+  NOMBRE_NEGOCIO: 'Tentaciones de Sabor',
+  NRO_WHATSAPP: '5491151038957',
+  URL_SHEETS: 'https://script.google.com/macros/s/AKfycbzmB7g9Fs4-D7h0MbDlxOidVXLYOFsjvsnnVy8RtrfYMdzdIuWpjSYXNDI9G0atzMpykw/exec',
+  HERO_INTERVAL_MS: 5000,
+}
+</file>
 
+<file path="package.json">
+{
+  "name": "ventas-pandul",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && npm run copy:assets",
+    "copy:assets": "rm -rf 'dist/assets/hero' && cp -r 'src/assets/hero' 'dist/assets/hero'",
+    "preview": "vite preview --port 4173",
+    "sync": "node scripts/sync-products.js",
+    "sync:watch": "node scripts/sync-products.js --watch",
+    "fix:images": "node scripts/fix-images.js",
+    "analyze": "vite build --reporter",
+    "deploy": "npm run build && vercel --prod",
+    "deploy:netlify": "npm run build && netlify deploy --dir=dist --prod"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.47",
+    "tailwindcss": "^3.4.13",
+    "vite": "^5.4.8"
+  }
+}
+</file>
+
+<file path="public/products/manifest.json">
+[
+  {
+    "slug": "brownie-arbol",
+    "nombre": "Arboles Navideños de Brownie",
+    "descripcion": "Brownies bien chocolatosos en forma de arbolitos navideños",
+    "precio": 5000,
+    "subtipos": [],
+    "terminaciones": [],
+    "imagenes": [
+      "/products/brownie-arbol/1.jpg",
+      "/products/brownie-arbol/2.jpg",
+      "/products/brownie-arbol/3.jpg",
+      "/products/brownie-arbol/4.jpg",
+      "/products/brownie-arbol/5.jpg",
+      "/products/brownie-arbol/6.jpg"
+    ]
+  },
+  {
+    "slug": "mantecol",
+    "nombre": "Mantecol",
+    "descripcion": "Mantecol casero hecho con maní y miel pura",
+    "precio": 21000,
+    "subtipos": [
+      {
+        "nombre": "1/2 kg",
+        "precio": 10000
+      },
+      {
+        "nombre": "1 kg",
+        "precio": 21000
+      }
+    ],
+    "terminaciones": [],
+    "imagenes": [
+      "/products/mantecol/mantecol1.jpeg",
+      "/products/mantecol/mantecol2.jpeg",
+      "/products/mantecol/mantecol3.jpeg",
+      "/products/mantecol/mantecol4.jpeg",
+      "/products/mantecol/mantecol.jpeg"
+    ]
+  },
+  {
+    "slug": "pan-dulces1",
+    "nombre": "Pan Dulce de Futos Secos",
+    "descripcion": "Pan Dulces caseros hechos con mucho amor y sabor.",
+    "precio": 30000,
+    "subtipos": [
+      {
+        "nombre": "Frutos Secos 1/2 kg",
+        "precio": 15000
+      },
+      {
+        "nombre": "Frutos Secos 1 kg",
+        "precio": 30000
+      }
+    ],
+    "terminaciones": [
+      {
+        "nombre": "Glaseado",
+        "precio": 0
+      },
+      {
+        "nombre": "Bañado",
+        "precio": 2000
+      }
+    ],
+    "imagenes": [
+      "/products/pan-dulces1/1.jpeg",
+      "/products/pan-dulces1/2.jpeg",
+      "/products/pan-dulces1/3.jpeg",
+      "/products/pan-dulces1/4.jpeg",
+      "/products/pan-dulces1/5.jpeg",
+      "/products/pan-dulces1/6.jpeg",
+      "/products/pan-dulces1/7.jpeg",
+      "/products/pan-dulces1/8.jpeg"
+    ]
+  },
+  {
+    "slug": "pan-dulces2",
+    "nombre": "Pan Dulce de Chips de chocolate",
+    "descripcion": "Pan Dulces caseros hechos con mucho amor y sabor.",
+    "precio": 30000,
+    "subtipos": [
+      {
+        "nombre": "Chips 1/2 kg",
+        "precio": 14000
+      },
+      {
+        "nombre": "Chips 1 kg",
+        "precio": 28000
+      }
+    ],
+    "terminaciones": [
+      {
+        "nombre": "Glaseado",
+        "precio": 0
+      },
+      {
+        "nombre": "Bañado",
+        "precio": 2000
+      }
+    ],
+    "imagenes": [
+      "/products/pan-dulces2/1.jpeg",
+      "/products/pan-dulces2/2.jpeg",
+      "/products/pan-dulces2/3.jpeg",
+      "/products/pan-dulces2/4.jpeg",
+      "/products/pan-dulces2/5.jpeg",
+      "/products/pan-dulces2/6.jpeg",
+      "/products/pan-dulces2/7.jpeg"
+    ]
+  }
+]
 </file>
 
 </files>

@@ -10,8 +10,13 @@ export function renderProductCard(product) {
   card.dataset.product = JSON.stringify(product)
 
   const hasSubtipos = product.subtipos && product.subtipos.length > 0
-  const precioInicial = hasSubtipos ? product.subtipos[0].precio : product.precio
+  const baseInicial = hasSubtipos ? product.subtipos[0].precio : product.precio
   const subtipoInicial = hasSubtipos ? product.subtipos[0].nombre : null
+
+  const hasTerminaciones = product.terminaciones && product.terminaciones.length > 0
+  const terminacionInicial = hasTerminaciones ? product.terminaciones[0].nombre : null
+  const terminacionExtraInicial = hasTerminaciones ? product.terminaciones[0].precio : 0
+  const precioInicial = baseInicial + terminacionExtraInicial
 
   card.innerHTML = `
     <div class="relative aspect-square bg-navidad-crema overflow-hidden group cursor-pointer">
@@ -88,6 +93,32 @@ export function renderProductCard(product) {
           : ''
       }
 
+      ${
+        hasTerminaciones
+          ? `
+        <div class="mt-4">
+          <p class="text-xs font-semibold text-navidad-oscuro/60 uppercase tracking-wide mb-2">Terminación:</p>
+          <div class="flex flex-wrap gap-2">
+            ${product.terminaciones
+              .map(
+                (t, i) => `
+                <button data-terminacion="${t.nombre}" data-extra="${t.precio}"
+                        class="terminacion-btn px-3 py-1.5 rounded-full text-xs font-medium border-2 transition-all ${
+                          i === 0
+                            ? 'border-navidad-rojo bg-navidad-rojo text-white'
+                            : 'border-navidad-oscuro/20 text-navidad-oscuro/70 hover:border-navidad-rojo/50'
+                        }">
+                  ${t.nombre}${t.precio > 0 ? ` (+$ ${t.precio.toLocaleString('es-AR')})` : ''}
+                </button>
+              `
+              )
+              .join('')}
+          </div>
+        </div>
+      `
+          : ''
+      }
+
       <div class="mt-4 flex items-center justify-between">
         <p id="precio-${product.slug}" class="text-2xl font-bold text-navidad-verde">
           $ ${precioInicial.toLocaleString('es-AR')}
@@ -105,8 +136,14 @@ export function renderProductCard(product) {
   `
 
   let selectedSubtipo = subtipoInicial
-  let selectedPrecio = precioInicial
+  let selectedBasePrecio = baseInicial
+  let selectedTerminacion = terminacionInicial
+  let selectedTerminacionExtra = terminacionExtraInicial
   let currentImg = 0
+
+  const actualizarPrecio = () => {
+    precioEl.textContent = `$ ${(selectedBasePrecio + selectedTerminacionExtra).toLocaleString('es-AR')}`
+  }
 
   const mainImg = card.querySelector(`#main-img-${product.slug}`)
   const precioEl = card.querySelector(`#precio-${product.slug}`)
@@ -117,6 +154,7 @@ export function renderProductCard(product) {
     // Evitar que se abra el modal si se clickearon botones internos
     if (e.target.closest(`#add-${product.slug}`) ||
         e.target.closest('.subtipo-btn') ||
+        e.target.closest('.terminacion-btn') ||
         e.target.closest('.thumb')) {
       return
     }
@@ -195,10 +233,25 @@ export function renderProductCard(product) {
   card.querySelectorAll('.subtipo-btn').forEach((btn) => {
     btn.addEventListener('click', () => {
       selectedSubtipo = btn.dataset.subtipo
-      selectedPrecio = parseInt(btn.dataset.precio, 10)
-      precioEl.textContent = `$ ${selectedPrecio.toLocaleString('es-AR')}`
+      selectedBasePrecio = parseInt(btn.dataset.precio, 10)
+      actualizarPrecio()
 
       card.querySelectorAll('.subtipo-btn').forEach((b) => {
+        b.classList.remove('border-navidad-rojo', 'bg-navidad-rojo', 'text-white')
+        b.classList.add('border-navidad-oscuro/20', 'text-navidad-oscuro/70')
+      })
+      btn.classList.add('border-navidad-rojo', 'bg-navidad-rojo', 'text-white')
+      btn.classList.remove('border-navidad-oscuro/20', 'text-navidad-oscuro/70')
+    })
+  })
+
+  card.querySelectorAll('.terminacion-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      selectedTerminacion = btn.dataset.terminacion
+      selectedTerminacionExtra = parseInt(btn.dataset.extra, 10)
+      actualizarPrecio()
+
+      card.querySelectorAll('.terminacion-btn').forEach((b) => {
         b.classList.remove('border-navidad-rojo', 'bg-navidad-rojo', 'text-white')
         b.classList.add('border-navidad-oscuro/20', 'text-navidad-oscuro/70')
       })
@@ -212,7 +265,8 @@ export function renderProductCard(product) {
       slug: product.slug,
       nombre: product.nombre,
       subtipoNombre: selectedSubtipo,
-      precio: selectedPrecio,
+      terminacionNombre: selectedTerminacion,
+      precio: selectedBasePrecio + selectedTerminacionExtra,
       imagen: product.imagenes[currentImg],
     })
 

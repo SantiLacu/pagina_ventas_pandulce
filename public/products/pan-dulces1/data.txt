@@ -4,4 +4,7 @@ precio: 30000
 subtipos:
 Frutos Secos 1/2 kg | 15000
 Frutos Secos 1 kg | 30000
+terminaciones:
+Glaseado | 0
+Bañado | 2000
 

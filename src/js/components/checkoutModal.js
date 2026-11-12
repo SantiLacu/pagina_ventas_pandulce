@@ -124,7 +124,7 @@ export function renderCheckoutModal(container) {
             <img src="${item.imagen}" alt="" class="w-10 h-10 rounded-lg object-cover" />
             <div>
               <p class="font-medium text-navidad-oscuro truncate max-w-[160px]">${item.nombre}</p>
-              ${item.subtipo ? `<p class="text-xs text-navidad-oscuro/50">${item.subtipo}</p>` : ''}
+              ${[item.subtipo, item.terminacion].filter(Boolean).length ? `<p class="text-xs text-navidad-oscuro/50">${[item.subtipo, item.terminacion].filter(Boolean).join(' · ')}</p>` : ''}
             </div>
           </div>
           <div class="text-right">

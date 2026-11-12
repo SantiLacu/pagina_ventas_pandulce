@@ -5,6 +5,7 @@
     "descripcion": "Brownies bien chocolatosos en forma de arbolitos navideños",
     "precio": 5000,
     "subtipos": [],
+    "terminaciones": [],
     "imagenes": [
       "/products/brownie-arbol/1.jpg",
       "/products/brownie-arbol/2.jpg",
@@ -29,6 +30,7 @@
         "precio": 21000
       }
     ],
+    "terminaciones": [],
     "imagenes": [
       "/products/mantecol/mantecol1.jpeg",
       "/products/mantecol/mantecol2.jpeg",
@@ -50,6 +52,16 @@
       {
         "nombre": "Frutos Secos 1 kg",
         "precio": 30000
+      }
+    ],
+    "terminaciones": [
+      {
+        "nombre": "Glaseado",
+        "precio": 0
+      },
+      {
+        "nombre": "Bañado",
+        "precio": 2000
       }
     ],
     "imagenes": [
@@ -76,6 +88,16 @@
       {
         "nombre": "Chips 1 kg",
         "precio": 28000
+      }
+    ],
+    "terminaciones": [
+      {
+        "nombre": "Glaseado",
+        "precio": 0
+      },
+      {
+        "nombre": "Bañado",
+        "precio": 2000
       }
     ],
     "imagenes": [

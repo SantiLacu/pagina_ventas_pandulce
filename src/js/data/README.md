@@ -7,4 +7,4 @@ Capa de datos: manejo del catálogo de productos y el estado del carrito.
 | Archivo | Función |
 |---|---|
 | `productService.js` | Expone `getProducts()` que hace `fetch('/products/manifest.json')`. Cachea el resultado en memoria tras el primer llamado para no repetir fetches. |
-| `cartStore.js` | Estado del carrito persistido en `localStorage`. Expose `getCart()`, `addToCart(item)`, `removeFromCart(id)`, `updateQty(id, qty)`, `clearCart()`, `getTotal()`. Emite eventos `cart:changed`. |
+| `cartStore.js` | Estado del carrito persistido en `localStorage`. Expose `getCart()`, `addToCart(item)`, `removeFromCart(id)`, `updateQty(id, qty)`, `clearCart()`, `getTotal()`. Emite eventos `cart:changed`. Cada item guarda `subtipo` y `terminacion` (ej: `Glaseado`/`Bañado`); el `id` se arma como `slug::subtipo::terminacion`. |
