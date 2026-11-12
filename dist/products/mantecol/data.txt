@@ -3,5 +3,5 @@ descripcion: Mantecol casero hecho con maní y miel pura
 precio: 21000
 subtipos:
 1/2 kg | 10000
-1 kg | 21000
+1 kg | 18000
 
