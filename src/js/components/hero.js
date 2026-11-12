@@ -5,7 +5,7 @@ import { openProductModal } from './productCard.js'
 export async function renderHero(container) {
   container.id = 'inicio'
   container.className =
-    'relative min-h-[90vh] flex items-center justify-center overflow-hidden bg-navidad-oscuro'
+    'relative min-h-[85svh] md:min-h-[90vh] flex items-center justify-center overflow-hidden bg-navidad-oscuro'
 
   container.innerHTML = `
     <div id="hero-slides" class="absolute inset-0"></div>
@@ -62,10 +62,10 @@ async function initSlideshow() {
 
   slidesContainer.innerHTML = slides
     .map(
-      ({ image }, i) => `
+      ({ image, product }, i) => `
       <div class="absolute inset-0 transition-opacity duration-1000 ease-in-out ${
         i === 0 ? 'opacity-100' : 'opacity-0'
-      }" style="background-image: url('${image}'); background-size: cover; background-position: center; cursor: pointer;"></div>
+      }" role="button" tabindex="0" aria-label="Ver ${product.nombre}" style="background-image: url('${image}'); background-size: cover; background-position: center; cursor: pointer;"></div>
     `
     )
     .join('')
@@ -75,10 +75,17 @@ async function initSlideshow() {
 
   // Add click handlers to slideshow images
   slidesContainer.querySelectorAll('div').forEach((slide, index) => {
-    slide.addEventListener('click', () => {
+    const abrirDetalle = () => {
       const { product } = slides[index]
       if (product) {
         openProductModal(product)
+      }
+    }
+    slide.addEventListener('click', abrirDetalle)
+    slide.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault()
+        abrirDetalle()
       }
     })
   })

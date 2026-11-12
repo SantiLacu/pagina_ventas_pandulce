@@ -41,7 +41,7 @@
   },
   {
     "slug": "pan-dulces1",
-    "nombre": "Pan Dulce de Futos Secos",
+    "nombre": "Pan Dulce de Frutos Secos",
     "descripcion": "Pan Dulces caseros hechos con mucho amor y sabor.",
     "precio": 30000,
     "subtipos": [
@@ -108,6 +108,36 @@
       "/products/pan-dulces2/5.jpeg",
       "/products/pan-dulces2/6.jpeg",
       "/products/pan-dulces2/7.jpeg"
+    ]
+  },
+  {
+    "slug": "pan-dulces3",
+    "nombre": "Pan Dulce de Futos Secos",
+    "descripcion": "Pan Dulces caseros hechos con mucho amor y sabor.",
+    "precio": 30000,
+    "subtipos": [
+      {
+        "nombre": "Frutos Secos 1/2 kg",
+        "precio": 15000
+      },
+      {
+        "nombre": "Frutos Secos 1 kg",
+        "precio": 30000
+      }
+    ],
+    "terminaciones": [
+      {
+        "nombre": "Glaseado",
+        "precio": 0
+      },
+      {
+        "nombre": "Bañado",
+        "precio": 2000
+      }
+    ],
+    "imagenes": [
+      "/products/pan-dulces3/frutas1.jpeg",
+      "/products/pan-dulces3/frutas.jpeg"
     ]
   }
 ]

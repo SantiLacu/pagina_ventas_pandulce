@@ -10,7 +10,7 @@ export function renderCheckoutModal(container) {
          role="dialog"
          aria-modal="true"
          aria-labelledby="checkout-title">
-      <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto transform scale-95 transition-transform duration-300">
+      <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full max-h-[92dvh] overflow-y-auto overscroll-contain transform scale-95 transition-transform duration-300">
         <div class="p-6 border-b border-navidad-oscuro/10 bg-navidad-rojo text-white rounded-t-2xl flex items-center justify-between">
           <h2 id="checkout-title" class="font-display text-xl font-bold flex items-center gap-2">
             🎄 Finalizar compra

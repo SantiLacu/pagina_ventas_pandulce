@@ -1,4 +1,4 @@
-nombre: Pan Dulce de Futos Secos
+nombre: Pan Dulce de Frutos Secos
 descripcion: Pan Dulces caseros hechos con mucho amor y sabor.
 precio: 30000
 subtipos:

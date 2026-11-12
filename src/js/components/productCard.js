@@ -30,16 +30,16 @@ export function renderProductCard(product) {
            height="400" />
       ${product.imagenes.length > 1 ? `
         <!-- Flechas laterales -->
-        <div class="absolute top-1/2 -translate-y-1/2 w-full flex justify-between p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none group-hover:pointer-events-auto">
+        <div class="absolute top-1/2 -translate-y-1/2 w-full flex justify-between p-2 opacity-90 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-200 pointer-events-auto md:pointer-events-none md:group-hover:pointer-events-auto">
           <button id="card-prev-${product.slug}"
-                  class="bg-white/20 rounded-full p-2 hover:bg-white transition-colors pointer-events-auto"
+                  class="bg-white/70 md:bg-white/20 backdrop-blur rounded-full p-3 hover:bg-white transition-colors pointer-events-auto"
                   aria-label="Imagen anterior">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
           </button>
           <button id="card-next-${product.slug}"
-                  class="bg-white/20 rounded-full p-2 hover:bg-white transition-colors pointer-events-auto"
+                  class="bg-white/70 md:bg-white/20 backdrop-blur rounded-full p-3 hover:bg-white transition-colors pointer-events-auto"
                   aria-label="Imagen siguiente">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
@@ -52,10 +52,12 @@ export function renderProductCard(product) {
             .map(
               (_, i) => `
               <button data-img="${i}"
-                      class="thumb w-2 h-2 rounded-full transition-all ${
-                        i === 0 ? 'bg-navidad-dorado scale-125' : 'bg-white/60 hover:bg-white'
-                      }"
-                      aria-label="Ver imagen ${i + 1}"></button>
+                      class="thumb w-7 h-7 flex items-center justify-center rounded-full"
+                      aria-label="Ver imagen ${i + 1}">
+                <span class="thumb-dot block w-2 h-2 rounded-full transition-all ${
+                        i === 0 ? 'bg-navidad-dorado scale-125' : 'bg-white/60'
+                      }"></span>
+              </button>
             `
             )
             .join('')}
@@ -77,7 +79,7 @@ export function renderProductCard(product) {
               .map(
                 (s, i) => `
                 <button data-subtipo="${s.nombre}" data-precio="${s.precio}"
-                        class="subtipo-btn px-3 py-1.5 rounded-full text-xs font-medium border-2 transition-all ${
+                        class="subtipo-btn px-3 py-2 rounded-full text-xs font-medium border-2 transition-all ${
                           i === 0
                             ? 'border-navidad-rojo bg-navidad-rojo text-white'
                             : 'border-navidad-oscuro/20 text-navidad-oscuro/70 hover:border-navidad-rojo/50'
@@ -103,7 +105,7 @@ export function renderProductCard(product) {
               .map(
                 (t, i) => `
                 <button data-terminacion="${t.nombre}" data-extra="${t.precio}"
-                        class="terminacion-btn px-3 py-1.5 rounded-full text-xs font-medium border-2 transition-all ${
+                        class="terminacion-btn px-3 py-2 rounded-full text-xs font-medium border-2 transition-all ${
                           i === 0
                             ? 'border-navidad-rojo bg-navidad-rojo text-white'
                             : 'border-navidad-oscuro/20 text-navidad-oscuro/70 hover:border-navidad-rojo/50'
@@ -176,7 +178,7 @@ export function renderProductCard(product) {
       void mainImg.offsetWidth // Trigger reflow
       mainImg.style.display = ''
       // Update thumbnail active state
-      card.querySelectorAll('.thumb').forEach((t, idx) => {
+      card.querySelectorAll('.thumb-dot').forEach((t, idx) => {
         t.classList.remove('bg-navidad-dorado', 'scale-125')
         t.classList.add('bg-white/60')
         if (idx === currentImg) {
@@ -198,7 +200,7 @@ export function renderProductCard(product) {
       void mainImg.offsetWidth // Trigger reflow
       mainImg.style.display = ''
       // Update thumbnail active state
-      card.querySelectorAll('.thumb').forEach((t, idx) => {
+      card.querySelectorAll('.thumb-dot').forEach((t, idx) => {
         t.classList.remove('bg-navidad-dorado', 'scale-125')
         t.classList.add('bg-white/60')
         if (idx === currentImg) {
@@ -218,7 +220,7 @@ export function renderProductCard(product) {
       mainImg.style.display = 'none'
       void mainImg.offsetWidth // Trigger reflow
       mainImg.style.display = ''
-      card.querySelectorAll('.thumb').forEach((t, thumbIdx) => {
+      card.querySelectorAll('.thumb-dot').forEach((t, thumbIdx) => {
         if (thumbIdx === currentImg) {
           t.classList.remove('bg-white/60')
           t.classList.add('bg-navidad-dorado', 'scale-125')
@@ -307,6 +309,7 @@ export function openProductModal(product) {
   if (modal) {
     modal.classList.remove('hidden')
     modal.classList.add('flex')
+    document.body.style.overflow = 'hidden'
 
     // Inicializar listeners DESPUÉS de que el modal esté en el DOM
     initModalListeners(product)

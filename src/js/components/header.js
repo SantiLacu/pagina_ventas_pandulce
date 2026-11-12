@@ -9,7 +9,7 @@ const NAV_LINKS = [
 
 export function renderHeader(container) {
   container.innerHTML = `
-    <header id="site-header" class="sticky top-0 z-50 bg-navidad-rojo text-white transition-shadow duration-300">
+    <header id="site-header" class="sticky top-0 z-50 bg-navidad-rojo text-white transition-shadow duration-300 pt-safe">
       <div class="container-page flex items-center justify-between h-16">
         <a href="#inicio" class="flex items-center gap-2 group" aria-label="${CONFIG.NOMBRE_NEGOCIO}">
           <span class="text-2xl">🎄</span>

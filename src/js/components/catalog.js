@@ -2,15 +2,15 @@ import { getProducts } from '../data/productService.js'
 import { renderProductCard } from './productCard.js'
 
 export async function renderCatalog(container) {
-  container.className = 'container-page py-12'
+  container.className = 'container-page py-8 sm:py-12'
 
   container.innerHTML = `
     <div class="flex items-center justify-between mb-6">
-      <h2 id="catalog-title" class="font-display text-3xl font-bold text-navidad-rojo">
+      <h2 id="catalog-title" class="font-display text-2xl sm:text-3xl font-bold text-navidad-rojo">
         🎄 Cargando productos...
       </h2>
     </div>
-    <div id="catalogo" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+    <div id="catalogo" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"></div>
     <div id="catalog-empty" class="hidden text-center py-16 text-navidad-oscuro/60">
       <p class="text-lg">No hay productos disponibles en este momento.</p>
     </div>

@@ -19,7 +19,7 @@ export function renderFooter(container) {
           <div>
             <h3 class="font-display text-lg font-bold text-navidad-dorado">Contacto</h3>
             <ul class="mt-3 space-y-2 text-sm text-white/80">
-              <li>📱 WhatsApp: ${CONFIG.NRO_WHATSAPP}</li>
+              <li>📱 WhatsApp: <a href="https://wa.me/${CONFIG.NRO_WHATSAPP}" target="_blank" rel="noopener noreferrer" class="hover:text-navidad-dorado transition-colors underline-offset-2 hover:underline">${CONFIG.NRO_WHATSAPP}</a></li>
               <li>📍 Envíos a domicilio</li>
               <li>🕐 Lun a Sáb · 9 a 19 hs</li>
             </ul>

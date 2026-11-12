@@ -5,14 +5,42 @@
 @layer base {
   html {
     scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    overflow-x: clip;
   }
 
   body {
     -webkit-tap-highlight-color: transparent;
+    overflow-x: clip;
+  }
+
+  /* iOS hace zoom al enfocar inputs de menos de 16px */
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+
+  button,
+  a {
+    touch-action: manipulation;
   }
 }
 
 @layer components {
+  /* Padding superior para el notch (usado en el header sticky) */
+  .pt-safe {
+    padding-top: env(safe-area-inset-top);
+  }
+
+  /* Ocultar scrollbar en tiras horizontales (miniaturas, etc.) */
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
   .btn-primary {
     @apply inline-flex items-center justify-center gap-2 rounded-full bg-navidad-rojo px-6 py-3 font-semibold text-white shadow-lg transition-all duration-200 hover:bg-navidad-rojoClaro hover:shadow-xl active:scale-95;
   }
