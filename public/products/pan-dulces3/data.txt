@@ -2,8 +2,8 @@ nombre: Pan Dulce de Frutas Abrillantadas
 descripcion: Pan Dulces caseros hechos con mucho amor y sabor.
 precio: 30000
 subtipos:
-Frutos Secos 1/2 kg | 12000
-Frutos Secos 1 kg | 24000
+Frutas Abrillantadas 1/2 kg | 12000
+Frutas Abrillantadas 1 kg | 24000
 terminaciones:
 Glaseado | 0
 Bañado | 2000

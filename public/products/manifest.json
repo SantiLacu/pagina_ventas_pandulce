@@ -126,11 +126,11 @@
     "precio": 30000,
     "subtipos": [
       {
-        "nombre": "Frutos Secos 1/2 kg",
+        "nombre": "Frutas Abrillantadas 1/2 kg",
         "precio": 12000
       },
       {
-        "nombre": "Frutos Secos 1 kg",
+        "nombre": "Frutas Abrillantadas 1 kg",
         "precio": 24000
       }
     ],
@@ -147,6 +147,35 @@
     "imagenes": [
       "/products/pan-dulces3/frutas1.jpeg",
       "/products/pan-dulces3/frutas.jpeg"
+    ]
+  },
+  {
+    "slug": "pan-dulces4",
+    "nombre": "Pan Dulce de Pistacho",
+    "descripcion": "Pan Dulces de Pistacho y Chocolate",
+    "precio": 30000,
+    "subtipos": [
+      {
+        "nombre": "Pistacho /2 kg",
+        "precio": 21000
+      },
+      {
+        "nombre": "Pistacho 1 kg",
+        "precio": 42000
+      }
+    ],
+    "terminaciones": [
+      {
+        "nombre": "Glaseado",
+        "precio": 0
+      },
+      {
+        "nombre": "Bañado",
+        "precio": 2000
+      }
+    ],
+    "imagenes": [
+      "/products/pan-dulces4/pandul.jpeg"
     ]
   }
 ]

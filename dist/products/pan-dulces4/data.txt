@@ -1,0 +1,10 @@
+nombre: Pan Dulce de Pistacho
+descripcion: Pan Dulces de Pistacho y Chocolate
+precio: 30000
+subtipos:
+Pistacho /2 kg | 21000
+Pistacho 1 kg | 42000
+terminaciones:
+Glaseado | 0
+Bañado | 2000
+
