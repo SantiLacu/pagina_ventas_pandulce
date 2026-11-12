@@ -13,8 +13,9 @@
 // ============================================
 
 // SOLO el ID de la hoja (el string entre /d/ y /edit)
-// Ejemplo: https://docs.google.com/spreadsheets/d/1AbC123.../edit → SPREADSHEET_ID = '1AbC123...'
-const SPREADSHEET_ID = '1Bw90ni7RcooEuj7L3tJTrJkn02RCphoCutWnm81YSB8'
+// NO commitear el ID real: pegarlo SOLO al desplegar en script.google.com.
+// Lo encontrás en la URL de tu hoja: https://docs.google.com/spreadsheets/d/ID_DE_LA_HOJA/edit
+const SPREADSHEET_ID = 'PEGAR_ID_DE_LA_HOJA_ACA'
 const SHEET_NAME = 'Pedidos'
 
 function doPost(e) {

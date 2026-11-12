@@ -10,7 +10,7 @@ Código de Google Apps Script que se pega en script.google.com y se despliega co
 
 ## Cómo desplegar
 1. Ir a https://script.google.com → crear nuevo proyecto.
-2. Pegar el contenido de `Code.gs`.
+2. Pegar el contenido de `Code.gs` y reemplazar `SPREADSHEET_ID` por el ID real de tu hoja (está en la URL: `https://docs.google.com/spreadsheets/d/ID_DE_LA_HOJA/edit`). **No commitear el ID real** — el repo es público.
 3. Crear/ligar una hoja de cálculo de Google.
 4. Desplegar → Nueva implementación → Tipo: "Aplicación web".
 5. Acceso: "Cualquier persona".

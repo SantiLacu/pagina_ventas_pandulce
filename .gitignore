@@ -1,2 +1,7 @@
 .backup-imagenes/
 *.kate-swp
+.env
+.env.*
+*.local
+node_modules/
+repomix-output.xml
